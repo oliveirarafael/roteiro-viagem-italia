@@ -313,6 +313,78 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .map-pop{width:300px}
 .map-hint{margin:-4px 0 0;font-size:12px;color:var(--muted)}
 .map-note{margin:4px 0 18px;font-size:13.5px;line-height:1.45}
+.map-modes{display:flex;justify-content:center;margin:0 0 8px}
+.plan-grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
+.plan-paper{position:sticky;top:110px;width:100%;max-width:calc((100vh - 160px) * .84 + 24px);justify-self:center}
+.plan-svg{display:block;width:100%;height:auto;border-radius:10px}
+.pl-city{cursor:pointer}
+.pl-city:hover>circle:nth-of-type(2),.pl-city:hover>circle:last-of-type{stroke:#f59e0b}
+.pl-leg{pointer-events:auto}
+.plan-side .card{margin:0;background:#fffaf0;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:14px}
+.plan-side .card h3{font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;font-size:24px;letter-spacing:.03em;margin:0;color:var(--c,#0f766e);-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:1.5px 1.5px 0 var(--ink)}
+.plan-side .card h4{font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;letter-spacing:.03em;font-size:15px;margin:14px 0 4px;color:var(--ink)}
+.pl-search{width:100%;border:1.5px solid var(--ink);border-radius:999px;padding:6px 12px;background:#fff;margin-bottom:8px}
+.pl-region{margin:8px 0}
+.pl-region>b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7a6a52}
+.pl-region>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.pl-chip{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;padding:3px 10px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.pl-chip.on{background:var(--c);color:#fff}
+.pl-chip span{background:#fff;color:var(--c);border-radius:999px;min-width:17px;height:17px;display:inline-grid;place-items:center;font-size:10.5px}
+.pl-back{border:none;background:none;color:#0f766e;font-weight:700;padding:0;margin-bottom:6px;font-size:12.5px}
+.pl-reg{font-size:12.5px;color:#7a6a52;margin-top:2px}
+.pl-desc{font-size:13.5px;margin:8px 0}
+.pl-how{font-size:12.5px;background:#f6ecd6;border-radius:10px;padding:8px 10px;margin-bottom:10px;line-height:1.4}
+.pl-leg-line{margin-top:6px;display:flex;gap:8px;align-items:flex-start}
+.pl-in{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;color:#15803d;margin-bottom:8px}
+.pl-in button{margin-left:auto;font-size:12px;padding:2px 10px;border-radius:999px}
+.pl-add{width:100%;justify-content:center;margin-bottom:8px}
+.mini-map{display:block;width:100%;height:auto;margin:6px 0 2px}
+.mm-pt{cursor:pointer}
+.mm-pt:hover circle:last-of-type{stroke:#f59e0b;stroke-width:3}
+.pl-places{list-style:none;margin:0;padding:0}
+.pl-place label{display:flex;gap:8px;align-items:flex-start;padding:7px 4px;border-bottom:1px dashed #eadbb8;cursor:pointer;font-size:13px;font-weight:400;color:var(--ink)}
+.pl-place.on label{background:#eef8f5}
+.pl-place input{margin-top:3px;accent-color:#0f766e;width:16px;height:16px;flex:none}
+.pl-place .mini-ic{margin-top:2px}
+.pp-main{display:flex;flex-direction:column;gap:1px;min-width:0}
+.pp-main small{color:#6b5a44;font-size:12px}
+.pp-meta a{color:#0f766e}
+.gem{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#7c3aed;background:#f1eafe;border-radius:999px;padding:0 6px;white-space:nowrap}
+.res{color:#c2410c;font-weight:700}
+.leg-ic{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--lc);display:grid;place-items:center;background:#fffaf0}
+.leg-ic svg{width:15px;height:15px;color:var(--lc)}
+.pl-seq{margin-top:24px}
+.pl-seq-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.pl-seq-head h3{font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;font-size:28px;margin:0;letter-spacing:.03em;color:#0f766e;-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:2px 2px 0 var(--ink)}
+.pl-seq-head .sp{flex:1}
+.pl-tot{font-family:'Caveat','Segoe Print',cursive;font-size:19px}
+.pl-empty{background:#fffaf0;border:2px dashed #c9a46a;border-radius:14px;padding:18px;text-align:center;color:#7a6a52}
+.pl-leg-row{display:flex;gap:8px;align-items:center;margin:6px 0 6px 26px;padding:6px 10px;border-left:3px dashed #c9a46a;font-size:13px}
+.pl-leg-row small{color:#6b5a44}
+.pl-stop{background:#fffaf0;border:2px solid var(--ink);border-left:8px solid var(--c);border-radius:14px;box-shadow:3px 3px 0 var(--ink);padding:10px 12px}
+.ps-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ps-num{width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-family:'Lilita One','Arial Black',sans-serif;border:2px solid var(--ink);flex:none}
+.ps-title{display:flex;flex-direction:column;min-width:0;flex:1}
+.ps-title b{font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;font-size:19px;letter-spacing:.02em;cursor:pointer}
+.ps-title small{color:#7a6a52;font-size:12px}
+.ps-nights{display:inline-flex;align-items:center;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden;font-size:12.5px;font-weight:700}
+.ps-nights button{border:none;border-radius:0;background:#f6ecd6;padding:2px 9px;font-weight:800}
+.ps-nights span{padding:0 8px;white-space:nowrap}
+.ps-move{display:inline-flex;gap:4px}
+.ps-move button,.ps-pm button{border:1.5px solid var(--ink);border-radius:8px;background:#fff;padding:0 7px;font-weight:800;line-height:22px}
+.ps-move button:disabled,.ps-pm button:disabled{opacity:.3}
+.ps-places{list-style:none;margin:8px 0 0;padding:0}
+.ps-place{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13.5px}
+.ps-place .pn{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--c);color:var(--c);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.ps-place .pt{flex:1;min-width:0}
+.ps-place .pt small{color:#7a6a52;margin-left:6px}
+.ps-pm{display:inline-flex;gap:3px;opacity:.55}
+.ps-place:hover .ps-pm{opacity:1}
+.ps-walk{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#6b5a44;padding:0 0 0 30px}
+.ps-walk span svg{width:13px;height:13px;color:#7a6a52;display:block}
+.ps-none{font-size:12.5px;margin:6px 0 0}
+.ps-none a{color:#0f766e;font-weight:700}
+@media (max-width:980px){.plan-grid{grid-template-columns:1fr}.plan-paper{position:static;max-width:none}}
 .plain-days{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:12px 0}
 .plain-day{background:#fffaf0;border:2px solid var(--ink);border-radius:12px;padding:10px 12px;box-shadow:3px 3px 0 var(--ink)}
 .plain-day .muted{font-size:12.5px;margin:6px 0 0}
@@ -3245,8 +3317,19 @@ function renderMap() {
   const trips = Object.keys(m.visits).filter(k => PLACES[k] && PLACES[k].kind !== 'airport').length;
   const title = (state.title.split('·')[0] || 'Itália + Suíça').trim().toUpperCase();
   const first = state.days[0], last = state.days[state.days.length - 1];
+  const mode = state.settings.mapMode || (coversMap(m) ? 'route' : 'plan');
+  const modeBar = `<div class="map-modes"><div class="pills">${[['plan', 'Planejar pela Itália'], ['route', 'Mapa do roteiro']].map(([k, l]) => `<button data-mapmode="${k}" class="${mode === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>`;
+  if (mode === 'plan') {
+    const pcs = plan().cities;
+    el.innerHTML = `${modeBar}
+    <div class="map-hero">
+      <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
+      <div class="map-sub">${pcs.length ? `${pcs.length} cidade${pcs.length > 1 ? 's' : ''} escolhida${pcs.length > 1 ? 's' : ''} · monte a sequência e depois gere o calendário` : 'escolha as cidades e os lugares · sem datas por enquanto'}</div>
+    </div>${planHTML()}`;
+    return;
+  }
   if (!coversMap(m)) {
-    el.innerHTML = `
+    el.innerHTML = `${modeBar}
     <div class="map-hero">
       <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
       <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) : ''} · ${state.days.length} dias${m.cities.length ? ` · ${m.cities.length} cidade${m.cities.length > 1 ? 's' : ''}` : ''}</div>
@@ -3256,7 +3339,7 @@ function renderMap() {
     ${m.cities.length ? m.cities.map(citySectionHTML).join('') : dayListHTML(state.days)}`;
     return;
   }
-  el.innerHTML = `
+  el.innerHTML = `${modeBar}
     <div class="map-hero">
       <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
       <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) : ''} · ${m.cities.length} cidades-base · ${trips} passeios e bate-voltas</div>
@@ -3281,6 +3364,754 @@ function renderMap() {
     <p class="hint" style="margin-top:22px">Nos mapas das cidades: cada cor é um dia e o número é a ordem da atividade. Clique num marcador para ver detalhes e arraste para ajustar a posição; dê um duplo clique para voltar à posição automática. As atividades sem lugar ficam ao lado: arraste-as para o mapa.</p>
     ${m.cities.map(citySectionHTML).join('')}`;
   applyMapFilters();
+}
+
+/* ======================= planejador (Itália inteira) ======================= */
+// P(nome, ícone, lat, lon, famoso 1/0, horas, descrição, reserva 1/0)
+const P = (name, ic, lat, lon, f, h, d, r = 0) => ({name, ic, lat, lon, f: !!f, h, d, r: !!r});
+// C(chave, nome, região, lat, lon, noites sugeridas, resumo, lugares, extras {av: alta velocidade, isl: ilha, car: carro recomendado, via: como chegar})
+const CC = (k, name, reg, lat, lon, n, d, places, x = {}) => ({k, name, reg, lat, lon, n, d, places, ...x});
+const IT_CITIES = [
+  CC('milao', 'Milão', 'Lombardia', 45.4642, 9.19, 2, 'Moda, design e o Duomo gótico; base para os lagos e para a Suíça.', [
+    P('Duomo e terraços', 'igreja', 45.4641, 9.1919, 1, 2, 'Catedral gótica com passeio pelos telhados entre as agulhas.', 1),
+    P('Galleria Vittorio Emanuele II', 'compras', 45.4659, 9.19, 1, 0.5, 'Galeria de 1877 ao lado do Duomo; gire o calcanhar no touro do piso.'),
+    P('A Última Ceia (Cenacolo Vinciano)', 'visita', 45.466, 9.1708, 1, 0.5, 'Afresco de Leonardo; visita de 15 min e ingressos esgotam meses antes.', 1),
+    P('Castello Sforzesco e Parco Sempione', 'castelo', 45.4705, 9.1793, 1, 1.5, 'Castelo dos Sforza com a Pietà Rondanini de Michelangelo.'),
+    P('Teatro alla Scala e museu', 'visita', 45.4674, 9.1895, 1, 1, 'Um dos teatros de ópera mais famosos do mundo.'),
+    P('Pinacoteca di Brera e bairro de Brera', 'visita', 45.4719, 9.188, 1, 2, 'Caravaggio, Rafael e Mantegna; ruas de ateliês e cafés.'),
+    P('Navigli ao entardecer', 'comida', 45.452, 9.175, 1, 2, 'Canais com bares de aperitivo e antiquários.'),
+    P('San Bernardino alle Ossa', 'igreja', 45.4623, 9.1952, 0, 0.25, 'Capela-ossuário decorada com crânios e ossos; grátis.'),
+    P('Santa Maria presso San Satiro', 'igreja', 45.4628, 9.1878, 0, 0.25, 'A falsa abside de Bramante: 97 cm que parecem 10 metros.'),
+    P('Vinha de Leonardo (Casa degli Atellani)', 'passeio', 45.4657, 9.1717, 0, 1, 'A vinha que Leonardo ganhou de Ludovico Sforza, replantada.', 1),
+    P('Biblioteca e Pinacoteca Ambrosiana', 'visita', 45.4635, 9.1858, 0, 1.5, 'Codex Atlanticus de Leonardo e a Cesta de Frutas de Caravaggio.'),
+    P('Cimitero Monumentale', 'visita', 45.4856, 9.1797, 0, 1, 'Museu a céu aberto de esculturas art nouveau; grátis.'),
+    P('Flamingos da Villa Invernizzi', 'passeio', 45.47, 9.204, 0, 0.25, 'Flamingos cor-de-rosa num jardim privado, vistos pela grade.'),
+    P('Bosco Verticale e Porta Nuova', 'foto', 45.4855, 9.1904, 0, 0.75, 'Prédios-floresta e a Milão moderna.'),
+    P('Fondazione Prada', 'visita', 45.4447, 9.2045, 0, 1.5, 'Arte contemporânea numa destilaria com torre dourada.'),
+  ], {av: 1, via: 'Aeroportos de Malpensa e Linate; trem rápido de Roma (2h55), Florença (1h54), Veneza (2h27).'}),
+  CC('lago-como', 'Lago de Como', 'Lombardia', 45.99, 9.265, 2, 'Vilas e jardins à beira do lago; vilarejos ligados por balsas.', [
+    P('Bellagio', 'passeio', 45.9864, 9.2611, 1, 2, 'A “pérola do lago”, com escadarias e vista para os três braços.'),
+    P('Varenna e Castello di Vezio', 'passeio', 46.0105, 9.2849, 1, 2, 'Vilarejo colorido e trilha curta até o castelo com vista.'),
+    P('Villa del Balbianello', 'visita', 45.9655, 9.2023, 1, 1.5, 'Vila em península usada em Star Wars e 007; jardim com reserva.', 1),
+    P('Villa Carlotta (Tremezzo)', 'visita', 45.985, 9.231, 1, 1.5, 'Jardim botânico e esculturas de Canova.'),
+    P('Balsas entre Bellagio, Varenna e Menaggio', 'barco', 45.99, 9.25, 1, 1, 'O jeito clássico de circular pelo lago.'),
+    P('Como e funicular para Brunate', 'foto', 45.8126, 9.0884, 0, 2, 'Funicular de 1894 até o mirante sobre o lago.'),
+    P('Villa Monastero', 'passeio', 46.008, 9.2866, 0, 1, 'Jardim botânico comprido à beira d’água em Varenna.'),
+    P('Orrido di Nesso', 'foto', 45.9135, 9.157, 0, 0.5, 'Cachoeira num desfiladeiro com ponte medieval.'),
+    P('Abadia de Piona', 'igreja', 46.118, 9.33, 0, 1, 'Abadia românica isolada numa península; monges cistercienses.'),
+  ], {via: 'Trem regional de Milão para Varenna (1h05) ou Como (40 min).'}),
+  CC('bergamo', 'Bergamo', 'Lombardia', 45.6983, 9.6773, 1, 'Cidade alta medieval cercada de muralhas venezianas (Unesco).', [
+    P('Città Alta e Piazza Vecchia', 'passeio', 45.7035, 9.6623, 1, 1.5, 'Praça medieval que Le Corbusier chamou de a mais bela da Europa.'),
+    P('Cappella Colleoni e Santa Maria Maggiore', 'igreja', 45.7031, 9.6626, 1, 0.75, 'Fachada renascentista e interior barroco exuberante.'),
+    P('Funicular e muralhas venezianas', 'foto', 45.704, 9.666, 1, 0.75, 'Muralhas de 1561 com vista para a planície.'),
+    P('Accademia Carrara', 'visita', 45.706, 9.675, 0, 1.5, 'Pinacoteca com Rafael, Botticelli e Bellini.'),
+    P('San Vigilio', 'foto', 45.7085, 9.651, 0, 1, 'Segundo funicular até o castelo e a melhor vista.'),
+  ], {via: 'Trem de Milão (50 min); aeroporto de Orio al Serio.'}),
+  CC('lago-garda', 'Lago di Garda', 'Lombardia/Vêneto', 45.4925, 10.6076, 2, 'O maior lago da Itália: castelos, termas e vilarejos.', [
+    P('Sirmione e Castelo Scaligero', 'castelo', 45.4925, 10.6076, 1, 1.5, 'Castelo cercado de água na ponta da península.'),
+    P('Grotte di Catullo', 'visita', 45.5045, 10.6055, 1, 1.5, 'Ruínas de vila romana debruçadas sobre o lago.'),
+    P('Malcesine e teleférico do Monte Baldo', 'foto', 45.764, 10.809, 1, 3, 'Teleférico giratório até 1.760 m.'),
+    P('Limone sul Garda', 'passeio', 45.813, 10.792, 1, 1.5, 'Antigas estufas de limão em encosta íngreme.'),
+    P('Riva del Garda', 'passeio', 45.8853, 10.8411, 0, 1.5, 'Ponta norte, entre montanhas, com o Bastione.'),
+    P('Lazise', 'passeio', 45.5054, 10.732, 0, 1, 'Vilarejo murado com porto charmoso.'),
+    P('Vittoriale degli Italiani', 'visita', 45.6203, 10.5665, 0, 2, 'A excêntrica casa de D’Annunzio, com um navio no jardim.'),
+    P('Jamaica Beach (Sirmione)', 'sol', 45.503, 10.604, 0, 1, 'Lajes de pedra em água turquesa.'),
+  ], {via: 'Trem até Desenzano ou Peschiera (de Milão 1h10, Verona 20 min) + ônibus/balsa.'}),
+  CC('verona', 'Verona', 'Vêneto', 45.4384, 10.9916, 1, 'Cidade de Romeu e Julieta, com arena romana ainda em uso.', [
+    P('Arena di Verona', 'visita', 45.439, 10.9944, 1, 1, 'Anfiteatro do séc. I com ópera no verão.'),
+    P('Casa di Giulietta', 'visita', 45.4419, 10.9984, 1, 0.5, 'A varanda mais fotografada da Itália; pátio lotado.'),
+    P('Piazza delle Erbe e Torre dei Lamberti', 'torre', 45.4434, 10.9975, 1, 1, 'Mercado antigo e torre de 84 m com elevador.'),
+    P('Castelvecchio e ponte Scaligera', 'castelo', 45.4399, 10.9876, 1, 1.5, 'Castelo-museu e ponte de tijolos sobre o Ádige.'),
+    P('Basílica de San Zeno', 'igreja', 45.4425, 10.9792, 0, 0.75, 'Obra-prima românica com portas de bronze.'),
+    P('Castel San Pietro', 'foto', 45.4475, 11.003, 0, 0.75, 'Funicular até o mirante sobre a cidade.'),
+    P('Giardino Giusti', 'passeio', 45.443, 11.006, 0, 1, 'Jardim renascentista com labirinto de buxo.'),
+    P('Ponte Pietra', 'ponte', 45.4475, 10.9985, 0, 0.25, 'Ponte romana reconstruída pedra a pedra após a guerra.'),
+  ], {av: 1, via: 'Trem de Milão (1h15), Veneza (1h10), Bolonha (55 min).'}),
+  CC('padua', 'Pádua', 'Vêneto', 45.4064, 11.8768, 1, 'Cidade universitária com os afrescos de Giotto.', [
+    P('Capela Scrovegni (Giotto)', 'igreja', 45.4116, 11.8796, 1, 0.5, 'Ciclo de afrescos de 1305; horário marcado obrigatório.', 1),
+    P('Basílica de Santo Antônio', 'igreja', 45.4013, 11.881, 1, 1, 'Santuário de Santo Antônio de Pádua.'),
+    P('Prato della Valle', 'passeio', 45.3982, 11.8766, 1, 0.5, 'Uma das maiores praças da Europa, com 78 estátuas.'),
+    P('Palazzo della Ragione e mercados', 'compras', 45.4073, 11.8753, 0, 1, 'Salão medieval sobre as praças das Erbe e della Frutta.'),
+    P('Orto Botanico', 'passeio', 45.3995, 11.8805, 0, 1, 'O jardim botânico universitário mais antigo do mundo (1545).'),
+    P('Palazzo Bo e teatro anatômico', 'visita', 45.4068, 11.877, 0, 1, 'Onde Galileu lecionou; visita guiada.', 1),
+  ], {av: 1, via: 'Trem de Veneza (25 min) ou Bolonha (1h).'}),
+  CC('veneza', 'Veneza', 'Vêneto', 45.4371, 12.3326, 3, 'Cidade sobre a água: sem carros, só pontes, vaporetti e gôndolas.', [
+    P('Praça e Basílica de São Marcos', 'igreja', 45.4345, 12.3397, 1, 1.5, 'Mosaicos dourados bizantinos; reserva opcional evita fila.'),
+    P('Palácio Ducal e Ponte dos Suspiros', 'visita', 45.4337, 12.3404, 1, 2, 'Sede da República de Veneza e as prisões.', 1),
+    P('Ponte di Rialto e mercado', 'ponte', 45.438, 12.3359, 1, 0.75, 'A ponte mais antiga do Grande Canal e o mercado de peixe.'),
+    P('Grande Canal de vaporetto (linha 1)', 'barco', 45.44, 12.33, 1, 1, 'O passeio mais bonito pelo preço de um bilhete.'),
+    P('Gallerie dell’Accademia', 'visita', 45.4313, 12.3281, 1, 1.5, 'Pintura veneziana: Ticiano, Tintoretto, Veronese.'),
+    P('Coleção Peggy Guggenheim', 'visita', 45.4309, 12.3315, 1, 1.5, 'Arte moderna num palácio no Grande Canal.'),
+    P('Santa Maria della Salute', 'igreja', 45.4308, 12.3345, 1, 0.5, 'Basílica barroca na ponta de Dorsoduro.'),
+    P('Campanile di San Marco', 'torre', 45.4341, 12.3388, 1, 0.5, 'Elevador até a vista de toda a lagoa.'),
+    P('Murano (vidro)', 'passeio', 45.4583, 12.3533, 1, 2.5, 'Ilha dos sopradores de vidro.'),
+    P('Burano (casas coloridas)', 'passeio', 45.4853, 12.417, 1, 3, 'Casinhas coloridas e renda.'),
+    P('Libreria Acqua Alta', 'compras', 45.4378, 12.3422, 0, 0.5, 'Livros em gôndolas e banheiras; escada de livros.'),
+    P('Gueto de Cannaregio', 'passeio', 45.4447, 12.326, 0, 1, 'O primeiro gueto do mundo (1516).'),
+    P('Scala Contarini del Bovolo', 'torre', 45.4351, 12.3352, 0, 0.5, 'Escada em caracol renascentista com vista.'),
+    P('Squero di San Trovaso', 'gondola', 45.43, 12.326, 0, 0.25, 'Estaleiro de gôndolas ainda em atividade.'),
+    P('Bacari e cicchetti em Cannaregio', 'comida', 45.443, 12.333, 0, 1.5, 'Petiscos venezianos e uma “ombra” de vinho.'),
+    P('San Giorgio Maggiore (torre)', 'foto', 45.429, 12.343, 0, 1, 'A vista de São Marcos sem multidão.'),
+    P('Castello e Giardini', 'passeio', 45.429, 12.356, 0, 1.5, 'O bairro mais vivido de Veneza.'),
+    P('Torcello', 'passeio', 45.4977, 12.418, 0, 2, 'Ilha quase deserta com mosaicos do séc. XI.'),
+  ], {av: 1, via: 'Trem até Santa Lucia: Milão 2h27, Florença 2h14, Roma 3h59. Aeroporto Marco Polo.'}),
+  CC('dolomitas', 'Dolomitas', 'Trentino-Alto Ádige', 46.5747, 11.6725, 3, 'Montanhas Unesco: trilhas no verão, esqui no inverno.', [
+    P('Seceda', 'foto', 46.6, 11.724, 1, 3, 'Cristas recortadas acessadas por teleférico de Ortisei.'),
+    P('Alpe di Siusi', 'passeio', 46.545, 11.625, 1, 3, 'Maior planalto alpino da Europa.'),
+    P('Tre Cime di Lavaredo', 'passeio', 46.6186, 12.3027, 1, 4, 'Trilha circular ao redor dos três picos (estrada com pedágio).'),
+    P('Lago di Braies', 'foto', 46.6946, 12.0857, 1, 1.5, 'Lago esmeralda com barquinhos; acesso controlado no verão.', 1),
+    P('Cortina d’Ampezzo', 'passeio', 46.5405, 12.1357, 1, 2, 'A “rainha das Dolomitas”, sede olímpica 2026.'),
+    P('Passo Giau', 'foto', 46.483, 12.052, 0, 1, 'Um dos passos mais cênicos.'),
+    P('Lago di Carezza', 'foto', 46.4097, 11.5752, 0, 1, 'O lago do arco-íris aos pés do Latemar.'),
+    P('Val di Funes (Santa Maddalena)', 'foto', 46.63, 11.724, 0, 1.5, 'A igrejinha diante das Odle.'),
+    P('Bolzano e o Ötzi', 'visita', 46.4997, 11.349, 0, 2, 'Múmia de 5.300 anos no Museu Arqueológico.'),
+  ], {car: 1, via: 'Trem até Bolzano (Verona 1h30) + ônibus; carro recomendado. No inverno, várias trilhas fecham.'}),
+  CC('trieste', 'Trieste', 'Friuli', 45.6495, 13.7768, 1, 'Cidade de cafés literários entre a Itália e a Europa Central.', [
+    P('Piazza Unità d’Italia', 'passeio', 45.6503, 13.7677, 1, 0.5, 'A maior praça aberta para o mar da Europa.'),
+    P('Castelo de Miramare', 'castelo', 45.7026, 13.7128, 1, 1.5, 'Castelo branco de Maximiliano sobre o mar.'),
+    P('Caffè San Marco', 'comida', 45.6545, 13.784, 0, 0.5, 'Café histórico de 1914, ponto de escritores.'),
+    P('Canal Grande e Teatro Romano', 'passeio', 45.6533, 13.771, 0, 0.75, 'O bairro teresiano e ruínas no meio da cidade.'),
+    P('Grotta Gigante', 'visita', 45.709, 13.764, 0, 1.5, 'Uma das maiores cavernas turísticas do mundo.'),
+    P('Bonde de Opicina e Strada Napoleonica', 'foto', 45.688, 13.788, 0, 2, 'Trilha plana com vista para o golfo.'),
+  ], {via: 'Trem de Veneza (~2h).'}),
+  CC('turim', 'Turim', 'Piemonte', 45.0703, 7.6869, 2, 'Primeira capital da Itália: palácios, cafés e chocolate.', [
+    P('Mole Antonelliana e Museu do Cinema', 'torre', 45.069, 7.6932, 1, 2, 'Símbolo da cidade, com elevador panorâmico.'),
+    P('Museu Egípcio', 'visita', 45.0684, 7.6843, 1, 2.5, 'A maior coleção egípcia fora do Cairo.', 1),
+    P('Palácio Real', 'visita', 45.0727, 7.6857, 1, 1.5, 'Residência dos Savoia e a Armaria Real.'),
+    P('Piazza San Carlo e o bicerin', 'comida', 45.0677, 7.6826, 1, 1, 'Cafés históricos e a bebida de café, chocolate e creme.'),
+    P('Basílica de Superga', 'igreja', 45.0802, 7.768, 0, 2, 'Bondinho de cremalheira até a basílica com vista dos Alpes.'),
+    P('Parco del Valentino e Borgo Medievale', 'passeio', 45.054, 7.687, 0, 1.5, 'Parque à beira do Pó e uma vila medieval recriada.'),
+    P('Mercado de Porta Palazzo', 'compras', 45.077, 7.683, 0, 1, 'O maior mercado ao ar livre da Europa.'),
+    P('Lingotto e a pista no telhado', 'comida', 45.032, 7.666, 0, 1.5, 'Antiga fábrica da Fiat com pista de testes no teto.'),
+  ], {av: 1, via: 'Trem de Milão (1h) ou Roma (4h25).'}),
+  CC('genova', 'Gênova', 'Ligúria', 44.4056, 8.9463, 1, 'Porto histórico com becos medievais e palácios renascentistas.', [
+    P('Centro histórico (carruggi)', 'passeio', 44.408, 8.93, 1, 1.5, 'Um dos maiores centros medievais da Europa.'),
+    P('Via Garibaldi e Palazzi dei Rolli', 'visita', 44.4115, 8.934, 1, 1.5, 'Palácios Unesco com museus.'),
+    P('Aquário de Gênova', 'visita', 44.4102, 8.9267, 1, 2, 'Um dos maiores aquários da Europa.'),
+    P('Boccadasse', 'passeio', 44.393, 8.974, 0, 1, 'Vila de pescadores colorida dentro da cidade.'),
+    P('Spianata Castelletto', 'foto', 44.413, 8.933, 0, 0.5, 'Elevador art nouveau até o mirante.'),
+    P('Cemitério de Staglieno', 'visita', 44.425, 8.95, 0, 1.5, 'Esculturas monumentais do séc. XIX.'),
+    P('Focaccia genovese', 'comida', 44.407, 8.932, 0, 0.5, 'Prove quente, de manhã, numa padaria do centro.'),
+  ], {av: 1, via: 'Trem de Milão (1h40) ou Turim (1h45).'}),
+  CC('portofino', 'Portofino e Camogli', 'Ligúria', 44.3036, 9.2097, 1, 'Riviera de vilarejos de pescadores e enseadas.', [
+    P('Portofino e Castello Brown', 'castelo', 44.3036, 9.2097, 1, 2, 'Porto colorido e castelo com vista.'),
+    P('Abadia de San Fruttuoso', 'igreja', 44.316, 9.175, 0, 2, 'Abadia numa enseada só acessível de barco ou trilha.'),
+    P('Santa Margherita Ligure', 'passeio', 44.334, 9.211, 0, 1.5, 'Base mais tranquila e acessível de trem.'),
+    P('Camogli', 'passeio', 44.35, 9.155, 0, 1.5, 'Casas altas coloridas sobre a praia de pedras.'),
+  ], {via: 'Trem até Santa Margherita Ligure (Gênova 35 min) + ônibus ou barco.'}),
+  CC('cinque-terre', 'Cinque Terre', 'Ligúria', 44.127, 9.709, 2, 'Cinco vilarejos coloridos nas falésias, ligados por trem e trilhas.', [
+    P('Vernazza', 'passeio', 44.135, 9.684, 1, 1.5, 'O porto mais fotogênico das cinco.'),
+    P('Manarola ao pôr do sol', 'foto', 44.107, 9.728, 1, 1.5, 'O mirante clássico das casas sobre as rochas.'),
+    P('Riomaggiore', 'passeio', 44.099, 9.738, 1, 1, 'Ruela íngreme e marina minúscula.'),
+    P('Monterosso (praia)', 'sol', 44.146, 9.654, 1, 2, 'A única com praia de areia de verdade.'),
+    P('Trilha Vernazza–Monterosso', 'passeio', 44.14, 9.67, 1, 2, 'Trecho do Sentiero Azzurro; pago (Cinque Terre Card).', 1),
+    P('Via dell’Amore', 'passeio', 44.103, 9.733, 0, 0.5, 'Reaberta em 2024, com horário marcado.', 1),
+    P('Corniglia', 'passeio', 44.1197, 9.709, 0, 1, 'A única no alto, a 382 degraus da estação: a mais tranquila.'),
+    P('Portovenere', 'passeio', 44.0505, 9.836, 0, 2, 'Igreja de São Pedro sobre o mar e a Gruta de Byron.'),
+    P('Santuário de Montenero', 'igreja', 44.104, 9.743, 0, 1.5, 'Trilha acima de Riomaggiore com vista do golfo.'),
+  ], {via: 'Trem regional de La Spezia (5–25 min por vilarejo); de Florença ~2h30, Milão ~3h.'}),
+  CC('bolonha', 'Bolonha', 'Emília-Romanha', 44.4949, 11.3426, 2, 'Capital gastronômica: pórticos, torres e a universidade mais antiga do Ocidente.', [
+    P('Piazza Maggiore e San Petronio', 'igreja', 44.4937, 11.343, 1, 1, 'Praça central e basílica inacabada.'),
+    P('Duas Torres (Asinelli e Garisenda)', 'torre', 44.4943, 11.3466, 1, 0.5, 'Símbolos da cidade; a subida da Asinelli está fechada para obras desde 2023 (confira).'),
+    P('Quadrilatero: mercado e comida', 'comida', 44.4935, 11.3451, 1, 1.5, 'Mortadela, tortellini e tagliatelle al ragù.'),
+    P('Santuário de San Luca pelo pórtico', 'passeio', 44.4795, 11.2981, 1, 2.5, 'Caminhada sob 666 arcos até a colina.'),
+    P('Archiginnasio e Teatro Anatômico', 'visita', 44.4925, 11.3433, 0, 0.75, 'Sala de aula de anatomia em madeira do séc. XVII.'),
+    P('Finestrella di Via Piella', 'foto', 44.4985, 11.3437, 0, 0.25, 'Janelinha que revela um canal escondido.'),
+    P('Santo Stefano (Sete Igrejas)', 'igreja', 44.4919, 11.3484, 0, 0.75, 'Complexo de igrejas medievais interligadas.'),
+    P('Biblioteca Salaborsa', 'visita', 44.494, 11.3425, 0, 0.5, 'Ruínas romanas sob o piso de vidro; grátis.'),
+    P('Museo di Palazzo Poggi', 'visita', 44.497, 11.3525, 0, 1, 'Museu da ciência antiga da universidade.'),
+  ], {av: 1, via: 'Nó ferroviário: Florença 37 min, Milão 1h04, Veneza 1h25, Roma 2h03.'}),
+  CC('modena', 'Modena', 'Emília-Romanha', 44.6471, 10.9252, 1, 'Vinagre balsâmico, Ferrari e Pavarotti.', [
+    P('Duomo e Torre Ghirlandina', 'igreja', 44.6461, 10.9255, 1, 1, 'Catedral românica Unesco.'),
+    P('Museu Ferrari (Maranello)', 'visita', 44.5296, 10.8613, 1, 1.5, 'Carros e história da Ferrari; ônibus da estação.'),
+    P('Mercato Albinelli', 'comida', 44.645, 10.927, 0, 0.75, 'Mercado coberto de 1931.'),
+    P('Acetaia de balsâmico tradicional', 'comida', 44.62, 10.9, 0, 1.5, 'Visita e degustação em produtor familiar.', 1),
+    P('Museo Enzo Ferrari', 'visita', 44.653, 10.918, 0, 1.5, 'Casa natal de Enzo e galeria futurista.'),
+  ], {via: 'Trem de Bolonha (20 min).'}),
+  CC('parma', 'Parma', 'Emília-Romanha', 44.8015, 10.3279, 1, 'Presunto, parmesão e cúpulas de Correggio.', [
+    P('Duomo e Batistério', 'igreja', 44.8036, 10.3305, 1, 1, 'Cúpula de Correggio e batistério de mármore rosa.'),
+    P('Pilotta e Teatro Farnese', 'visita', 44.8044, 10.3263, 1, 1.5, 'Teatro de madeira de 1618.'),
+    P('Visita a produtor de Parmigiano Reggiano', 'comida', 44.75, 10.35, 0, 2, 'Veja o queijo sendo feito de manhã.', 1),
+    P('Prosciutto em Langhirano', 'comida', 44.615, 10.266, 0, 2, 'Presuntaria e degustação.', 1),
+    P('Teatro Regio', 'visita', 44.8034, 10.3249, 0, 0.75, 'Templo verdiano da ópera.'),
+  ], {via: 'Trem de Bolonha (50 min) ou Milão (1h10).'}),
+  CC('ravenna', 'Ravenna', 'Emília-Romanha', 44.4184, 12.2035, 1, 'Os mosaicos bizantinos mais bonitos do mundo (Unesco).', [
+    P('Basílica de San Vitale', 'igreja', 44.4205, 12.1965, 1, 0.75, 'Mosaicos de Justiniano e Teodora.'),
+    P('Mausoléu de Galla Placidia', 'igreja', 44.421, 12.1975, 1, 0.5, 'Céu estrelado em mosaico azul; horário marcado.', 1),
+    P('Sant’Apollinare Nuovo', 'igreja', 44.4166, 12.2045, 1, 0.5, 'Procissões de santos em fundo dourado.'),
+    P('Túmulo de Dante', 'visita', 44.416, 12.199, 0, 0.25, 'Onde está sepultado o autor da Divina Comédia.'),
+    P('Sant’Apollinare in Classe', 'igreja', 44.3803, 12.233, 0, 1, 'Abside verde com ovelhas, fora do centro.'),
+    P('Batistério Neoniano', 'igreja', 44.4155, 12.1955, 0, 0.25, 'Mosaico do batismo de Cristo, do séc. V.'),
+  ], {via: 'Trem regional de Bolonha (1h10).'}),
+  CC('florenca', 'Florença', 'Toscana', 43.7696, 11.2558, 3, 'Berço do Renascimento: Michelangelo, Botticelli e Brunelleschi.', [
+    P('Duomo e Cúpula de Brunelleschi', 'igreja', 43.7731, 11.256, 1, 2, '463 degraus até o topo da cúpula; horário fixo.', 1),
+    P('Galleria degli Uffizi', 'visita', 43.7678, 11.2553, 1, 3, 'Botticelli, Leonardo, Michelangelo e Caravaggio.', 1),
+    P('Galleria dell’Accademia (Davi)', 'visita', 43.7768, 11.2586, 1, 1, 'O Davi original de Michelangelo.', 1),
+    P('Ponte Vecchio', 'ponte', 43.768, 11.2531, 1, 0.5, 'Ponte medieval de joalheiros.'),
+    P('Piazza della Signoria e Palazzo Vecchio', 'visita', 43.7696, 11.2558, 1, 1.5, 'Praça-museu e torre de Arnolfo.'),
+    P('Piazzale Michelangelo', 'foto', 43.7629, 11.265, 1, 0.75, 'O cartão-postal da cidade ao pôr do sol.'),
+    P('Palazzo Pitti e Jardim de Boboli', 'visita', 43.7652, 11.25, 1, 2.5, 'Palácio dos Médici e jardim italiano.'),
+    P('Mercato Centrale', 'comida', 43.7764, 11.2534, 1, 1, 'Lampredotto, massas frescas e vinhos.'),
+    P('Basílica de Santa Croce', 'igreja', 43.7686, 11.2622, 1, 1, 'Túmulos de Michelangelo, Galileu e Maquiavel.'),
+    P('San Miniato al Monte', 'igreja', 43.7595, 11.2649, 0, 0.75, 'Igreja românica acima do Piazzale; canto gregoriano à tarde.'),
+    P('Capela Brancacci', 'igreja', 43.7681, 11.2437, 0, 0.75, 'Afrescos de Masaccio que inauguraram o Renascimento.', 1),
+    P('Museu de San Marco', 'visita', 43.7782, 11.2589, 0, 1, 'Celas pintadas por Fra Angelico.'),
+    P('Oltrarno: Santo Spirito e ateliês', 'passeio', 43.7665, 11.247, 0, 1.5, 'Artesãos, praças e a Florença local.'),
+    P('Giardino Bardini', 'passeio', 43.7636, 11.2585, 0, 1, 'Jardim em terraços com vista para o Duomo.'),
+    P('Cenacolo di Sant’Apollonia', 'visita', 43.7785, 11.2563, 0, 0.5, 'Última Ceia de Andrea del Castagno; grátis e vazio.'),
+    P('Farmácia de Santa Maria Novella', 'compras', 43.7737, 11.2483, 0, 0.5, 'Uma das farmácias mais antigas do mundo (1612).'),
+    P('Fiesole', 'foto', 43.8069, 11.2919, 0, 2.5, 'Colina etrusca com teatro romano e vista de Florença.'),
+  ], {av: 1, via: 'Trem rápido de Roma (1h35), Milão (1h54), Veneza (2h14).'}),
+  CC('pisa', 'Pisa', 'Toscana', 43.7228, 10.4017, 1, 'A torre inclinada e uma cidade universitária animada.', [
+    P('Torre de Pisa', 'torre', 43.723, 10.3966, 1, 1, 'Subida com horário marcado.', 1),
+    P('Duomo e Batistério', 'igreja', 43.7234, 10.3955, 1, 1, 'Conjunto românico da Piazza dei Miracoli.'),
+    P('Camposanto Monumentale', 'visita', 43.7243, 10.395, 0, 0.75, 'Claustro com afrescos do Triunfo da Morte.'),
+    P('Piazza dei Cavalieri', 'passeio', 43.7194, 10.4008, 0, 0.5, 'Coração da Scuola Normale.'),
+    P('Santa Maria della Spina', 'igreja', 43.7148, 10.4, 0, 0.25, 'Igrejinha gótica na beira do Arno.'),
+    P('Mural Tuttomondo (Keith Haring)', 'foto', 43.7116, 10.4046, 0, 0.25, 'Último mural público de Haring.'),
+  ], {via: 'Trem de Florença (~1h); aeroporto Galileo Galilei.'}),
+  CC('lucca', 'Lucca', 'Toscana', 43.843, 10.5027, 1, 'Muralhas inteiras que viraram parque.', [
+    P('Muralhas de bicicleta', 'passeio', 43.844, 10.5, 1, 1.5, '4 km de passeio arborizado sobre as muralhas.'),
+    P('Piazza dell’Anfiteatro', 'passeio', 43.8457, 10.5068, 1, 0.5, 'Praça oval sobre um anfiteatro romano.'),
+    P('Torre Guinigi', 'torre', 43.8423, 10.5076, 1, 0.5, 'Torre com carvalhos no topo.'),
+    P('Duomo di San Martino', 'igreja', 43.8405, 10.505, 0, 0.75, 'Túmulo de Ilaria del Carretto.'),
+    P('Palazzo Pfanner', 'passeio', 43.8455, 10.5, 0, 0.75, 'Jardim barroco visto das muralhas.'),
+    P('San Michele in Foro', 'igreja', 43.843, 10.503, 0, 0.25, 'Fachada românica rendada.'),
+  ], {via: 'Trem de Pisa (30 min) ou Florença (1h20).'}),
+  CC('san-gimignano', 'San Gimignano', 'Toscana', 43.4677, 11.0435, 1, 'A “Manhattan medieval” de torres, entre vinhedos.', [
+    P('Torres e Piazza della Cisterna', 'torre', 43.4675, 11.0432, 1, 1, '14 torres medievais preservadas.'),
+    P('Torre Grossa', 'torre', 43.4677, 11.0429, 1, 0.5, 'A mais alta, com vista para a Toscana.'),
+    P('Gelateria Dondoli', 'comida', 43.4673, 11.0436, 0, 0.25, 'Sorvete premiado na praça.'),
+    P('Rocca di Montestaffoli', 'foto', 43.469, 11.042, 0, 0.5, 'Ruínas de fortaleza com vista grátis.'),
+    P('Vernaccia em vinícola', 'comida', 43.47, 11.03, 0, 1.5, 'Degustação do branco local.', 1),
+    P('Monteriggioni', 'castelo', 43.39, 11.223, 0, 1, 'Vilarejo cercado por muralha completa.'),
+  ], {via: 'Ônibus via Poggibonsi (Florença ~1h30, Siena ~1h15).'}),
+  CC('siena', 'Siena', 'Toscana', 43.3188, 11.3308, 2, 'Cidade gótica em tijolo, da praça em concha e do Palio.', [
+    P('Piazza del Campo e Torre del Mangia', 'torre', 43.3184, 11.3317, 1, 1.5, 'A praça do Palio e a torre de 88 m.'),
+    P('Duomo e Biblioteca Piccolomini', 'igreja', 43.3176, 11.3289, 1, 1.5, 'Piso de mármore e afrescos de Pinturicchio.', 1),
+    P('Facciatone (Panorama dal Facciatone)', 'foto', 43.317, 11.3295, 0, 0.5, 'Suba a fachada inacabada do Duomo Nuovo.'),
+    P('Santa Maria della Scala', 'visita', 43.3174, 11.3283, 0, 1.5, 'Hospital medieval com afrescos e subterrâneos.'),
+    P('Basílica de San Domenico', 'igreja', 43.3205, 11.327, 0, 0.5, 'Relíquias de Santa Catarina.'),
+    P('Fontes e contradas', 'fonte', 43.3196, 11.327, 0, 1, 'Fonte Gaia, Fontebranda e os 17 bairros do Palio.'),
+  ], {via: 'Ônibus expresso de Florença (1h15) ou trem regional.'}),
+  CC('val-dorcia', 'Val d’Orcia', 'Toscana', 43.0766, 11.68, 2, 'Colinas, ciprestes e vinho: a Toscana dos cartões-postais.', [
+    P('Montepulciano', 'comida', 43.092, 11.78, 1, 2, 'Vinho Nobile e adegas sob os palácios.'),
+    P('Pienza', 'passeio', 43.0766, 11.679, 1, 1.5, 'Cidade ideal do Renascimento e pecorino.'),
+    P('Montalcino', 'comida', 43.056, 11.489, 1, 2, 'Terra do Brunello.'),
+    P('Capela de Vitaleta', 'foto', 43.056, 11.644, 1, 0.5, 'A capelinha entre ciprestes mais fotografada.'),
+    P('Bagno Vignoni', 'passeio', 43.027, 11.619, 0, 0.75, 'Uma piscina termal no lugar da praça.'),
+    P('Bagni San Filippo (Balena Bianca)', 'passeio', 42.928, 11.702, 0, 1.5, 'Cascatas de calcário com água quente, grátis.'),
+    P('Ciprestes de Monticchiello', 'foto', 43.071, 11.723, 0, 0.5, 'Estrada em zigue-zague com ciprestes.'),
+    P('Abadia de Sant’Antimo', 'igreja', 43.0, 11.515, 0, 1, 'Abadia românica isolada no campo.'),
+  ], {car: 1, via: 'Carro recomendado (Florença ~1h45, Siena ~50 min); ônibus limitados.'}),
+  CC('perugia', 'Perúgia', 'Úmbria', 43.1107, 12.3908, 1, 'Capital da Úmbria, etrusca e medieval, e do chocolate.', [
+    P('Corso Vannucci e Fontana Maggiore', 'fonte', 43.1121, 12.3888, 1, 1, 'O passeio principal e a fonte do séc. XIII.'),
+    P('Rocca Paolina', 'visita', 43.109, 12.389, 0, 0.75, 'Ruas medievais engolidas por uma fortaleza, com escadas rolantes.'),
+    P('Galleria Nazionale dell’Umbria', 'visita', 43.112, 12.389, 0, 1.5, 'Perugino e Piero della Francesca.'),
+    P('Pozzo Etrusco', 'visita', 43.113, 12.3885, 0, 0.5, 'Poço etrusco de 37 m.'),
+    P('Casa del Cioccolato Perugina', 'comida', 43.098, 12.355, 0, 1.5, 'Fábrica dos Baci, com degustação.', 1),
+  ], {via: 'Trem de Florença (~2h) ou Roma (~2h20).'}),
+  CC('assis', 'Assis', 'Úmbria', 43.0707, 12.6196, 1, 'Cidade de São Francisco, em pedra rosada.', [
+    P('Basílica de São Francisco', 'igreja', 43.0748, 12.6052, 1, 1.5, 'Afrescos de Giotto e o túmulo do santo.'),
+    P('Basílica de Santa Clara', 'igreja', 43.068, 12.618, 1, 0.5, 'O crucifixo que falou com Francisco.'),
+    P('Rocca Maggiore', 'castelo', 43.075, 12.617, 0, 0.75, 'Fortaleza com vista do vale.'),
+    P('Eremo delle Carceri', 'igreja', 43.068, 12.64, 0, 1.5, 'Ermida no bosque onde Francisco rezava.'),
+    P('Templo de Minerva', 'visita', 43.071, 12.6145, 0, 0.25, 'Fachada romana intacta na praça.'),
+    P('Santa Maria degli Angeli (Porciúncula)', 'igreja', 43.058, 12.581, 0, 1, 'A capelinha dentro de uma basílica enorme.'),
+  ], {via: 'Trem de Perúgia (25 min) ou Roma (~2h10) + ônibus até o centro.'}),
+  CC('orvieto', 'Orvieto', 'Úmbria', 42.7185, 12.1107, 1, 'Cidade sobre um penhasco de tufo, com catedral deslumbrante.', [
+    P('Duomo de Orvieto', 'igreja', 42.717, 12.113, 1, 1, 'Fachada de mosaicos e afrescos de Signorelli.'),
+    P('Pozzo di San Patrizio', 'visita', 42.723, 12.118, 1, 0.75, 'Poço com escadas em dupla hélice.'),
+    P('Orvieto Subterrânea', 'visita', 42.7175, 12.1105, 0, 1, 'Cavernas e pombais escavados no tufo.', 1),
+    P('Torre del Moro', 'torre', 42.719, 12.11, 0, 0.5, 'Vista dos telhados.'),
+    P('Civita di Bagnoregio', 'passeio', 42.6274, 12.1135, 1, 2.5, 'A “cidade que morre”, acessível por uma ponte a pé.'),
+  ], {via: 'Trem de Roma (~1h10) ou Florença (~1h50) + funicular.'}),
+  CC('roma', 'Roma', 'Lácio', 41.9028, 12.4964, 4, 'A Cidade Eterna: 2.700 anos de história empilhados.', [
+    P('Coliseu, Fórum Romano e Palatino', 'visita', 41.8902, 12.4922, 1, 3, 'O coração da Roma antiga; ingresso nominal.', 1),
+    P('Museus Vaticanos e Capela Sistina', 'visita', 41.9065, 12.4536, 1, 3.5, 'Rafael, Michelangelo e 7 km de galerias.', 1),
+    P('Basílica de São Pedro', 'igreja', 41.9022, 12.4539, 1, 1.5, 'A Pietà e a cúpula de Michelangelo.'),
+    P('Pantheon', 'visita', 41.8986, 12.4769, 1, 0.5, 'Templo de 2.000 anos com cúpula aberta.'),
+    P('Fontana di Trevi', 'fonte', 41.9009, 12.4833, 1, 0.5, 'Jogue a moeda; vá cedo ou à noite.'),
+    P('Piazza Navona', 'passeio', 41.8992, 12.4731, 1, 0.5, 'Praça barroca sobre um estádio romano.'),
+    P('Piazza di Spagna e Escadaria', 'passeio', 41.9059, 12.4823, 1, 0.5, 'Proibido sentar nos degraus.'),
+    P('Galleria Borghese', 'visita', 41.9142, 12.4921, 1, 2, 'Bernini e Caravaggio; reserva obrigatória.', 1),
+    P('Trastevere', 'passeio', 41.8894, 12.47, 1, 2, 'Bairro de ruas de pedra, trattorias e hera.'),
+    P('Castel Sant’Angelo', 'castelo', 41.9031, 12.4663, 1, 1.5, 'Mausoléu de Adriano que virou fortaleza papal.'),
+    P('Campo de’ Fiori', 'compras', 41.8957, 12.4722, 1, 0.5, 'Mercado de manhã, bares à noite.'),
+    P('Buraco da fechadura do Aventino', 'foto', 41.8833, 12.4778, 0, 0.5, 'São Pedro emoldurada pela fechadura; Jardim das Laranjas ao lado.'),
+    P('Basílica de San Clemente', 'igreja', 41.8893, 12.4976, 0, 1, 'Três igrejas empilhadas e um templo de Mitra no subsolo.'),
+    P('Quartiere Coppedè', 'passeio', 41.9175, 12.505, 0, 0.5, 'Bairro de conto de fadas art nouveau; grátis.'),
+    P('Centrale Montemartini', 'visita', 41.8667, 12.4778, 0, 1.5, 'Estátuas romanas entre turbinas de uma usina.'),
+    P('Bairro Monti', 'passeio', 41.8955, 12.4935, 0, 1.5, 'Lojinhas, vinhos e a praça da fonte.'),
+    P('Gueto Judaico', 'comida', 41.8925, 12.4775, 0, 1, 'Alcachofra à judia e o Pórtico de Otávia.'),
+    P('Testaccio e mercado', 'comida', 41.8766, 12.4757, 0, 1.5, 'A Roma da cozinha popular: carbonara, cacio e pepe.'),
+    P('Galleria Sciarra', 'visita', 41.9003, 12.4813, 0, 0.25, 'Pátio art nouveau escondido perto da Trevi.'),
+    P('Gianicolo', 'foto', 41.8916, 12.4614, 0, 0.75, 'Mirante com o canhão do meio-dia.'),
+    P('Via Ápia Antiga e Catacumbas', 'passeio', 41.8586, 12.5108, 0, 3, 'Estrada romana de bicicleta e catacumbas cristãs.'),
+    P('Tivoli: Villa d’Este e Villa Adriana', 'passeio', 41.963, 12.796, 0, 4, 'Jardins de fontes e a vila do imperador Adriano.'),
+    P('Ostia Antica', 'visita', 41.7556, 12.2922, 0, 3, 'Uma Pompeia perto de Roma, quase sem filas.'),
+  ], {av: 1, via: 'Aeroporto de Fiumicino (Leonardo Express 32 min); trem rápido para todo o país.'}),
+  CC('napoles', 'Nápoles', 'Campânia', 40.8518, 14.2681, 3, 'Caótica e apaixonante: pizza, barroco e uma cidade subterrânea.', [
+    P('Museu Arqueológico Nacional', 'visita', 40.8536, 14.2504, 1, 2.5, 'Os tesouros de Pompeia e Herculano.'),
+    P('Spaccanapoli e centro histórico', 'passeio', 40.849, 14.256, 1, 2, 'A rua que corta a cidade velha ao meio.'),
+    P('Capela Sansevero (Cristo Velado)', 'igreja', 40.8492, 14.2546, 1, 0.75, 'Véu de mármore que parece tecido; esgota.', 1),
+    P('Napoli Sotterranea', 'visita', 40.851, 14.256, 1, 1.5, 'Cisternas greco-romanas a 40 m de profundidade.', 1),
+    P('Pizza na Via dei Tribunali', 'comida', 40.8513, 14.2589, 1, 1, 'Sorbillo, Di Matteo e outras pizzarias históricas.'),
+    P('Castel dell’Ovo e Lungomare', 'castelo', 40.8283, 14.248, 1, 1, 'Castelo sobre o mar e o calçadão com o Vesúvio.'),
+    P('Palácio Real e Piazza del Plebiscito', 'visita', 40.8359, 14.2486, 1, 1.5, 'A grande praça e o palácio dos Bourbon.'),
+    P('San Gregorio Armeno', 'compras', 40.8503, 14.2573, 0, 0.5, 'A rua dos artesãos de presépio, o ano todo.'),
+    P('Galleria Borbonica', 'visita', 40.835, 14.244, 0, 1.5, 'Túnel de fuga do rei com carros antigos abandonados.', 1),
+    P('Catacumbas de San Gaudioso (Sanità)', 'visita', 40.8605, 14.25, 0, 1, 'Afrescos com crânios reais, no bairro da Sanità.'),
+    P('Castel Sant’Elmo e Certosa di San Martino', 'foto', 40.8435, 14.239, 0, 2, 'A melhor vista do golfo; desça pela Pedamentina.'),
+    P('Pio Monte della Misericordia', 'igreja', 40.852, 14.26, 0, 0.5, 'As Sete Obras de Misericórdia de Caravaggio.'),
+    P('Estação Toledo do metrô', 'foto', 40.8423, 14.2486, 0, 0.25, 'Uma das estações mais bonitas da Europa.'),
+  ], {av: 1, via: 'Trem rápido de Roma (1h13) ou Florença (~3h); aeroporto de Capodichino.'}),
+  CC('pompeia', 'Pompeia e Vesúvio', 'Campânia', 40.7491, 14.4849, 1, 'A cidade romana congelada pela erupção de 79 d.C.', [
+    P('Sítio arqueológico de Pompeia', 'visita', 40.7491, 14.4849, 1, 4, 'Casas, termas e afrescos; leve água e chapéu.', 1),
+    P('Herculano', 'visita', 40.8061, 14.3477, 1, 2.5, 'Menor e mais bem conservada, com madeira carbonizada.'),
+    P('Vesúvio (trilha até a cratera)', 'passeio', 40.821, 14.426, 1, 3, 'Ingresso com horário obrigatório.', 1),
+    P('Villa Oplontis', 'visita', 40.757, 14.452, 0, 1, 'Afrescos espetaculares e quase ninguém.'),
+    P('Vilas de Stabia', 'visita', 40.7, 14.49, 0, 1.5, 'Vilas romanas de luxo com vista para o golfo.'),
+  ], {via: 'Circumvesuviana de Nápoles (35 min) ou Sorrento (30 min).'}),
+  CC('sorrento', 'Sorrento', 'Campânia', 40.6263, 14.3757, 2, 'Base prática para Capri, Pompeia e a Costa Amalfitana.', [
+    P('Piazza Tasso e centro', 'passeio', 40.626, 14.376, 1, 1, 'Ruelas de limoncello e intarsio.'),
+    P('Marina Grande', 'comida', 40.63, 14.37, 0, 1, 'Vila de pescadores com restaurantes de frutos do mar.'),
+    P('Vallone dei Mulini', 'foto', 40.6262, 14.3754, 0, 0.25, 'Moinho abandonado numa fenda verde no meio da cidade.'),
+    P('Bagni della Regina Giovanna', 'sol', 40.634, 14.35, 0, 1.5, 'Piscina natural entre ruínas romanas.'),
+    P('Jardim de limões e limoncello', 'comida', 40.625, 14.378, 0, 0.75, 'Visita a um limoal com degustação.'),
+  ], {via: 'Circumvesuviana de Nápoles (~1h10) ou balsa (~40 min).'}),
+  CC('capri', 'Capri', 'Campânia', 40.5507, 14.2426, 1, 'Ilha glamourosa de falésias e grutas.', [
+    P('Gruta Azul', 'barco', 40.5605, 14.205, 1, 1.5, 'Entra-se deitado num barquinho; fecha com mar agitado.'),
+    P('Anacapri e Monte Solaro', 'foto', 40.556, 14.219, 1, 2, 'Teleférico até o ponto mais alto da ilha.'),
+    P('Jardins de Augusto e Via Krupp', 'foto', 40.547, 14.242, 1, 1, 'Vista dos Faraglioni.'),
+    P('Piazzetta', 'passeio', 40.5507, 14.2426, 1, 0.5, 'A “sala de visitas do mundo”.'),
+    P('Volta de barco aos Faraglioni', 'barco', 40.544, 14.255, 1, 1, 'Passa pelo arco dos rochedos.'),
+    P('Villa Jovis', 'visita', 40.556, 14.265, 0, 1.5, 'Ruínas da vila do imperador Tibério no penhasco.'),
+    P('Arco Naturale e Pizzolungo', 'passeio', 40.552, 14.26, 0, 1.5, 'Trilha costeira tranquila.'),
+    P('Villa San Michele', 'visita', 40.556, 14.22, 0, 1, 'Casa-museu com a esfinge e vista de Anacapri.'),
+  ], {isl: 'capri', via: 'Balsa de Nápoles (50 min), Sorrento (25 min) ou da Costa Amalfitana (abr–out).'}),
+  CC('costa-amalfi', 'Costa Amalfitana', 'Campânia', 40.634, 14.6027, 3, 'Vilarejos pendurados nas falésias sobre o mar (Unesco).', [
+    P('Positano', 'passeio', 40.6281, 14.485, 1, 2.5, 'Casas em cascata até a praia.'),
+    P('Amalfi e Duomo', 'igreja', 40.634, 14.6027, 1, 1.5, 'Catedral árabe-normanda e o claustro do Paraíso.'),
+    P('Ravello: Villa Rufolo e Villa Cimbrone', 'passeio', 40.6493, 14.6121, 1, 2.5, 'Jardins suspensos e o Terraço do Infinito.'),
+    P('Sentiero degli Dei', 'passeio', 40.628, 14.532, 1, 3.5, 'Trilha de Bomerano a Nocelle com vista do mar.'),
+    P('Passeio de barco pela costa', 'barco', 40.62, 14.55, 1, 2, 'A costa vista do mar, com grutas e enseadas.'),
+    P('Fiordo di Furore', 'foto', 40.62, 14.548, 0, 0.5, 'Praia escondida sob uma ponte num desfiladeiro.'),
+    P('Atrani', 'passeio', 40.6363, 14.608, 0, 1, 'O menor município da Itália, a 10 min de Amalfi.'),
+    P('Praia de Fornillo', 'sol', 40.6262, 14.479, 0, 2, 'A praia mais calma de Positano.'),
+    P('Valle delle Ferriere', 'passeio', 40.644, 14.594, 0, 3, 'Trilha por um vale úmido com cachoeiras e ruínas.'),
+    P('Praiano', 'passeio', 40.6115, 14.53, 0, 1, 'Pôr do sol sem multidões.'),
+  ], {via: 'Trem até Salerno (Roma 1h45) + balsa, ou ônibus SITA de Sorrento.'}),
+  CC('matera', 'Matera', 'Basilicata', 40.6664, 16.6043, 2, 'Cidade de casas-caverna habitadas há 9.000 anos.', [
+    P('Sassi (Barisano e Caveoso)', 'passeio', 40.665, 16.61, 1, 2.5, 'Labirinto de casas escavadas na rocha.'),
+    P('Belvedere Luigi Guerricchio', 'foto', 40.668, 16.608, 1, 0.25, 'A vista clássica dos Sassi.'),
+    P('Casa Grotta di Vico Solitario', 'visita', 40.663, 16.612, 1, 0.5, 'Como se vivia numa gruta até 1950.'),
+    P('Igrejas rupestres', 'igreja', 40.6635, 16.6125, 0, 1, 'Madonna de Idris e Santa Lucia alle Malve, com afrescos bizantinos.'),
+    P('Belvedere Murgia Timone', 'foto', 40.664, 16.62, 0, 1.5, 'Do outro lado da ravina: a vista de conjunto.'),
+    P('Palombaro Lungo', 'visita', 40.666, 16.604, 0, 0.75, 'Cisterna gigante sob a praça principal.', 1),
+    P('Catedral de Matera', 'igreja', 40.6672, 16.6105, 0, 0.5, 'Românica, no alto da Civita.'),
+  ], {via: 'Trem FAL de Bari (~1h30); ônibus de Roma ou Nápoles (~4h).'}),
+  CC('bari', 'Bari e Polignano', 'Apúlia', 41.1171, 16.8719, 1, 'Cidade velha à beira-mar e falésias da costa da Apúlia.', [
+    P('Bari Vecchia e Basílica de San Nicola', 'igreja', 41.1305, 16.87, 1, 1.5, 'Relíquias de São Nicolau (o Papai Noel).'),
+    P('Strada delle Orecchiette', 'comida', 41.1285, 16.868, 0, 0.5, 'Senhoras fazendo massa na porta de casa.'),
+    P('Lungomare de Bari', 'passeio', 41.12, 16.88, 0, 1, 'Calçadão art déco.'),
+    P('Polignano a Mare (Lama Monachile)', 'foto', 40.996, 17.219, 1, 2, 'Praia entre falésias; trem de Bari 30 min.'),
+    P('Grutas marinhas de Polignano (barco)', 'barco', 40.997, 17.22, 0, 1.5, 'Veja as falésias de baixo.'),
+    P('Monopoli', 'passeio', 40.952, 17.302, 0, 1.5, 'Porto antigo branco e enseadas.'),
+  ], {av: 1, via: 'Trem rápido de Roma (~4h) ou voo; aeroporto de Bari.'}),
+  CC('alberobello', 'Alberobello e Vale d’Itria', 'Apúlia', 40.7826, 17.2373, 2, 'Trulli de cone de pedra e cidades brancas.', [
+    P('Rione Monti (trulli)', 'passeio', 40.7815, 17.2375, 1, 1.5, 'Mais de mil trulli Unesco.'),
+    P('Aia Piccola', 'passeio', 40.7845, 17.239, 0, 0.75, 'Bairro de trulli ainda habitado, sem lojas.'),
+    P('Trullo Sovrano', 'visita', 40.785, 17.237, 0, 0.5, 'O único trullo de dois andares.'),
+    P('Ostuni (cidade branca)', 'passeio', 40.729, 17.578, 1, 2, 'Labirinto caiado no alto da colina.'),
+    P('Locorotondo', 'passeio', 40.755, 17.326, 0, 1.5, 'Um dos vilarejos mais bonitos da Itália.'),
+    P('Cisternino e as “bombette”', 'comida', 40.741, 17.425, 0, 1.5, 'Açougues que assam a carne na hora.'),
+    P('Martina Franca', 'passeio', 40.704, 17.337, 0, 1.5, 'Barroco e capocollo.'),
+    P('Grutas de Castellana', 'visita', 40.876, 17.15, 0, 1.5, 'Caverna com a Gruta Branca de alabastro.', 1),
+  ], {car: 1, via: 'Trem FSE de Bari (~1h30); carro facilita visitar os vilarejos.'}),
+  CC('lecce', 'Lecce e Salento', 'Apúlia', 40.3515, 18.175, 2, 'A “Florença do Sul”, barroca em pedra dourada.', [
+    P('Basílica de Santa Croce', 'igreja', 40.354, 18.173, 1, 0.75, 'Fachada barroca esculpida em detalhes.'),
+    P('Piazza del Duomo', 'igreja', 40.3505, 18.168, 1, 0.5, 'Praça fechada, linda à noite.'),
+    P('Anfiteatro Romano', 'visita', 40.3528, 18.172, 1, 0.5, 'Metade escavada na Piazza Sant’Oronzo.'),
+    P('Ateliês de cartapesta', 'compras', 40.352, 18.171, 0, 0.5, 'Esculturas de papel machê tradicionais.'),
+    P('Museo Faggiano', 'visita', 40.348, 18.17, 0, 0.75, '2.000 anos de camadas descobertos sob uma casa.'),
+    P('Otranto', 'igreja', 40.146, 18.491, 0, 3, 'Catedral com piso de mosaico do séc. XII.'),
+    P('Grotta della Poesia', 'sol', 40.288, 18.43, 0, 1.5, 'Piscina natural de água turquesa.'),
+    P('Gallipoli', 'passeio', 40.056, 17.98, 0, 2.5, 'Cidade velha numa ilha.'),
+  ], {via: 'Trem de Bari (~1h30); de Roma ~5h30.'}),
+  CC('tropea', 'Tropea', 'Calábria', 38.6776, 15.8981, 2, 'Falésias sobre um mar transparente e a cebola roxa.', [
+    P('Centro histórico e mirantes', 'foto', 38.678, 15.897, 1, 1, 'Casas na beira do penhasco.'),
+    P('Santa Maria dell’Isola', 'igreja', 38.68, 15.895, 1, 0.75, 'Santuário sobre um rochedo no mar.'),
+    P('Praias de Tropea', 'sol', 38.679, 15.894, 1, 2, 'Água cristalina ao pé da cidade.'),
+    P('Capo Vaticano', 'foto', 38.62, 15.83, 0, 1.5, 'Mirante e enseadas.'),
+    P('Pizzo: tartufo e Chiesetta di Piedigrotta', 'comida', 38.734, 16.16, 0, 2, 'Igreja escavada numa gruta e o sorvete tartufo.'),
+    P('Scilla (Chianalea)', 'passeio', 38.254, 15.717, 0, 2, 'Bairro de pescadores sobre a água.'),
+  ], {via: 'Trem rápido até Lamezia/Vibo Pizzo + regional; aeroporto de Lamezia.'}),
+  CC('palermo', 'Palermo', 'Sicília', 38.1157, 13.3615, 3, 'Árabe, normanda e barroca: mercados e mosaicos dourados.', [
+    P('Catedral de Palermo', 'igreja', 38.1144, 13.3561, 1, 1, 'Mistura de estilos e terraços no telhado.'),
+    P('Capela Palatina (Palazzo dei Normanni)', 'igreja', 38.111, 13.353, 1, 1.5, 'Mosaicos dourados árabe-normandos.', 1),
+    P('Mercado de Ballarò', 'comida', 38.111, 13.361, 1, 1, 'O mercado mais antigo e barulhento.'),
+    P('Quattro Canti e Piazza Pretoria', 'fonte', 38.1158, 13.3618, 1, 0.5, 'O cruzamento barroco e a “fonte da vergonha”.'),
+    P('Monreale', 'igreja', 38.0819, 13.2925, 1, 2, 'Catedral com 6.400 m² de mosaicos.'),
+    P('Teatro Massimo', 'visita', 38.1203, 13.357, 1, 0.75, 'O maior teatro de ópera da Itália.'),
+    P('Catacumbas dos Capuchinhos', 'visita', 38.112, 13.339, 0, 0.75, 'Múmias vestidas em corredores (impressionante).'),
+    P('Street food na Vucciria', 'comida', 38.119, 13.364, 0, 1, 'Panelle, arancine e sfincione.'),
+    P('Mondello', 'sol', 38.205, 13.325, 0, 2.5, 'Praia art nouveau a 30 min.'),
+    P('Oratório de Santa Cita', 'igreja', 38.1205, 13.362, 0, 0.5, 'Esculturas em estuque de Serpotta.'),
+    P('Palazzo Butera', 'visita', 38.117, 13.372, 0, 1.5, 'Palácio restaurado com arte contemporânea e terraço.'),
+  ], {isl: 'sic', via: 'Voo de Roma/Milão (~1h10) ou balsa noturna de Nápoles (~10h).'}),
+  CC('cefalu', 'Cefalù', 'Sicília', 38.0386, 14.0221, 1, 'Vilarejo de praia sob um rochedo, com catedral normanda.', [
+    P('Catedral normanda', 'igreja', 38.0398, 14.023, 1, 0.75, 'Cristo Pantocrator em mosaico (Unesco).'),
+    P('La Rocca', 'foto', 38.039, 14.028, 1, 2, 'Trilha ao templo de Diana e vista.'),
+    P('Praia de Cefalù', 'sol', 38.037, 14.018, 1, 2, 'A cidade velha atrás da areia.'),
+    P('Lavatoio medievale', 'visita', 38.0393, 14.022, 0, 0.25, 'Lavadouro medieval escavado na rocha.'),
+  ], {isl: 'sic', via: 'Trem de Palermo (~1h).'}),
+  CC('agrigento', 'Agrigento', 'Sicília', 37.3111, 13.5765, 1, 'Templos gregos mais bem preservados fora da Grécia.', [
+    P('Vale dos Templos', 'visita', 37.29, 13.585, 1, 3, 'Templo da Concórdia ao pôr do sol.'),
+    P('Jardim da Kolymbethra', 'passeio', 37.289, 13.58, 0, 1, 'Pomar antigo escondido no vale.'),
+    P('Scala dei Turchi', 'foto', 37.29, 13.474, 1, 1, 'Falésia de marga branca (acesso à escadaria restrito).'),
+    P('Centro histórico', 'passeio', 37.311, 13.577, 0, 1, 'Via Atenea e a catedral.'),
+  ], {isl: 'sic', car: 1, via: 'Trem de Palermo (~2h10); carro facilita.'}),
+  CC('taormina', 'Taormina e Etna', 'Sicília', 37.8516, 15.2853, 2, 'Teatro grego com o Etna ao fundo.', [
+    P('Teatro Antico', 'visita', 37.8524, 15.292, 1, 1, 'Vista do Etna e do mar.'),
+    P('Corso Umberto', 'passeio', 37.853, 15.287, 1, 1, 'Rua principal de palácios e lojas.'),
+    P('Isola Bella', 'sol', 37.85, 15.3, 1, 2, 'Ilhota ligada à praia por uma faixa de areia.'),
+    P('Etna (crateras)', 'passeio', 37.7, 14.999, 1, 5, 'Teleférico e jipes até 2.900 m; tours guiados.', 1),
+    P('Castelmola', 'foto', 37.859, 15.277, 0, 1.5, 'Vilarejo acima de Taormina com vista ainda mais alta.'),
+    P('Gole dell’Alcantara', 'passeio', 37.877, 15.172, 0, 2, 'Cânion de basalto com água gelada.'),
+    P('Savoca', 'passeio', 37.955, 15.34, 0, 2, 'Cenário do bar de O Poderoso Chefão.'),
+  ], {isl: 'sic', via: 'Ônibus ou trem de Catânia (~1h); aeroporto de Catânia.'}),
+  CC('catania', 'Catânia', 'Sicília', 37.5079, 15.083, 1, 'Cidade barroca de pedra vulcânica aos pés do Etna.', [
+    P('Piazza del Duomo e Fontana dell’Elefante', 'fonte', 37.5025, 15.0874, 1, 0.5, 'O elefante de lava, símbolo da cidade.'),
+    P('La Pescheria', 'comida', 37.501, 15.086, 1, 0.75, 'Mercado de peixe teatral, de manhã.'),
+    P('Via Etnea', 'compras', 37.508, 15.086, 0, 1, 'Rua principal com vista para o vulcão.'),
+    P('Teatro Romano', 'visita', 37.503, 15.083, 0, 0.5, 'Ruínas entre as casas.'),
+    P('Monastero dei Benedettini', 'visita', 37.504, 15.079, 0, 1, 'Mosteiro gigante, hoje universidade; visita guiada.', 1),
+  ], {isl: 'sic', via: 'Voo de Roma/Milão (~1h15–1h40).'}),
+  CC('siracusa', 'Siracusa e Noto', 'Sicília', 37.0755, 15.2866, 2, 'Ortigia, a ilha grega, e o barroco do Val di Noto.', [
+    P('Ortigia e Piazza Duomo', 'igreja', 37.0597, 15.2932, 1, 1.5, 'Catedral construída dentro de um templo grego.'),
+    P('Parque Arqueológico da Neápolis', 'visita', 37.075, 15.276, 1, 2, 'Teatro grego e a Orelha de Dionísio.'),
+    P('Fonte Aretusa', 'fonte', 37.0583, 15.2926, 1, 0.25, 'Nascente de papiros à beira-mar.'),
+    P('Mercado de Ortigia', 'comida', 37.064, 15.293, 0, 1, 'Sanduíches do Caseificio Borderi.'),
+    P('Noto', 'igreja', 36.892, 15.07, 1, 2.5, 'Capital do barroco siciliano.'),
+    P('Reserva de Vendicari', 'sol', 36.81, 15.101, 0, 2.5, 'Praias selvagens e uma antiga armação de atum.'),
+    P('Necrópole de Pantalica', 'passeio', 37.14, 15.03, 0, 3, 'Milhares de tumbas escavadas em desfiladeiros.'),
+    P('Marzamemi', 'passeio', 36.739, 15.118, 0, 1.5, 'Vila de pescadores com praça à beira-mar.'),
+    P('Ragusa Ibla e Modica', 'comida', 36.926, 14.74, 0, 3, 'Barroco no alto e o chocolate de Modica.'),
+  ], {isl: 'sic', via: 'Trem de Catânia (~1h15).'}),
+  CC('cagliari', 'Cagliari', 'Sardenha', 39.2238, 9.1217, 2, 'Capital da Sardenha, entre colinas, lagoas e praias.', [
+    P('Bairro Castello e Bastione di Saint Remy', 'foto', 39.218, 9.115, 1, 1.5, 'Cidadela murada com vista do golfo.'),
+    P('Praia do Poetto', 'sol', 39.204, 9.175, 1, 2, '8 km de areia na cidade.'),
+    P('Mercado de San Benedetto', 'comida', 39.227, 9.124, 0, 1, 'Um dos maiores mercados cobertos da Itália.'),
+    P('Flamingos de Molentargius', 'passeio', 39.22, 9.15, 0, 1, 'Flamingos rosas na lagoa urbana.'),
+    P('Su Nuraxi di Barumini', 'visita', 39.706, 8.99, 1, 2, 'Fortaleza nurágica de 3.500 anos (Unesco); visita guiada.', 1),
+    P('Villasimius e Chia', 'sol', 39.14, 9.52, 0, 3, 'Praias caribenhas no sul.'),
+  ], {isl: 'sar', car: 1, via: 'Voo de Roma/Milão (~1h) ou balsa noturna.'}),
+  CC('alghero', 'Alghero', 'Sardenha', 40.558, 8.319, 2, 'Cidade catalã murada no noroeste da Sardenha.', [
+    P('Centro histórico e muralhas', 'passeio', 40.558, 8.315, 1, 1.5, 'Bastiões sobre o mar ao pôr do sol.'),
+    P('Grotta di Nettuno', 'visita', 40.564, 8.16, 1, 2, '656 degraus da Escala del Cabirol ou barco.'),
+    P('Capo Caccia', 'foto', 40.562, 8.164, 0, 1, 'Promontório de falésias.'),
+    P('Praia La Pelosa (Stintino)', 'sol', 40.965, 8.211, 1, 3, 'Água rasa turquesa; acesso pago e com reserva no verão.', 1),
+    P('Nuraghe di Palmavera', 'visita', 40.594, 8.241, 0, 0.75, 'Vila nurágica perto da cidade.'),
+  ], {isl: 'sar', car: 1, via: 'Voo de Roma/Milão (~1h); aeroporto de Alghero-Fertilia.'}),
+];
+const slugify = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+IT_CITIES.forEach(c => c.places.forEach(p => { p.id = c.k + ':' + slugify(p.name); p.city = c.k; }));
+const CAT = Object.fromEntries(IT_CITIES.map(c => [c.k, c]));
+const PLACE = Object.fromEntries(IT_CITIES.flatMap(c => c.places.map(p => [p.id, p])));
+const IT_REGIONS = [...new Set(IT_CITIES.map(c => c.reg))];
+
+// [modo, minutos, observação] — trens: menor tempo direto (Trenitalia/Italo, set/2026); demais: tempos típicos
+const LEGS = {
+  'florenca|roma': ['trem', 95, 'Frecciarossa/Italo, direto'], 'napoles|roma': ['trem', 73, 'Frecciarossa/Italo, direto'], 'milao|roma': ['trem', 175, 'Frecciarossa/Italo, direto'],
+  'roma|veneza': ['trem', 239, 'Frecciarossa/Italo, direto'], 'bolonha|roma': ['trem', 123, 'Frecciarossa/Italo, direto'], 'orvieto|roma': ['trem', 70, 'regional/Intercity'],
+  'assis|roma': ['trem', 130, 'regional, troca em Foligno'], 'perugia|roma': ['trem', 140, 'Frecciarossa ou regional'], 'pisa|roma': ['trem', 165, 'Intercity ou Frecce via Florença'],
+  'bari|roma': ['trem', 254, 'Frecciarossa direto (poucos por dia)'], 'lecce|roma': ['trem', 330, 'Frecciarossa/Intercity'], 'roma|turim': ['trem', 265, 'Frecciarossa direto'],
+  'pompeia|roma': ['trem', 120, 'trem rápido até Nápoles + Circumvesuviana'], 'roma|sorrento': ['trem', 150, 'trem rápido até Nápoles + Circumvesuviana'],
+  'costa-amalfi|roma': ['trem', 180, 'Frecciarossa até Salerno + balsa para Amalfi'], 'roma|siena': ['onibus', 180, 'ônibus direto (ou trem via Chiusi)'],
+  'palermo|roma': ['voo', 70, 'voo (+ ~2h de aeroportos) ou trem noturno ~12h'], 'catania|roma': ['voo', 75, 'voo (+ ~2h de aeroportos)'], 'cagliari|roma': ['voo', 65, 'voo (+ ~2h de aeroportos)'],
+  'alghero|roma': ['voo', 65, 'voo (+ ~2h de aeroportos)'], 'matera|roma': ['onibus', 270, 'ônibus direto (~4h30)'], 'roma|tropea': ['trem', 290, 'Frecciarossa + regional'],
+  'bolonha|florenca': ['trem', 37, 'Frecciarossa/Italo, direto'], 'florenca|veneza': ['trem', 134, 'Frecciarossa/Italo, direto'], 'florenca|milao': ['trem', 114, 'Frecciarossa/Italo, direto'],
+  'florenca|pisa': ['trem', 55, 'regional'], 'florenca|lucca': ['trem', 80, 'regional'], 'florenca|siena': ['onibus', 75, 'ônibus expresso (trem regional ~1h30)'],
+  'florenca|san-gimignano': ['onibus', 90, 'ônibus com troca em Poggibonsi'], 'florenca|napoles': ['trem', 175, 'Frecciarossa/Italo, direto'], 'florenca|verona': ['trem', 90, 'Frecciarossa, direto'],
+  'cinque-terre|florenca': ['trem', 150, 'regional via Pisa e La Spezia'], 'florenca|val-dorcia': ['carro', 105, 'carro (sem trem direto)'], 'florenca|perugia': ['trem', 125, 'regional'],
+  'assis|florenca': ['trem', 150, 'regional'], 'florenca|orvieto': ['trem', 110, 'regional/Intercity'], 'florenca|genova': ['trem', 180, 'via Pisa'],
+  'florenca|ravenna': ['trem', 130, 'troca em Bolonha'], 'florenca|modena': ['trem', 60, 'troca em Bolonha'], 'florenca|parma': ['trem', 90, 'troca em Bolonha'], 'florenca|turim': ['trem', 170, 'Frecciarossa'],
+  'bolonha|veneza': ['trem', 85, 'Frecciarossa/Italo'], 'bolonha|milao': ['trem', 64, 'Frecciarossa/Italo, direto'], 'bolonha|ravenna': ['trem', 70, 'regional'], 'bolonha|modena': ['trem', 20, 'regional ou Frecce'],
+  'bolonha|parma': ['trem', 50, 'regional'], 'bolonha|verona': ['trem', 55, 'Frecciarossa'], 'bolonha|padua': ['trem', 60, 'Frecciarossa ou regional'], 'bolonha|turim': ['trem', 125, 'Frecciarossa'],
+  'bolonha|napoles': ['trem', 205, 'Frecciarossa direto'], 'milao|veneza': ['trem', 147, 'Frecciarossa/Italo, direto'], 'veneza|verona': ['trem', 70, 'Frecciarossa ou regional'], 'padua|veneza': ['trem', 25, 'regional ou Frecce'],
+  'trieste|veneza': ['trem', 125, 'regional/Frecce'], 'dolomitas|veneza': ['onibus', 150, 'ônibus para Cortina (ou carro)'], 'lago-garda|veneza': ['trem', 105, 'trem até Desenzano + ônibus'],
+  'turim|veneza': ['trem', 210, 'Frecciarossa'], 'milao|turim': ['trem', 60, 'Frecciarossa direto'], 'lago-como|milao': ['trem', 65, 'regional para Varenna (Como: 40 min)'],
+  'bergamo|milao': ['trem', 50, 'regional'], 'milao|verona': ['trem', 75, 'Frecciarossa/Italo'], 'lago-garda|milao': ['trem', 70, 'trem até Desenzano + ônibus 20 min'],
+  'genova|milao': ['trem', 100, 'Frecciarossa/Intercity'], 'cinque-terre|milao': ['trem', 185, 'Intercity até La Spezia/Monterosso'], 'milao|portofino': ['trem', 150, 'trem até Santa Margherita + ônibus'],
+  'milao|padua': ['trem', 120, 'Frecciarossa'], 'milao|parma': ['trem', 70, 'regional/Frecce'], 'milao|napoles': ['trem', 273, 'Frecciarossa direto'], 'dolomitas|milao': ['trem', 240, 'trem até Bolzano + ônibus'],
+  'lago-garda|verona': ['trem', 30, 'trem até Peschiera + ônibus/balsa'], 'padua|verona': ['trem', 45, 'regional ou Frecce'], 'dolomitas|verona': ['trem', 150, 'trem até Bolzano (1h30) + ônibus'],
+  'napoles|pompeia': ['trem', 35, 'Circumvesuviana'], 'napoles|sorrento': ['trem', 70, 'Circumvesuviana (ou balsa 40 min)'], 'capri|napoles': ['barco', 50, 'balsa rápida do Molo Beverello'],
+  'costa-amalfi|napoles': ['barco', 100, 'trem até Salerno (40 min) + balsa até Amalfi'], 'bari|napoles': ['onibus', 210, 'ônibus ou trem (~3h30)'], 'matera|napoles': ['onibus', 250, 'ônibus direto (~4h)'],
+  'napoles|palermo': ['barco', 600, 'balsa noturna (~10h) ou voo 1h'], 'napoles|tropea': ['trem', 240, 'Frecciarossa + regional'], 'pompeia|sorrento': ['trem', 30, 'Circumvesuviana'],
+  'costa-amalfi|pompeia': ['onibus', 90, 'ônibus via Sorrento ou trem até Salerno + balsa'], 'capri|sorrento': ['barco', 25, 'balsa rápida'], 'costa-amalfi|sorrento': ['onibus', 50, 'ônibus SITA até Positano (ou balsa no verão)'],
+  'capri|costa-amalfi': ['barco', 50, 'balsa de Positano/Amalfi (abr–out)'], 'bari|matera': ['trem', 90, 'trem FAL'], 'alberobello|bari': ['trem', 90, 'trem FSE (carro: 1h)'], 'bari|lecce': ['trem', 90, 'Frecciarossa ou regional'],
+  'alberobello|lecce': ['carro', 75, 'carro (de trem ~2h com trocas)'], 'alberobello|matera': ['carro', 75, 'carro (sem trem direto)'], 'lecce|matera': ['carro', 150, 'carro ou ônibus'],
+  'cefalu|palermo': ['trem', 60, 'regional'], 'agrigento|palermo': ['trem', 125, 'regional'], 'catania|palermo': ['onibus', 165, 'ônibus direto (~2h45)'], 'palermo|taormina': ['carro', 190, 'carro (ou ônibus via Catânia)'],
+  'palermo|siracusa': ['carro', 200, 'carro (~3h20)'], 'catania|taormina': ['onibus', 60, 'ônibus ou trem regional'], 'catania|siracusa': ['trem', 75, 'regional'], 'agrigento|catania': ['onibus', 170, 'ônibus (~2h50)'],
+  'siracusa|taormina': ['carro', 90, 'carro (ou trem via Catânia)'], 'agrigento|siracusa': ['carro', 190, 'carro (~3h)'], 'cefalu|taormina': ['carro', 150, 'carro pela A20'], 'alghero|cagliari': ['carro', 180, 'carro (~3h) ou trem + ônibus (~4h)'],
+  'assis|perugia': ['trem', 25, 'regional'], 'assis|orvieto': ['trem', 100, 'regional com troca'], 'san-gimignano|siena': ['onibus', 75, 'ônibus'], 'siena|val-dorcia': ['onibus', 80, 'ônibus (carro: 50 min)'],
+  'lucca|pisa': ['trem', 30, 'regional'], 'cinque-terre|pisa': ['trem', 75, 'regional'], 'cinque-terre|lucca': ['trem', 110, 'regional via Viareggio'], 'cinque-terre|genova': ['trem', 80, 'regional'],
+  'genova|portofino': ['trem', 50, 'trem até Santa Margherita + ônibus'], 'genova|turim': ['trem', 105, 'Intercity/regional'], 'cinque-terre|portofino': ['trem', 75, 'trem Santa Margherita → Monterosso'],
+  'modena|parma': ['trem', 30, 'regional'], 'napoles|veneza': ['trem', 300, 'Frecciarossa/Italo, direto'], 'napoles|turim': ['trem', 335, 'Frecciarossa, direto'],
+  'bari|bolonha': ['trem', 315, 'Frecciarossa pela costa adriática'], 'bari|milao': ['trem', 410, 'Frecciarossa, direto'], 'lecce|milao': ['trem', 510, 'Frecciarossa ou trem noturno'],
+  'catania|milao': ['voo', 105, 'voo (+ ~2h de aeroportos)'], 'milao|palermo': ['voo', 105, 'voo (+ ~2h de aeroportos)'], 'cagliari|milao': ['voo', 85, 'voo (+ ~2h de aeroportos)'],
+  'catania|napoles': ['voo', 60, 'voo (ou trem ~7h com travessia de balsa)'], 'bergamo|lago-como': ['carro', 60, 'carro (de trem ~1h45 via Milão)'], 'bergamo|verona': ['trem', 75, 'regional/Frecce'], 'lago-como|lago-garda': ['carro', 150, 'carro (de trem ~2h30 via Milão)'],
+};
+const MODE = {trem: ['Trem', 'trem', '#8a4b2a'], onibus: ['Ônibus', 'onibus', '#4d7c0f'], barco: ['Balsa', 'barco', '#1f78ad'], voo: ['Avião', 'voo', '#56657a'], carro: ['Carro', 'carro', '#b45309']};
+const fmtDur = m => { m = Math.round(m); return m < 60 ? `${m} min` : `${Math.floor(m / 60)}h${String(m % 60).padStart(2, '0')}`; };
+function legInfo(a, b) {
+  const t = LEGS[[a.k, b.k].sort().join('|')];
+  const d = haversine([a.lat, a.lon], [b.lat, b.lon]), km = Math.round(d * 1.3);
+  const sea = (a.isl || '') !== (b.isl || ''), big = [a.isl, b.isl].some(x => x === 'sic' || x === 'sar');
+  const carMin = Math.round(km / 80 * 60 + 10);
+  let main, car = carMin;
+  if (t) main = {mode: t[0], min: t[1], note: t[2], est: false};
+  else if (sea && big && [a.k, b.k].includes('tropea') && [a.isl, b.isl].includes('sic')) main = {mode: 'carro', min: carMin + 45, note: 'carro + balsa Villa San Giovanni → Messina (20 min)', est: true};
+  else if (sea && big) { main = {mode: 'voo', min: 75, note: 'voo (~1h–1h30, + ~2h de aeroportos) ou balsa noturna', est: true}; car = null; }
+  else if (sea) { main = {mode: 'barco', min: Math.round(60 + km / 70 * 60), note: 'trem/ônibus até Nápoles ou Sorrento + balsa', est: true}; car = null; }
+  else if (a.car || b.car) main = {mode: 'carro', min: carMin, note: 'carro recomendado: transporte público limitado', est: true};
+  else if (a.av && b.av) main = {mode: 'trem', min: Math.round(d * 1.2 / 150 * 60 + 30), note: 'alta velocidade, pode ter troca de trem', est: true};
+  else main = {mode: 'trem', min: Math.round(d * 1.35 / 60 * 60 + 35), note: 'trem regional, provavelmente com troca', est: true};
+  return {...main, km, carMin: car, sea};
+}
+function walkInfo(p, q, city) {
+  const m = haversine([p.lat, p.lon], [q.lat, q.lon]) * 1000 * 1.25;
+  if (m < 2400) return {ic: 'passeio', txt: `${Math.max(1, Math.round(m / 80))} min a pé (${m < 1000 ? Math.round(m / 10) * 10 + ' m' : (m / 1000).toFixed(1).replace('.', ',') + ' km'})`};
+  const km = m / 1000;
+  if (city.k === 'veneza') return {ic: 'barco', txt: `~${fmtDur(km / 12 * 60 + 10)} de vaporetto (${km.toFixed(1).replace('.', ',')} km)`};
+  if (km < 15) return {ic: 'onibus', txt: `~${fmtDur(km / 20 * 60 + 8)} de metrô/ônibus/táxi (${km.toFixed(1).replace('.', ',')} km)`};
+  return {ic: 'carro', txt: `excursão: ~${fmtDur(km / 65 * 60 + 10)} de carro ou transporte (${Math.round(km)} km)`};
+}
+
+/* ---------- estado do plano ---------- */
+const plan = () => (state.plan ||= {cities: []});
+const planCity = k => plan().cities.find(c => c.k === k);
+let planSel = null, planQuery = '';
+function planAddCity(k) { if (!planCity(k)) plan().cities.push({k, n: CAT[k].n, p: []}); }
+function planTogglePlace(id) {
+  const P0 = PLACE[id]; if (!P0) return;
+  commit(() => {
+    planAddCity(P0.city);
+    const pc = planCity(P0.city), i = pc.p.indexOf(id);
+    if (i >= 0) pc.p.splice(i, 1); else pc.p.push(id);
+  });
+}
+
+/* ---------- mapa da Itália ---------- */
+const BALKANS = [[45.2, 16], [45.17, 14.69], [44.95, 14.85], [44.55, 15.05], [44.1, 15.25], [43.75, 15.75], [43.5, 16.3], [43.25, 16.95], [43.0, 17.45], [42.65, 18.05], [42.4, 18.55], [42.1, 19.1], [41.85, 19.38], [41.4, 19.45], [40.95, 19.42], [40.45, 19.4], [40.05, 19.85], [39.7, 20.05], [39.3, 20.3], [38.8, 20.65], [38.2, 21.2], [37.9, 21.15], [37.6, 21.65], [36.8, 21.7], [36.3, 22.5], [36.3, 23.5], [45.2, 23.5]];
+const PLAN_MAP = (() => { const k = 64, c = 0.743, lo0 = 6.4, la1 = 47.3; return {W: Math.round((18.7 - lo0) * c * k), H: Math.round((la1 - 36.4) * k), p: (lat, lon) => [(lon - lo0) * c * k, (la1 - lat) * k]}; })();
+function planMapSVG() {
+  const {W, H, p} = PLAN_MAP, poly = pts => smoothPath(pts.map(([a, b]) => p(a, b)), true), line = pts => smoothPath(pts.map(([a, b]) => p(a, b)), false);
+  const seq = plan().cities.map(pc => CAT[pc.k]).filter(Boolean), inPlan = new Map(seq.map((c, i) => [c.k, i]));
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="plan-svg" role="img" aria-label="Mapa interativo da Itália">`;
+  s += `<rect width="${W}" height="${H}" fill="url(#seaGrad)"/>`;
+  [[39.4, 11.2], [42.2, 9.2], [40.2, 13.4], [38.6, 17.8], [43.1, 14.6], [37.0, 17.0], [41.0, 17.9], [39.0, 15.0]].forEach(([a, b], i) => { const [x, y] = p(a, b); s += `<use href="#wave" x="${rn(x)}" y="${rn(y)}" width="${30 + (i % 3) * 6}" height="10"/>`; });
+  s += `<g filter="url(#rough)"><path d="${poly(EUROPE)}" fill="#ebe0c6" stroke="#b09466" stroke-width="1.5"/><path d="${poly(BALKANS)}" fill="#ebe0c6" stroke="#b09466" stroke-width="1.5"/>`;
+  ISLANDS.forEach(isl => s += `<path d="${poly(isl)}" fill="#f7e5bc" stroke="#7a5230" stroke-width="2"/>`);
+  s += `<path d="${poly(SWISS)}" fill="#f6d8cf" stroke="#c0504d" stroke-width="1.5" stroke-dasharray="5 3"/><path d="${poly(ITALY)}" fill="#f7e5bc" stroke="#7a5230" stroke-width="2.5"/>`;
+  RIVERS.forEach(r => s += `<path d="${line(r)}" fill="none" stroke="#7fb5d1" stroke-width="2" stroke-linecap="round"/>`);
+  LAKES.forEach(l => s += `<path d="${poly(l)}" fill="#8cc3dd" stroke="#4f8fb3" stroke-width="1"/>`);
+  s += `</g>`;
+  ALPS.forEach(([a, b], i) => { const [x, y] = p(a, b); const w = 20 + (i * 7) % 8; s += `<use href="#mtn" x="${rn(x - w / 2)}" y="${rn(y - w * .6)}" width="${w}" height="${rn(w * .75)}" opacity=".8"/>`; });
+  const txt = (t, a, b, o = {}) => { const [x, y] = p(a, b); return `<text x="${rn(x)}" y="${rn(y)}" text-anchor="middle" font-size="${o.size || 14}" fill="${o.fill || '#2f6d8f'}" class="f-bold" letter-spacing="${o.ls || 3}" opacity="${o.op ?? .7}" ${o.rot ? `transform="rotate(${o.rot} ${rn(x)} ${rn(y)})"` : ''}>${t}</text>`; };
+  s += txt('MAR TIRRENO', 40.3, 11.6, {size: 18}) + txt('MAR ADRIÁTICO', 43.2, 15.2, {size: 15, rot: -38}) + txt('MAR JÔNICO', 38.4, 18.0, {size: 14}) + txt('MAR LÍGURE', 43.65, 8.6, {size: 13}) + txt('SUÍÇA', 46.75, 8.3, {size: 13, fill: '#b0413e'});
+  // rota
+  for (let i = 1; i < seq.length; i++) {
+    const a = seq[i - 1], b = seq[i], L = legInfo(a, b), [x1, y1] = p(a.lat, a.lon), [x2, y2] = p(b.lat, b.lon), col = MODE[L.mode][2];
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, bend = Math.min(30, len * .18);
+    const cx = mx - dy / len * bend, cy = my + dx / len * bend;
+    s += `<path d="M${rn(x1)} ${rn(y1)}Q${rn(cx)} ${rn(cy)} ${rn(x2)} ${rn(y2)}" fill="none" stroke="${col}" stroke-width="3.2" stroke-dasharray="${L.mode === 'voo' ? '7 7' : L.mode === 'barco' ? '2 6' : '10 6'}" stroke-linecap="round" class="route-anim"/>`;
+    if (len > 46) { const bx = (x1 + 2 * cx + x2) / 4, by = (y1 + 2 * cy + y2) / 4; s += `<g class="pl-leg" transform="translate(${rn(bx)},${rn(by)})"><title>${MODE[L.mode][0]} ${a.name} → ${b.name}: ${fmtDur(L.min)}</title><circle r="11" fill="#fffaf0" stroke="${col}" stroke-width="2.2"/><use href="#ic-${MODE[L.mode][1]}" x="-7.5" y="-7.5" width="15" height="15" color="${col}"/></g>`; }
+  }
+  // cidades
+  const labels = [], boxes = [];
+  const fits = r => !boxes.some(o => r.x0 < o.x1 && r.x1 > o.x0 && r.y0 < o.y1 && r.y1 > o.y0);
+  const ordered = [...IT_CITIES].sort((a, b) => (inPlan.has(a.k) - inPlan.has(b.k)) || (a.k === planSel) - (b.k === planSel));
+  let dots = '';
+  ordered.forEach(c => {
+    const [x, y] = p(c.lat, c.lon), i = inPlan.get(c.k), on = i != null, sel = c.k === planSel;
+    const col = on ? cityColor(c.name) : '#fffaf0';
+    dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(c.name)} — ${esc(c.reg)}${on ? ` (parada ${i + 1})` : ' · clique para ver os lugares'}</title>
+      <circle r="16" fill="transparent"/>${sel ? '<circle r="17" fill="none" stroke="#f59e0b" stroke-width="4"/>' : ''}
+      <circle r="${on ? 11 : 6}" fill="${col}" stroke="${INK}" stroke-width="${on ? 2.5 : 2}"/>${on ? `<text y="4.5" text-anchor="middle" font-size="12" class="f-bold" fill="#fff">${i + 1}</text>` : ''}</g>`;
+    boxes.push({x0: x - (on ? 12 : 7), x1: x + (on ? 12 : 7), y0: y - (on ? 12 : 7), y1: y + (on ? 12 : 7)});
+  });
+  ordered.slice().reverse().forEach(c => {
+    const on = inPlan.has(c.k), sel = c.k === planSel;
+    const [x, y] = p(c.lat, c.lon), fs = on || sel ? 13 : 10.5, w = c.name.length * fs * .56 + 6, h = fs + 3, off = on ? 14 : 9;
+    const cands = [[off, -h / 2, 'start'], [-off - w, -h / 2, 'end'], [-w / 2, -off - h, 'middle'], [-w / 2, off, 'middle']];
+    for (const [dx, dy, anchor] of cands) {
+      const r = {x0: x + dx, x1: x + dx + w, y0: y + dy, y1: y + dy + h};
+      if (r.x0 < 2 || r.x1 > W - 2 || !fits(r)) continue;
+      boxes.push(r);
+      const tx = anchor === 'start' ? r.x0 + 2 : anchor === 'end' ? r.x1 - 2 : (r.x0 + r.x1) / 2;
+      labels.push(`<text x="${rn(tx)}" y="${rn(r.y1 - 3)}" text-anchor="${anchor}" font-size="${fs}" class="${on || sel ? 'f-bold' : 'f-hand'}" fill="${INK}" paint-order="stroke" stroke="#fffaf0" stroke-width="3.5" stroke-linejoin="round" pointer-events="none">${esc(c.name)}</text>`);
+      break;
+    }
+  });
+  s += dots + labels.join('');
+  s += `<use href="#compass" x="${W - 70}" y="14" width="54" height="54"/>`;
+  return s + `<rect width="${W}" height="${H}" filter="url(#paperNoise)" opacity=".4" pointer-events="none"/></svg>`;
+}
+function cityMiniMapSVG(c) {
+  const pc = planCity(c.k), sel = pc ? pc.p : [];
+  const pts = c.places.filter(p => haversine([c.lat, c.lon], [p.lat, p.lon]) < 12);
+  if (pts.length < 2) return '';
+  let la0 = Math.min(...pts.map(p => p.lat)), la1 = Math.max(...pts.map(p => p.lat)), lo0 = Math.min(...pts.map(p => p.lon)), lo1 = Math.max(...pts.map(p => p.lon));
+  const padA = (la1 - la0) * .12 + .002, padO = (lo1 - lo0) * .12 + .002; la0 -= padA; la1 += padA; lo0 -= padO; lo1 += padO;
+  const W = 300, cs = Math.cos((la0 + la1) / 2 * Math.PI / 180), sx = W / ((lo1 - lo0) * cs), H = Math.min(260, Math.max(140, (la1 - la0) * sx));
+  const sy = H / (la1 - la0), pr = (lat, lon) => [(lon - lo0) * cs * sx, (la1 - lat) * sy];
+  const route = sel.map(id => PLACE[id]).filter(p => p && pts.includes(p)).map(p => pr(p.lat, p.lon));
+  let s = `<svg viewBox="0 0 ${W} ${rn(H)}" class="mini-map"><rect width="${W}" height="${rn(H)}" rx="10" fill="#f7edd5" stroke="#d9c49a"/>`;
+  if (route.length > 1) s += `<path d="M${route.map(([x, y]) => `${rn(x)} ${rn(y)}`).join('L')}" fill="none" stroke="${cityColor(c.name)}" stroke-width="2.5" stroke-dasharray="6 4"/>`;
+  pts.forEach(p => {
+    const [x, y] = pr(p.lat, p.lon), i = sel.indexOf(p.id);
+    s += `<g class="mm-pt ${i >= 0 ? 'on' : ''}" data-place="${p.id}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(p.name)}</title><circle r="12" fill="transparent"/>`
+      + (i >= 0 ? `<circle r="9" fill="${cityColor(c.name)}" stroke="${INK}" stroke-width="2"/><text y="4" text-anchor="middle" font-size="10" class="f-bold" fill="#fff">${i + 1}</text>` : `<circle r="5" fill="${p.f ? '#fffaf0' : '#e9dfc6'}" stroke="${INK}" stroke-width="1.6"/>`) + '</g>';
+  });
+  return s + '</svg>';
+}
+
+/* ---------- painel lateral e sequência ---------- */
+function placeRowHTML(p, c, sel) {
+  const on = sel.includes(p.id);
+  return `<li class="pl-place ${on ? 'on' : ''}"><label><input type="checkbox" data-place="${p.id}" ${on ? 'checked' : ''}>
+    <svg class="mini-ic" style="--tc:${on ? cityColor(c.name) : '#7a6a52'}" viewBox="0 0 24 24"><use href="#ic-${p.ic}"/></svg>
+    <span class="pp-main"><b>${esc(p.name)}</b><small>${esc(p.d)}</small>
+    <small class="pp-meta">~${fmtDur(p.h * 60)}${p.r ? ' · <b class="res">reserva antecipada</b>' : ''} · <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(p.name + ' ' + c.name)}" target="_blank" rel="noopener">fotos</a> · <a href="${mapsUrl(p.name + ', ' + c.name + ', Itália')}" target="_blank" rel="noopener">mapa</a></small></span></label></li>`;
+}
+function planSideHTML() {
+  if (planSel && CAT[planSel]) {
+    const c = CAT[planSel], pc = planCity(c.k), sel = pc ? pc.p : [], idx = plan().cities.indexOf(pc);
+    const prev = idx > 0 ? CAT[plan().cities[idx - 1].k] : plan().cities.length && !pc ? CAT[plan().cities[plan().cities.length - 1].k] : null;
+    const L = prev ? legInfo(prev, c) : null;
+    const fam = c.places.filter(p => p.f), gems = c.places.filter(p => !p.f);
+    return `<div class="card pl-detail" style="--c:${cityColor(c.name)}">
+      <button class="pl-back" data-pl="back">← Todas as cidades</button>
+      <h3>${esc(c.name)}</h3><div class="pl-reg">${esc(c.reg)} · sugestão: ${c.n} noite${c.n > 1 ? 's' : ''}</div>
+      <p class="pl-desc">${esc(c.d)}</p>
+      <div class="pl-how"><b>Como chegar:</b> ${esc(c.via || '')}${L ? `<div class="pl-leg-line">${legHTML(L, prev, c)}</div>` : ''}</div>
+      ${pc ? `<div class="pl-in">✓ Parada ${idx + 1} do seu roteiro · ${sel.length} lugar${sel.length === 1 ? '' : 'es'} <button class="danger" data-pl="remove-city" data-city="${c.k}">Remover cidade</button></div>`
+        : `<button class="ink-btn primary pl-add" data-pl="add-city" data-city="${c.k}">+ Incluir ${esc(c.name)} no roteiro</button>`}
+      ${cityMiniMapSVG(c)}
+      <h4>Imperdíveis</h4><ul class="pl-places">${fam.map(p => placeRowHTML(p, c, sel)).join('')}</ul>
+      ${gems.length ? `<h4>Pouco conhecidos</h4><ul class="pl-places">${gems.map(p => placeRowHTML(p, c, sel)).join('')}</ul>` : ''}
+    </div>`;
+  }
+  const q = norm(planQuery);
+  const match = c => !q || norm(c.name).includes(q) || norm(c.reg).includes(q) || c.places.some(p => norm(p.name).includes(q));
+  return `<div class="card pl-browse">
+    <h3>Cidades da Itália</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 8px">Clique numa cidade (aqui ou no mapa) para ver os lugares famosos e os pouco conhecidos e montar sua sequência.</p>
+    <input class="pl-search" type="search" placeholder="Buscar cidade, região ou lugar…" value="${esc(planQuery)}">
+    ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const i = plan().cities.findIndex(x => x.k === c.k); return `<button class="pl-chip ${i >= 0 ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${i >= 0 ? `<span>${i + 1}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
+  </div>`;
+}
+function legHTML(L, a, b) {
+  const [lbl, ic, col] = MODE[L.mode];
+  return `<span class="leg-ic" style="--lc:${col}">${icSvg(ic)}</span><span><b>${lbl}: ${fmtDur(L.min)}</b> ${a ? `${esc(a.name)} → ${esc(b.name)}` : ''} <small>${esc(L.note)}${L.est ? ' · estimativa' : ''}</small>${L.mode !== 'carro' && L.carMin ? `<small> · de carro ~${fmtDur(L.carMin)}, ${L.km} km</small>` : L.mode === 'carro' ? `<small> · ${L.km} km</small>` : ''}</span>`;
+}
+function planSeqHTML() {
+  const pcs = plan().cities;
+  if (!pcs.length) return `<section class="pl-seq"><h3>Sua sequência</h3><div class="pl-empty">Nenhuma cidade ainda. Escolha cidades no mapa ou na lista ao lado.</div></section>`;
+  let totalMin = 0, nights = 0, places = 0;
+  const parts = pcs.map((pc, i) => {
+    const c = CAT[pc.k]; if (!c) return '';
+    nights += +pc.n || 0; places += pc.p.length;
+    let leg = '';
+    if (i > 0) { const a = CAT[pcs[i - 1].k], L = legInfo(a, c); totalMin += L.min; leg = `<div class="pl-leg-row">${legHTML(L, a, c)}</div>`; }
+    const items = pc.p.map(id => PLACE[id]).filter(Boolean);
+    return `${leg}<article class="pl-stop" style="--c:${cityColor(c.name)}">
+      <div class="ps-head"><span class="ps-num">${i + 1}</span><div class="ps-title"><b data-pl="sel" data-city="${c.k}">${esc(c.name)}</b><small>${esc(c.reg)}</small></div>
+        <div class="ps-nights" title="Noites nesta cidade"><button data-pl="n-" data-i="${i}">−</button><span>${pc.n} noite${pc.n === 1 ? '' : 's'}</span><button data-pl="n+" data-i="${i}">+</button></div>
+        <div class="ps-move"><button data-pl="up" data-i="${i}" title="Mover para antes" ${i ? '' : 'disabled'}>↑</button><button data-pl="down" data-i="${i}" title="Mover para depois" ${i < pcs.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="del" data-i="${i}" title="Remover" class="danger">×</button></div></div>
+      ${items.length ? `<ol class="ps-places">${items.map((p, j) => `${j ? `<li class="ps-walk"><span>${icSvg(walkInfo(items[j - 1], p, c).ic)}</span>${walkInfo(items[j - 1], p, c).txt}</li>` : ''}<li class="ps-place"><span class="pn">${j + 1}</span><span class="pt">${esc(p.name)}${p.r ? ' <b class="res">reserva</b>' : ''}<small>~${fmtDur(p.h * 60)}</small></span>
+          <span class="ps-pm"><button data-pl="pup" data-i="${i}" data-j="${j}" ${j ? '' : 'disabled'}>↑</button><button data-pl="pdown" data-i="${i}" data-j="${j}" ${j < items.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="pdel" data-i="${i}" data-j="${j}" class="danger">×</button></span></li>`).join('')}</ol>`
+        : `<p class="muted ps-none">Nenhum lugar escolhido. <a href="#" data-pl="sel" data-city="${c.k}">Escolher lugares</a></p>`}
+    </article>`;
+  }).join('');
+  return `<section class="pl-seq"><div class="pl-seq-head"><h3>Sua sequência</h3><span class="pl-tot">${pcs.length} cidade${pcs.length > 1 ? 's' : ''} · ${nights} noite${nights === 1 ? '' : 's'} · ${places} lugar${places === 1 ? '' : 'es'} · ~${fmtDur(totalMin)} de deslocamento</span>
+    <span class="sp"></span><button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">Gerar calendário</button></div>${parts}</section>`;
+}
+function planHTML() {
+  return `<div class="plan-grid"><div class="paper plan-paper">${planMapSVG()}</div><aside class="plan-side">${planSideHTML()}</aside></div>${planSeqHTML()}`;
+}
+
+/* ---------- gerar calendário ---------- */
+function generateFromPlan(start) {
+  const days = [], pcs = plan().cities.filter(pc => CAT[pc.k]);
+  let date = start;
+  const newDay = (base, title) => { const d = {id: uid(), date, base, title, note: '', items: []}; days.push(d); date = addDays(date, 1); return d; };
+  const typeOf = ic => ({comida: 'comida', compras: 'compras', passeio: 'passeio', foto: 'passeio', sol: 'passeio', barco: 'passeio', gondola: 'passeio'}[ic] || 'visita');
+  pcs.forEach((pc, i) => {
+    const c = CAT[pc.k], prev = i ? CAT[pcs[i - 1].k] : null, L = prev ? legInfo(prev, c) : null;
+    const items = pc.p.map(id => PLACE[id]).filter(Boolean).map(p => ({id: uid(), start: '', end: '', type: typeOf(p.ic), title: p.name, notes: p.d + (p.r ? ' Reserva antecipada recomendada.' : ''), cost: 0, status: p.r ? 'reservar' : '', link: '', _h: p.h}));
+    const legItem = L ? {id: uid(), start: '', end: '', type: L.mode === 'carro' ? 'transfer' : L.mode, title: `${MODE[L.mode][0]} ${prev.name} → ${c.name}`, notes: `~${fmtDur(L.min)} · ${L.note}${L.est ? ' (estimativa)' : ''}`, cost: 0, status: L.mode === 'trem' && !L.est ? 'reservar' : '', link: ''} : null;
+    const n = Math.max(0, +pc.n || 0);
+    const target = n ? Array.from({length: n}, (_, j) => newDay(c.name, j === 0 ? (prev ? `${prev.name} → ${c.name}` : `Chegada em ${c.name}`) : c.name)) : [days[days.length - 1] || newDay(c.name, c.name)];
+    if (legItem) target[0].items.push(legItem);
+    const cap = Math.min(7, Math.max(2.5, items.reduce((a, it) => a + it._h, 0) / target.length));
+    let di = 0, used = legItem ? Math.min(L.min / 60, 4) : 0;
+    items.forEach(it => {
+      if (used > 0 && used + it._h > cap + .25 && di < target.length - 1) { di++; used = 0; }
+      target[di].items.push(it); used += it._h;
+    });
+  });
+  days.forEach(d => d.items.forEach(it => delete it._h));
+  if (pcs.length && plan().cities[pcs.length - 1].n > 0) newDay('Voo', 'Volta');
+  return days;
+}
+
+/* ---------- eventos ---------- */
+function setupPlanner() {
+  const el = $('#tab-mapa');
+  el.addEventListener('click', e => {
+    const mode = e.target.closest('[data-mapmode]');
+    if (mode) { commit(() => state.settings.mapMode = mode.dataset.mapmode); return; }
+    const city = e.target.closest('.pl-city');
+    if (city) { planSel = city.dataset.city; renderMap(); $('#tab-mapa .plan-side')?.scrollIntoView({behavior: 'smooth', block: 'nearest'}); return; }
+    const mm = e.target.closest('.mm-pt');
+    if (mm) { planTogglePlace(mm.dataset.place); return; }
+    const b = e.target.closest('[data-pl]'); if (!b) return;
+    e.preventDefault();
+    const pcs = plan().cities, i = +b.dataset.i, j = +b.dataset.j, act = b.dataset.pl;
+    const swap = (arr, a, c) => { [arr[a], arr[c]] = [arr[c], arr[a]]; };
+    if (act === 'sel') { planSel = b.dataset.city; renderMap(); $('#tab-mapa .plan-grid')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+    if (act === 'back') { planSel = null; renderMap(); }
+    if (act === 'add-city') commit(() => planAddCity(b.dataset.city));
+    if (act === 'remove-city') commit(() => state.plan.cities = pcs.filter(x => x.k !== b.dataset.city));
+    if (act === 'n-') commit(() => pcs[i].n = Math.max(0, pcs[i].n - 1));
+    if (act === 'n+') commit(() => pcs[i].n = Math.min(30, pcs[i].n + 1));
+    if (act === 'up') commit(() => swap(pcs, i, i - 1));
+    if (act === 'down') commit(() => swap(pcs, i, i + 1));
+    if (act === 'del') commit(() => pcs.splice(i, 1));
+    if (act === 'pup') commit(() => swap(pcs[i].p, j, j - 1));
+    if (act === 'pdown') commit(() => swap(pcs[i].p, j, j + 1));
+    if (act === 'pdel') commit(() => pcs[i].p.splice(j, 1));
+    if (act === 'clear' && confirm('Limpar todas as cidades e lugares do plano?')) commit(() => state.plan.cities = []);
+    if (act === 'gen') {
+      const start = prompt('Data do primeiro dia (AAAA-MM-DD):', state.days[0]?.date || addDays(todayStr(), 60));
+      if (!start || !/^\d{4}-\d{2}-\d{2}$/.test(start)) return;
+      const hasItems = state.days.some(d => d.items.length);
+      if (hasItems && !confirm('Isto substitui os dias e as atividades do calendário pelo plano (hotéis e checklist ficam). Dá para desfazer. Continuar?')) return;
+      const days = generateFromPlan(start);
+      commit(() => state.days = days);
+      toast(`Calendário gerado: ${days.length} dias a partir de ${fmtBRY(start)}. Os horários ficam em branco para você ajustar.`, '<button data-t="cal">Ver calendário</button>', () => setTab('roteiro'));
+    }
+  });
+  el.addEventListener('change', e => { if (e.target.matches('input[data-place]')) planTogglePlace(e.target.dataset.place); });
+  el.addEventListener('input', e => {
+    if (!e.target.classList.contains('pl-search')) return;
+    planQuery = e.target.value;
+    $('#tab-mapa .plan-side').innerHTML = planSideHTML();
+    const s = $('#tab-mapa .pl-search'); s.focus(); s.setSelectionRange(s.value.length, s.value.length);
+  });
 }
 
 /* ---------- interação ---------- */
@@ -3943,7 +4774,7 @@ function init() {
     const el = $(`.day[data-id="${b.dataset.goto}"], .cal-day[data-id="${b.dataset.goto}"]`);
     if (el) { el.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'start'}); el.animate([{boxShadow: '0 0 0 4px var(--c)'}, {boxShadow: '0 0 0 0 transparent'}], {duration: 1200}); }
   });
-  setupBoardEvents(); setupCalEvents(); setupMapEvents(); setupChecklistEvents(); setupHotelEvents(); setupTransportEvents(); setupBudgetEvents();
+  setupBoardEvents(); setupCalEvents(); setupMapEvents(); setupPlanner(); setupChecklistEvents(); setupHotelEvents(); setupTransportEvents(); setupBudgetEvents();
   renderAll();
 }
 init();
