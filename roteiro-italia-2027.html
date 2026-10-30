@@ -344,6 +344,9 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .pp-other{color:#0f766e!important;font-weight:700}
 .ps-tag{font-family:system-ui,'Segoe UI',sans-serif;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--c);border:1.5px solid var(--c);border-radius:999px;padding:0 6px;vertical-align:middle}
 .pl-seq-foot{display:flex;justify-content:center;margin-top:12px}
+.gen-st{font-size:12px;font-weight:700;color:#7a6a52}
+.gen-st.ok{color:#15803d}
+.gen-st.warn{color:#c2410c}
 .mini-map{display:block;width:100%;height:auto;margin:6px 0 2px}
 .mm-tiles{filter:sepia(.2) saturate(.9)}
 .mm-hint{font-size:11.5px;color:#7a6a52;margin:2px 0 4px}
@@ -2965,7 +2968,7 @@ function renderMap() {
     el.innerHTML = `${modeBar}
     <div class="map-hero">
       <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
-      <div class="map-sub">${pcs.length ? `${pcs.length} cidade${pcs.length > 1 ? 's' : ''} escolhida${pcs.length > 1 ? 's' : ''} · monte a sequência e depois gere o calendário` : 'escolha as cidades e os lugares · sem datas por enquanto'}</div>
+      <div class="map-sub">${pcs.length ? `${pcs.length} cidade${pcs.length > 1 ? 's' : ''} escolhida${pcs.length > 1 ? 's' : ''} · monte a sequência e depois gere o roteiro` : 'escolha as cidades e os lugares · sem datas por enquanto'}</div>
     </div>${planHTML()}`;
     return;
   }
@@ -3714,7 +3717,14 @@ function planSeqHTML() {
   const first = CAT[pcs[0].k], last = CAT[pcs[pcs.length - 1].k];
   const back = pcs.length > 1 && first && last && first.k !== last.k ? `<button class="ink-btn pl-back-to" data-pl="return" data-city="${first.k}">↩ Voltar para ${esc(first.name)} no fim</button>` : '';
   return `<section class="pl-seq"><div class="pl-seq-head"><h3>Sua sequência</h3><span class="pl-tot">${pcs.length} parada${pcs.length > 1 ? 's' : ''} · ${nights} noite${nights === 1 ? '' : 's'} · ${places} lugar${places === 1 ? '' : 'es'} · ~${fmtDur(totalMin)} de deslocamento</span>
-    <span class="sp"></span><button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">Gerar calendário</button></div>${parts}${back ? `<div class="pl-seq-foot">${back}</div>` : ''}</section>`;
+    <span class="sp"></span>${genStatusHTML()}<button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">${plan().genKey ? 'Atualizar roteiro' : 'Gerar roteiro'}</button></div>${parts}${back ? `<div class="pl-seq-foot">${back}</div>` : ''}</section>`;
+}
+const planKey = () => JSON.stringify(plan().cities.map(pc => [pc.k, pc.n, pc.p]));
+const planStart = () => plan().start || state.days[0]?.date || addDays(todayStr(), 60);
+function genStatusHTML() {
+  const g = plan().genKey;
+  if (!g) return `<span class="gen-st">começa em ${fmtBRY(planStart())}</span>`;
+  return g === planKey() ? '<span class="gen-st ok">✓ roteiro em dia com a sequência</span>' : '<span class="gen-st warn">a sequência mudou desde a última vez</span>';
 }
 function planHTML() {
   return `<div class="plan-grid"><div class="paper plan-paper">${planMapSVG()}</div><aside class="plan-side">${planSideHTML()}</aside></div>${planSeqHTML()}`;
@@ -3775,14 +3785,13 @@ function setupPlanner() {
     if (act === 'pdel') commit(() => pcs[i].p.splice(j, 1));
     if (act === 'clear' && confirm('Limpar todas as cidades e lugares do plano?')) commit(() => state.plan.cities = []);
     if (act === 'gen') {
-      const start = prompt('Data do primeiro dia (AAAA-MM-DD):', state.days[0]?.date || addDays(todayStr(), 60));
-      if (!start || !/^\d{4}-\d{2}-\d{2}$/.test(start)) return;
-      const hasItems = state.days.some(d => d.items.length);
-      if (hasItems && !confirm('Isto substitui os dias e as atividades do calendário pelo plano (hotéis e checklist ficam). Dá para desfazer. Continuar?')) return;
+      const start = planStart(), update = !!plan().genKey;
+      if (update && state.days.some(d => d.items.length) && !confirm('Atualizar o roteiro com a sequência atual? Os dias e as atividades serão recriados a partir do plano (dá para desfazer).')) return;
       const days = generateFromPlan(start);
-      commit(() => state.days = days);
-      if (tabOn('roteiro')) toast(`Calendário gerado: ${days.length} dias a partir de ${fmtBRY(start)}. Os horários ficam em branco para você ajustar.`, '<button data-t="cal">Ver calendário</button>', () => setTab('roteiro'));
-      else toast(`Roteiro gerado: ${days.length} dias a partir de ${fmtBRY(start)}.`, '<button data-t="route">Ver dia a dia</button>', () => commit(() => state.settings.mapMode = 'route'));
+      commit(() => { state.days = days; plan().start = start; plan().genKey = planKey(); state.settings.mapMode = 'plan'; });
+      const msg = `Roteiro ${update ? 'atualizado' : 'gerado'}: ${days.length} dias, de ${fmtBRY(days[0].date)} a ${fmtBRY(days[days.length - 1].date)}.`;
+      if (tabOn('roteiro')) toast(msg, '<button data-t="cal">Ver calendário</button>', () => setTab('roteiro'));
+      else toast(msg, '<button data-t="route">Ver dia a dia</button>', () => commit(() => state.settings.mapMode = 'route'));
     }
   });
   el.addEventListener('change', e => { if (e.target.matches('input[data-place]')) planTogglePlace(e.target.dataset.place); });
