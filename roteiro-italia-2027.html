@@ -347,6 +347,10 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .pl-seq-foot{display:flex;justify-content:center;margin-top:12px}
 .gen-st{font-size:12px;font-weight:700;color:#7a6a52}
 .sug-pt{cursor:pointer}
+.stars{color:#d69e2e;font-size:1.05em;letter-spacing:-.5px;white-space:nowrap;font-weight:400;font-family:system-ui,'Segoe UI',sans-serif}
+.stars i{font-style:normal;color:#d9cdb3}
+.stars.lv1{color:#9f7aea}
+.sug-legend{font-size:11.5px;color:#7a6a52;margin:0 0 4px}
 .hover-card{position:fixed;z-index:900;width:300px;background:#fffaf0;border:2px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .15s,transform .15s}
 .hover-card.on{opacity:1;pointer-events:auto;transform:none}
 .hc-img{height:150px;background:#efe6d2;display:grid;place-items:center;color:#9a8a70;font-size:12px}
@@ -2905,7 +2909,8 @@ function cityMapSVG(c) {
   const [ba0, ba1, bo0, bo1] = cfg.bbox;
   s += sectionSuggestions(c).filter(p => p.lat >= ba0 && p.lat <= ba1 && p.lon >= bo0 && p.lon <= bo1).map(p => {
     const [x, y] = pr.p(p.lat, p.lon);
-    return `<g class="sug-pt ${p.f ? '' : 'gem'}" data-sug="${p.id}" data-si="${c.si}" transform="translate(${rn(x)},${rn(y)})"><circle r="13" fill="transparent"/><circle r="8" fill="${p.f ? '#fffaf0' : '#efe7fb'}" stroke="${p.f ? INK : '#7c3aed'}" stroke-width="2" stroke-dasharray="3 2"/><path d="M-3.5 0H3.5M0-3.5V3.5" stroke="${p.f ? INK : '#7c3aed'}" stroke-width="2" stroke-linecap="round"/></g>`;
+    const [fill, stroke, r, dash] = p.lv === 3 ? ['#fde68a', '#b7791f', 10, ''] : p.lv === 2 ? ['#fffaf0', INK, 8, '3 2'] : ['#efe7fb', '#7c3aed', 7, '3 2'];
+    return `<g class="sug-pt lv${p.lv}" data-sug="${p.id}" data-si="${c.si}" transform="translate(${rn(x)},${rn(y)})"><circle r="13" fill="transparent"/><circle r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${p.lv === 3 ? 2.5 : 2}" ${dash ? `stroke-dasharray="${dash}"` : ''}/><path d="M-3.5 0H3.5M0-3.5V3.5" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/></g>`;
   }).join('');
   s += hotelPin + pins.join('');
   s += `<use href="#compass" x="${W - 80}" y="${rn(H - 82)}" width="62" height="62"/><text x="${W - 49}" y="${rn(H - 84)}" text-anchor="middle" font-size="13" class="f-bold" fill="${INK}">N</text>`;
@@ -3491,7 +3496,29 @@ const IT_CITIES = [
   ], {isl: 'sar', car: 1, via: 'Voo de Roma/Milão (~1h); aeroporto de Alghero-Fertilia.'}),
 ];
 const slugify = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-IT_CITIES.forEach(c => c.places.forEach(p => { p.id = c.k + ':' + slugify(p.name); p.city = c.k; }));
+// ★★★ = os mais visitados de cada cidade; demais imperdíveis = ★★; pouco conhecidos = ★
+const TOP_PLACES = {
+  milao: ['Duomo', 'A Última Ceia', 'Galleria Vittorio'], 'lago-como': ['Bellagio', 'Varenna'], bergamo: ['Città Alta'], 'lago-garda': ['Sirmione'],
+  verona: ['Arena', 'Casa di Giulietta'], padua: ['Capela Scrovegni', 'Basílica de Santo'], veneza: ['Praça e Basílica', 'Palácio Ducal', 'Ponte di Rialto', 'Grande Canal', 'Burano'],
+  dolomitas: ['Seceda', 'Tre Cime', 'Lago di Braies'], trieste: ['Piazza Unità', 'Castelo de Miramare'], turim: ['Mole Antonelliana', 'Museu Egípcio'],
+  genova: ['Centro histórico', 'Aquário'], portofino: ['Portofino e Castello'], 'cinque-terre': ['Vernazza', 'Manarola', 'Riomaggiore'],
+  bolonha: ['Piazza Maggiore', 'Duas Torres'], modena: ['Museu Ferrari', 'Duomo'], parma: ['Duomo'], ravenna: ['Basílica de San Vitale', 'Mausoléu de Galla'],
+  florenca: ['Duomo', 'Galleria degli Uffizi', 'Galleria dell’Accademia', 'Ponte Vecchio', 'Piazzale Michelangelo'], pisa: ['Torre de Pisa', 'Duomo'], lucca: ['Muralhas'],
+  'san-gimignano': ['Torres'], siena: ['Piazza del Campo', 'Duomo'], 'val-dorcia': ['Montepulciano', 'Pienza'], perugia: ['Corso Vannucci'], assis: ['Basílica de São Francisco'],
+  orvieto: ['Duomo', 'Civita'], roma: ['Coliseu', 'Museus Vaticanos', 'Basílica de São Pedro', 'Pantheon', 'Fontana di Trevi'],
+  napoles: ['Museu Arqueológico', 'Spaccanapoli', 'Capela Sansevero', 'Pizza na Via'], pompeia: ['Sítio arqueológico', 'Vesúvio'], sorrento: ['Piazza Tasso'],
+  capri: ['Gruta Azul', 'Piazzetta', 'Volta de barco'], 'costa-amalfi': ['Positano', 'Amalfi e Duomo', 'Ravello'], matera: ['Sassi', 'Belvedere Luigi'],
+  bari: ['Polignano', 'Bari Vecchia'], alberobello: ['Rione Monti'], lecce: ['Basílica de Santa Croce'], tropea: ['Centro histórico', 'Santa Maria dell'],
+  palermo: ['Catedral', 'Monreale', 'Capela Palatina'], cefalu: ['Catedral'], agrigento: ['Vale dos Templos'], taormina: ['Teatro Antico', 'Etna'],
+  catania: ['Piazza del Duomo'], siracusa: ['Ortigia', 'Parque Arqueológico'], cagliari: ['Bairro Castello', 'Praia do Poetto'], alghero: ['Centro histórico', 'Grotta di Nettuno'],
+};
+IT_CITIES.forEach(c => c.places.forEach(p => {
+  p.id = c.k + ':' + slugify(p.name); p.city = c.k;
+  p.lv = (TOP_PLACES[c.k] || []).some(t => p.name.startsWith(t)) ? 3 : p.f ? 2 : 1;
+}));
+IT_CITIES.forEach(c => c.places.sort((a, b) => b.lv - a.lv));
+const LV = {3: 'Mais visitado', 2: 'Popular', 1: 'Pouco conhecido'};
+const starsHTML = lv => `<span class="stars lv${lv}" title="${LV[lv]}">${'★'.repeat(lv)}<i>${'★'.repeat(3 - lv)}</i></span>`;
 const CAT = Object.fromEntries(IT_CITIES.map(c => [c.k, c]));
 const PLACE = Object.fromEntries(IT_CITIES.flatMap(c => c.places.map(p => [p.id, p])));
 const IT_REGIONS = [...new Set(IT_CITIES.map(c => c.reg))];
@@ -3643,7 +3670,7 @@ function planSideHTML() {
     const c = CAT[planSel], occ = occOf(c.k), idx = activeOcc(c.k), pc = plan().cities[idx] || null, sel = pc ? pc.p : [];
     const pcs = plan().cities, prev = idx > 0 ? CAT[pcs[idx - 1].k] : pcs.length && !pc ? CAT[pcs[pcs.length - 1].k] : null;
     const L = prev && prev.k !== c.k ? legInfo(prev, c) : null;
-    const famN = c.places.filter(p => p.f).length, gemN = c.places.length - famN;
+    const nLv = lv => c.places.filter(p => p.lv === lv).length;
     return `<div class="card pl-detail" style="--c:${cityColor(c.name)}">
       <button class="pl-back" data-pl="back">← Todas as cidades</button>
       <h3>${esc(c.name)}</h3><div class="pl-reg">${esc(c.reg)} · sugestão: ${c.n} noite${c.n > 1 ? 's' : ''}</div>
@@ -3652,7 +3679,7 @@ function planSideHTML() {
       ${pc ? `<div class="pl-in">✓ ${occ.length > 1 ? `Paradas ${occ.map(i => i + 1).join(' e ')}` : `Parada ${idx + 1}`} do seu roteiro <button class="danger" data-pl="remove-occ" data-i="${idx}">Remover parada ${idx + 1}</button></div>
           <button class="ink-btn pl-add" data-pl="add-again" data-city="${c.k}" title="Incluir outra passagem por ${esc(c.name)}">+ Passar por aqui de novo (ex.: voltar no fim)</button>`
         : `<button class="ink-btn primary pl-add" data-pl="add-city" data-city="${c.k}">+ Incluir ${esc(c.name)} no roteiro</button>`}
-      <p class="pl-note">${famN} lugares imperdíveis e ${gemN} pouco conhecidos em ${esc(c.name)}. Você escolhe os lugares depois de gerar o roteiro, no <b>Mapa do roteiro</b>.</p>
+      <p class="pl-note">Lugares em ${esc(c.name)}: ${starsHTML(3)} ${nLv(3)} mais visitados · ${starsHTML(2)} ${nLv(2)} populares · ${starsHTML(1)} ${nLv(1)} pouco conhecidos.<br>Você escolhe os lugares depois de gerar o roteiro, no <b>Mapa do roteiro</b>.</p>
     </div>`;
   }
   const q = norm(planQuery);
@@ -3687,7 +3714,7 @@ function planSeqHTML() {
       <div class="ps-head"><span class="ps-num">${i + 1}</span><div class="ps-title"><b data-pl="sel" data-city="${c.k}" data-i="${i}">${esc(c.name)}${tag ? ` <span class="ps-tag">${tag}</span>` : ''}</b><small>${esc(c.reg)}</small></div>
         <div class="ps-nights" title="Noites nesta cidade"><button data-pl="n-" data-i="${i}">−</button><span>${pc.n} noite${pc.n === 1 ? '' : 's'}</span><button data-pl="n+" data-i="${i}">+</button></div>
         <div class="ps-move"><button data-pl="up" data-i="${i}" title="Mover para antes" ${i ? '' : 'disabled'}>↑</button><button data-pl="down" data-i="${i}" title="Mover para depois" ${i < pcs.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="del" data-i="${i}" title="Remover" class="danger">×</button></div></div>
-      ${items.length ? `<ol class="ps-places">${items.map((p, j) => `${j ? `<li class="ps-walk"><span>${icSvg(walkInfo(items[j - 1], p, c).ic)}</span>${walkInfo(items[j - 1], p, c).txt}</li>` : ''}<li class="ps-place"><span class="pn">${j + 1}</span><span class="pt">${esc(p.name)}${p.r ? ' <b class="res">reserva</b>' : ''}<small>~${fmtDur(p.h * 60)}</small></span>
+      ${items.length ? `<ol class="ps-places">${items.map((p, j) => `${j ? `<li class="ps-walk"><span>${icSvg(walkInfo(items[j - 1], p, c).ic)}</span>${walkInfo(items[j - 1], p, c).txt}</li>` : ''}<li class="ps-place"><span class="pn">${j + 1}</span><span class="pt">${esc(p.name)} ${starsHTML(p.lv)}${p.r ? ' <b class="res">reserva</b>' : ''}<small>~${fmtDur(p.h * 60)}</small></span>
           <span class="ps-pm"><button data-pl="pup" data-i="${i}" data-j="${j}" ${j ? '' : 'disabled'}>↑</button><button data-pl="pdown" data-i="${i}" data-j="${j}" ${j < items.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="pdel" data-i="${i}" data-j="${j}" class="danger">×</button></span></li>`).join('')}</ol>`
         : `<p class="muted ps-none">Nenhum lugar ainda. Depois de gerar, escolha os lugares no <b>Mapa do roteiro</b>.</p>`}
     </article>`;
@@ -3719,12 +3746,13 @@ function sectionSuggestions(c) {
 function sugCardHTML(c, withDaySelect) {
   const cat = catOfSection(c), list = sectionSuggestions(c); if (!cat || !list.length) return '';
   const selDay = mapAddDay[c.si] && c.days.some(d => d.id === mapAddDay[c.si]) ? mapAddDay[c.si] : c.days[0]?.id;
-  const row = p => `<li data-hc="${p.id}"><svg class="mini-ic" style="--tc:${p.f ? '#7a6a52' : '#7c3aed'}" viewBox="0 0 24 24"><use href="#ic-${p.ic}"/></svg><span><b>${esc(p.name)}</b><small>${esc(p.d)} · ~${fmtDur(p.h * 60)}${p.r ? ' · <b class="res">reserva</b>' : ''}</small></span><button data-sug="${p.id}" data-si="${c.si}" title="Incluir no dia escolhido">+</button></li>`;
-  const fam = list.filter(p => p.f), gems = list.filter(p => !p.f);
+  const row = p => `<li data-hc="${p.id}"><svg class="mini-ic" style="--tc:${p.lv === 3 ? '#b7791f' : p.lv === 2 ? '#7a6a52' : '#7c3aed'}" viewBox="0 0 24 24"><use href="#ic-${p.ic}"/></svg><span><b>${esc(p.name)} ${starsHTML(p.lv)}</b><small>${esc(p.d)} · ~${fmtDur(p.h * 60)}${p.r ? ' · <b class="res">reserva</b>' : ''}</small></span><button data-sug="${p.id}" data-si="${c.si}" title="Incluir no dia escolhido">+</button></li>`;
+  const groups = [3, 2, 1].map(lv => [lv, list.filter(p => p.lv === lv)]).filter(([, l]) => l.length);
   return `<div class="card sug-card"><h4>Mais lugares em ${esc(cat.name)}</h4>
     ${withDaySelect ? `<select class="add-day" data-si="${c.si}" aria-label="Dia">${c.days.map(d => `<option value="${d.id}" ${d.id === selDay ? 'selected' : ''}>Incluir em: ${weekday(d.date)} ${fmtBR(d.date)}${d.title ? ' · ' + esc(d.title) : ''}</option>`).join('')}</select>`
       : '<p class="muted" style="font-size:12px;margin:0 0 6px">Entram no dia escolhido em “Adicionar atividade”. No mapa, são os pontos com “+”.</p>'}
-    <div class="sug-scroll">${fam.length ? `<div class="sug-h">Imperdíveis</div><ul class="sug-list">${fam.map(row).join('')}</ul>` : ''}${gems.length ? `<div class="sug-h">Pouco conhecidos</div><ul class="sug-list">${gems.map(row).join('')}</ul>` : ''}</div>
+    <div class="sug-legend">${starsHTML(3)} mais visitados · ${starsHTML(2)} populares · ${starsHTML(1)} pouco conhecidos</div>
+    <div class="sug-scroll">${groups.map(([lv, l]) => `<div class="sug-h">${starsHTML(lv)} ${LV[lv] === 'Mais visitado' ? 'Mais visitados' : LV[lv] === 'Popular' ? 'Populares' : 'Pouco conhecidos'}</div><ul class="sug-list">${l.map(row).join('')}</ul>`).join('')}</div>
   </div>`;
 }
 function includeSuggestion(id, si) {
@@ -3803,7 +3831,7 @@ function hoverInfo(el) {
 function hoverCardHTML(h) {
   const {name, city, p, item, day} = h, q = encodeURIComponent(`${name} ${city}`);
   const desc = p ? p.d : item?.notes || '';
-  const meta = [p ? (p.f ? 'Imperdível' : 'Pouco conhecido') : TYPES[item?.type]?.label, p ? `~${fmtDur(p.h * 60)}` : '', (p?.r || item?.status === 'reservar') ? '<b class="res">reserva antecipada</b>' : '', item?.status === 'reservado' ? '<b style="color:#15803d">reservado</b>' : ''].filter(Boolean).join(' · ');
+  const meta = [p ? `${starsHTML(p.lv)} ${LV[p.lv]}` : TYPES[item?.type]?.label, p ? `~${fmtDur(p.h * 60)}` : '', (p?.r || item?.status === 'reservar') ? '<b class="res">reserva antecipada</b>' : '', item?.status === 'reservado' ? '<b style="color:#15803d">reservado</b>' : ''].filter(Boolean).join(' · ');
   return `<div class="hc-img"><span>carregando foto…</span></div>
     <div class="hc-body">
       <b class="hc-title">${esc(name)}</b><div class="hc-city">${esc(city)}${day ? ` · ${weekday(day.date)} ${fmtBR(day.date)}${item.start ? ' · ' + esc(item.start) + (item.end ? '–' + esc(item.end) : '') : ''}` : ''}</div>
