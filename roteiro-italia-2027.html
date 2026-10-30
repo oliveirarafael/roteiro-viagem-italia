@@ -33,14 +33,45 @@ header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);bac
 .top-inner{max-width:1500px;margin:0 auto;padding:10px 18px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
 .trip-title{font-size:20px;font-weight:700;border:none;background:transparent;min-width:0;flex:1;padding:2px 4px;border-radius:6px}
 .trip-switch{display:flex;align-items:center;gap:6px;flex:0 1 560px;min-width:280px}
-.trip-menu summary{font-size:12.5px;white-space:nowrap;border:1.5px solid var(--ink);border-radius:999px;padding:3px 10px;color:var(--ink)}
-.trip-menu .menu-pop{left:0;right:auto;top:32px;min-width:300px;max-height:70vh;overflow:auto}
-.trip-head{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:6px 10px 4px}
-.trip-opt{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
-.trip-opt small{font-size:11.5px}
-.trip-opt.on{background:#e6f4f1}
-.trip-opt.on b::before{content:"✓ ";color:#0f766e}
-.trip-menu hr{border:none;border-top:1px dashed var(--line);margin:4px 6px}
+.trips-btn{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:12.5px;font-weight:700;white-space:nowrap;border:1.5px solid var(--ink);border-radius:999px;padding:4px 6px 4px 10px;background:var(--paper,#fffaf0);color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.trips-btn svg{width:15px;height:15px}
+.trips-btn .n{background:var(--ink);color:#fff;border-radius:999px;padding:0 7px;font-size:11px;line-height:17px}
+.trips-btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+
+dialog.drawer{margin:0 auto 0 0;height:100vh;max-height:100vh;width:min(460px,100vw);max-width:100vw;border-radius:0 18px 18px 0;padding:0;background:#f5ecd7;border:none;border-right:3px solid var(--ink);box-shadow:6px 0 0 var(--ink);overflow:hidden}
+dialog.drawer[open]{display:flex;flex-direction:column;animation:drawerIn .22s ease-out}
+@keyframes drawerIn{from{transform:translateX(-100%)}to{transform:none}}
+.dr-head{display:flex;align-items:center;gap:12px;padding:16px 16px 10px}
+.dr-head .medal-big{width:54px;height:54px;border-width:3px;--c:#0f766e}
+.dr-head .medal-big svg{width:28px;height:28px;color:#0f766e}
+.dr-head h2{font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;font-size:28px;margin:0;line-height:1;color:#0f766e;-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:2px 2px 0 var(--ink);letter-spacing:.03em}
+.dr-head .f-script{font-size:17px;color:var(--ink)}
+.dr-head .x{margin-left:auto;font-size:24px;line-height:1;border:none;background:none;color:var(--ink);padding:4px 8px}
+.dr-tools{display:flex;gap:8px;padding:0 16px 12px;flex-wrap:wrap}
+.dr-tools .ink-btn{flex:1 1 auto;justify-content:center}
+.dr-search{width:100%;border:1.5px solid var(--ink);border-radius:999px;padding:6px 12px;background:#fffaf0;font-size:13.5px}
+.dr-list{flex:1;overflow:auto;padding:4px 16px 20px;display:flex;flex-direction:column;gap:12px}
+.dr-sec{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#7a6a52;margin:6px 2px -4px}
+.trip-card{position:relative;background:#fffaf0;border:2px solid var(--ink);border-left:8px solid var(--c);border-radius:14px;box-shadow:3px 3px 0 var(--ink);padding:11px 12px 10px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.trip-card:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.trip-card.on{background:#eef8f5}
+.trip-card.past{opacity:.75}
+.tc-top{display:flex;align-items:flex-start;gap:8px}
+.tc-top h4{margin:0;font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;font-size:18px;letter-spacing:.02em;line-height:1.15;color:var(--ink);flex:1;min-width:0;overflow-wrap:anywhere}
+.tc-badge{flex:none;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#0f766e;background:#d6f0ea;border:1.5px solid #0f766e;border-radius:999px;padding:0 7px;line-height:17px}
+.tc-dates{font-family:'Caveat','Segoe Print',cursive;font-size:18px;color:#4a3b2a;margin:2px 0 6px}
+.tc-cities{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.tc-cities span{background:var(--c);color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
+.tc-cities .more{background:#e9dfc6;color:var(--ink)}
+.tc-stats{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:#7a6a52}
+.tc-stats b{color:var(--ink)}
+.tc-bar{height:5px;border-radius:5px;background:#eadfc4;margin:7px 0 8px;overflow:hidden}
+.tc-bar div{height:100%;background:#1f9d55}
+.tc-actions{display:flex;gap:6px;flex-wrap:wrap}
+.tc-actions button{font-size:12px;padding:3px 10px;border-radius:999px;border:1.5px solid var(--ink);background:#fffaf0;color:var(--ink);font-weight:700}
+.tc-actions button.primary{background:var(--ink);color:#fff}
+.tc-actions button.danger{border-color:#b91c1c;color:#b91c1c;margin-left:auto}
+.dr-empty{text-align:center;color:#7a6a52;font-size:13px;padding:20px}
 .trip-title:focus{outline:2px solid #cfe9e5;background:#fff}
 .stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .stat{background:#f3f1ea;border-radius:999px;padding:4px 10px;font-size:12.5px;white-space:nowrap}
@@ -629,7 +660,7 @@ dialog{max-height:92vh;overflow:auto}
   nav.tabs{padding:0 6px;scrollbar-width:none}
   nav.tabs::-webkit-scrollbar{display:none}
   nav.tabs button{padding:8px 10px}
-  .trip-menu .menu-pop{position:fixed;left:8px;right:8px;top:58px;min-width:0;max-height:75vh}
+  dialog.drawer{width:100vw;border-radius:0;border-right:none;box-shadow:none}
   main{padding:12px 10px 50px}
   .budget-grid{grid-template-columns:1fr}
 
@@ -689,7 +720,7 @@ dialog{max-height:92vh;overflow:auto}
   <div class="top-inner">
     <div class="trip-switch">
       <input id="tripTitle" class="trip-title" aria-label="Título da viagem">
-      <details class="menu trip-menu" id="tripMenu"><summary title="Trocar, criar ou excluir roteiros">Meus roteiros ▾</summary><div class="menu-pop" id="tripMenuPop"></div></details>
+      <button id="tripsBtn" class="trips-btn" title="Ver, criar e trocar de roteiro"></button>
     </div>
     <div class="stats" id="stats"></div>
     <div class="actions">
@@ -738,6 +769,7 @@ dialog{max-height:92vh;overflow:auto}
 
 <datalist id="bases"></datalist>
 <dialog id="modal"><form id="modalForm" method="dialog"></form></dialog>
+<dialog id="tripsPanel" class="drawer" aria-label="Meus roteiros"></dialog>
 
 <script>
 /* ======================= utilidades ======================= */
@@ -1268,7 +1300,9 @@ function computeConflicts() {
 const conflictText = id => (CONFLICTS.get(id) || []).map(o => `${o.start}${o.end ? '–' + o.end : ''} ${o.title}`).join('; ');
 function renderHeader() {
   CONFLICTS = computeConflicts();
-  renderTripMenu();
+  $('#tripsBtn').innerHTML = `${icSvg('mapa')}<span class="lbl">Meus roteiros</span><span class="n">${tripIndex.trips.length}</span>`;
+  $('#resetBtn').hidden = tripIndex.current !== FIRST_TRIP;
+  renderTripsPanel();
   const t = $('#tripTitle'); if (document.activeElement !== t) t.value = state.title;
   const days = state.days;
   if (!days.length) { $('#stats').innerHTML = ''; return; }
@@ -3685,7 +3719,8 @@ function switchTrip(id) {
   if (tripIndex.trips.some(t => t.id === tripIndex.current)) localStorage.setItem(tripKey(tripIndex.current), JSON.stringify(state));
   const s = readTrip(id) || (id === FIRST_TRIP ? defaultState() : null);
   if (!s) { alert('Não encontrei os dados desse roteiro.'); return; }
-  const tab = state.settings.tab;
+  const tab = state.settings.tab, panel = $('#tripsPanel');
+  if (panel.open) panel.close();
   tripIndex.current = id; state = s; state.settings.tab = tab;
   resetTripUi(); save(); renderAll(); window.scrollTo({top: 0});
 }
@@ -3695,23 +3730,100 @@ function addTrip(s) {
   localStorage.setItem(tripKey(id), JSON.stringify(s));
   switchTrip(id);
 }
-function deleteTrip() {
+const tripData = id => id === tripIndex.current ? state : readTrip(id);
+function deleteTrip(id = tripIndex.current) {
   if (tripIndex.trips.length < 2) { alert('Este é o único roteiro. Crie outro antes de excluir este.'); return; }
-  if (!confirm(`Excluir o roteiro “${state.title}”? Isso não pode ser desfeito — se quiser guardar, use “Exportar” antes.`)) return;
-  const id = tripIndex.current;
+  const t = tripIndex.trips.find(x => x.id === id); if (!t) return;
+  if (!confirm(`Excluir o roteiro “${t.title || 'Sem título'}”? Isso não pode ser desfeito — se quiser guardar, use “Exportar” antes.`)) return;
   localStorage.removeItem(tripKey(id));
-  tripIndex.trips = tripIndex.trips.filter(t => t.id !== id);
-  tripIndex.current = '';
-  switchTrip(tripIndex.trips[0].id);
-  toast('Roteiro excluído.');
+  tripIndex.trips = tripIndex.trips.filter(x => x.id !== id);
+  if (id === tripIndex.current) { tripIndex.current = ''; switchTrip(tripIndex.trips[0].id); }
+  else { saveIndex(); renderHeader(); }
+  renderTripsPanel();
+  toast(`Roteiro <b>${esc(t.title || 'Sem título')}</b> excluído.`);
 }
-function renderTripMenu() {
-  const pop = $('#tripMenuPop'); if (!pop) return;
-  const range = t => t.start ? `${fmtBRY(t.start)} → ${fmtBRY(t.end)}` : 'sem datas';
-  pop.innerHTML = `<div class="trip-head">Meus roteiros (${tripIndex.trips.length})</div>`
-    + tripIndex.trips.map(t => `<button class="trip-opt ${t.id === tripIndex.current ? 'on' : ''}" data-trip="${t.id}"><b>${esc(t.title || 'Sem título')}</b><small>${range(t)}</small></button>`).join('')
-    + `<hr><button data-trip-act="new">+ Novo roteiro</button><button data-trip-act="dup">Duplicar este roteiro</button><button data-trip-act="del" class="danger">Excluir este roteiro</button>`;
-  $('#resetBtn').hidden = tripIndex.current !== FIRST_TRIP;
+function duplicateTrip(id) {
+  const s = tripData(id); if (!s) return;
+  const copy = JSON.parse(JSON.stringify(s));
+  copy.title = s.title + ' (cópia)';
+  addTrip(copy);
+  toast(`Roteiro <b>${esc(copy.title)}</b> criado. Para mudar as datas use “Mudar data de início” no Calendário.`);
+}
+function tripSummary(s) {
+  const days = s.days || [], stays = [];
+  days.forEach((d, i) => {
+    if (isNoHotel(d.base)) return;
+    const last = stays[stays.length - 1];
+    if (last && norm(last.base) === norm(d.base) && last.end === i - 1) { last.end = i; last.n++; } else stays.push({base: d.base, end: i, n: 1});
+  });
+  const items = days.reduce((a, d) => a + d.items.length, 0);
+  const cl = s.checklist || [], done = cl.filter(c => c.done).length;
+  const start = days[0]?.date || '', end = days[days.length - 1]?.date || '';
+  return {start, end, n: days.length, stays, items, clN: cl.length, clDone: done, toGo: start ? diffDays(todayStr(), start) : null, past: end ? diffDays(todayStr(), end) < 0 : false};
+}
+let tripsQuery = '';
+function renderTripsPanel() {
+  const dlg = $('#tripsPanel'); if (!dlg.open) return;
+  const all = tripIndex.trips.map(t => ({t, s: tripData(t.id)})).filter(x => x.s).map(x => ({...x, sum: tripSummary(x.s)}));
+  const q = norm(tripsQuery);
+  const list = all.filter(x => !q || norm(x.s.title).includes(q) || x.sum.stays.some(st => norm(st.base).includes(q)))
+    .sort((a, b) => (a.sum.past - b.sum.past) || (a.sum.start || '9').localeCompare(b.sum.start || '9'));
+  const card = ({t, s, sum}) => {
+    const on = t.id === tripIndex.current, color = sum.stays[0] ? cityColor(sum.stays[0].base) : '#0f766e';
+    const cities = sum.stays.slice(0, 5).map(st => `<span style="--c:${cityColor(st.base)}">${esc(st.base)}</span>`).join('') + (sum.stays.length > 5 ? `<span class="more">+${sum.stays.length - 5}</span>` : '');
+    const when = sum.toGo == null ? '' : sum.past ? 'já aconteceu' : sum.toGo > 0 ? `faltam <b>${sum.toGo}</b> dias` : 'em andamento';
+    const pct = sum.clN ? Math.round(sum.clDone / sum.clN * 100) : 0;
+    return `<article class="trip-card ${on ? 'on' : ''} ${sum.past ? 'past' : ''}" data-trip="${t.id}" style="--c:${color}">
+      <div class="tc-top"><h4>${esc(s.title || 'Sem título')}</h4>${on ? '<span class="tc-badge">aberto</span>' : ''}</div>
+      <div class="tc-dates">${sum.start ? `${weekday(sum.start)} ${fmtBRY(sum.start)} → ${weekday(sum.end)} ${fmtBRY(sum.end)} · ${sum.n} dia${sum.n > 1 ? 's' : ''}` : 'sem datas'}</div>
+      ${cities ? `<div class="tc-cities">${cities}</div>` : ''}
+      <div class="tc-stats"><span><b>${sum.items}</b> atividade${sum.items === 1 ? '' : 's'}</span><span>checklist <b>${sum.clDone}/${sum.clN}</b></span>${when ? `<span>${when}</span>` : ''}</div>
+      <div class="tc-bar" title="Checklist ${pct}%"><div style="width:${pct}%"></div></div>
+      <div class="tc-actions">${on ? '<button data-ta="close" class="primary">Continuar</button>' : '<button data-ta="open" class="primary">Abrir</button>'}<button data-ta="dup">Duplicar</button><button data-ta="export">Exportar</button><button data-ta="del" class="danger">Excluir</button></div>
+    </article>`;
+  };
+  const upcoming = list.filter(x => !x.sum.past), past = list.filter(x => x.sum.past);
+  dlg.innerHTML = `
+    <div class="dr-head"><div class="medal-big">${icSvg('mapa')}</div><div><h2>MEUS ROTEIROS</h2><div class="f-script">${all.length} roteiro${all.length > 1 ? 's' : ''} salvo${all.length > 1 ? 's' : ''} neste navegador</div></div><button class="x" data-ta="close" title="Fechar (Esc)">×</button></div>
+    <div class="dr-tools">
+      <button class="ink-btn primary" data-ta="new">+ Novo roteiro</button>
+      <button class="ink-btn" data-ta="ai">Pedir para uma IA</button>
+      <button class="ink-btn" data-ta="import">Importar arquivo</button>
+      ${all.length > 4 ? `<input class="dr-search" type="search" placeholder="Buscar por nome ou cidade…" value="${esc(tripsQuery)}">` : ''}
+    </div>
+    <div class="dr-list">
+      ${upcoming.length && past.length ? '<div class="dr-sec">Próximas viagens</div>' : ''}${upcoming.map(card).join('')}
+      ${past.length ? `<div class="dr-sec">Já aconteceram</div>${past.map(card).join('')}` : ''}
+      ${list.length ? '' : '<div class="dr-empty">Nenhum roteiro encontrado.</div>'}
+    </div>`;
+}
+function openTripsPanel() {
+  const dlg = $('#tripsPanel');
+  if (!dlg.open) dlg.showModal();
+  renderTripsPanel();
+}
+let importAsNewNext = false;
+function setupTripsPanel() {
+  const dlg = $('#tripsPanel');
+  dlg.addEventListener('click', e => {
+    if (e.target === dlg) { dlg.close(); return; }
+    const b = e.target.closest('[data-ta]'), card = e.target.closest('[data-trip]');
+    const id = card?.dataset.trip, act = b ? b.dataset.ta : card ? 'open' : null;
+    if (!act) return;
+    if (act === 'close') dlg.close();
+    if (act === 'open') { dlg.close(); switchTrip(id); }
+    if (act === 'dup') duplicateTrip(id);
+    if (act === 'del') deleteTrip(id);
+    if (act === 'export') { const s = tripData(id); if (s) download('roteiro-' + (norm(s.title).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'viagem') + '.json', JSON.stringify(s, null, 2), 'application/json'); }
+    if (act === 'new') openNewTripModal('blank');
+    if (act === 'ai') { openAiModal(); mform.asNew.checked = true; }
+    if (act === 'import') { importAsNewNext = true; $('#importFile').click(); }
+  });
+  dlg.addEventListener('input', e => {
+    if (!e.target.classList.contains('dr-search')) return;
+    tripsQuery = e.target.value; renderTripsPanel();
+    const s = $('.dr-search', dlg); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
+  });
 }
 function openNewTripModal(mode = 'blank') {
   const today = todayStr(), start = addDays(today, 60);
@@ -3784,16 +3896,11 @@ function init() {
   $('#tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab); });
   $('#tripTitle').addEventListener('change', e => commit(() => state.title = e.target.value.trim() || state.title, {render: false}));
   $('#undoBtn').addEventListener('click', undo);
-  $('#tripMenuPop').addEventListener('click', e => {
-    const b = e.target.closest('[data-trip], [data-trip-act]'); if (!b) return;
-    $('#tripMenu').open = false;
-    if (b.dataset.trip) switchTrip(b.dataset.trip);
-    else if (b.dataset.tripAct === 'del') deleteTrip();
-    else openNewTripModal(b.dataset.tripAct === 'dup' ? 'dup' : 'blank');
-  });
+  $('#tripsBtn').addEventListener('click', openTripsPanel);
+  setupTripsPanel();
   window.addEventListener('storage', e => {
     if (e.key === INDEX_KEY && e.newValue) {
-      try { const x = JSON.parse(e.newValue); tripIndex.trips = x.trips; if (!x.trips.some(t => t.id === tripIndex.current)) { tripIndex.current = ''; switchTrip(x.trips[0].id); } else renderTripMenu(); } catch (err) {}
+      try { const x = JSON.parse(e.newValue); tripIndex.trips = x.trips; if (!x.trips.some(t => t.id === tripIndex.current)) { tripIndex.current = ''; switchTrip(x.trips[0].id); } else renderHeader(); } catch (err) {}
       return;
     }
     if (e.key !== tripKey(tripIndex.current) || !e.newValue) return;
@@ -3810,8 +3917,10 @@ function init() {
   $('#importFile').addEventListener('change', async e => {
     const file = e.target.files[0]; if (!file) return;
     try {
-      if (importAnyText(await file.text(), modal.open && !!mform.asNew?.checked) && modal.open) modal.close();
+      const asNew = importAsNewNext || (modal.open && !!mform.asNew?.checked);
+      if (importAnyText(await file.text(), asNew) && modal.open) modal.close();
     } catch (err) { alert('Não foi possível importar: ' + err.message); }
+    importAsNewNext = false;
     e.target.value = '';
   });
   $('#resetBtn').addEventListener('click', () => {
