@@ -345,6 +345,18 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .ps-tag{font-family:system-ui,'Segoe UI',sans-serif;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--c);border:1.5px solid var(--c);border-radius:999px;padding:0 6px;vertical-align:middle}
 .pl-seq-foot{display:flex;justify-content:center;margin-top:12px}
 .gen-st{font-size:12px;font-weight:700;color:#7a6a52}
+.sug-pt{cursor:pointer}
+.sug-pt:hover circle:nth-of-type(2){stroke-dasharray:none;stroke-width:3;fill:#fde68a}
+.sug-card select{width:100%;margin-bottom:6px}
+.sug-scroll{max-height:320px;overflow:auto;margin-right:-6px;padding-right:6px}
+.sug-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#7a6a52;margin:6px 0 2px}
+.sug-list{list-style:none;margin:0;padding:0}
+.sug-list li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed #eadbb8;font-size:13px}
+.sug-list li span{flex:1;min-width:0;display:flex;flex-direction:column}
+.sug-list small{color:#6b5a44;font-size:11.5px}
+.sug-list button{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);background:#fffaf0;font-weight:800;font-size:16px;line-height:1;padding:0;box-shadow:1.5px 1.5px 0 var(--ink)}
+.sug-list button:hover{background:#fde68a}
+.city-section>.sug-card{margin-top:12px;max-width:640px}
 .gen-st.ok{color:#15803d}
 .gen-st.warn{color:#c2410c}
 .mini-map{display:block;width:100%;height:auto;margin:6px 0 2px}
@@ -2475,6 +2487,7 @@ function locateItem(it, c, ctx) {
   const trip = places.find(k => k !== c.key);
   if (trip) return {kind: 'trip', place: trip};
   if (c.cfg) { const poi = c.cfg.pois.find(p => p.re.some(re => re.test(t))); if (poi) return {kind: 'poi', poi}; }
+  if (it.geo && c.cfg) { const [a0, a1, o0, o1] = c.cfg.bbox; if (it.geo.lat >= a0 && it.geo.lat <= a1 && it.geo.lon >= o0 && it.geo.lon <= o1) return {kind: 'custom', lat: it.geo.lat, lon: it.geo.lon, auto: true}; }
   if (places.includes(c.key)) {
     if (c.cfg && TRANSPORT.has(it.type)) return {kind: 'poi', poi: c.cfg.pois.find(p => p.k === c.cfg.station)};
     return {kind: 'city'};
@@ -2855,7 +2868,7 @@ function cityMapSVG(c) {
     const color = DAY_COLORS[dayIdx.get(d.id) % DAY_COLORS.length];
     if (displaced) leaders += `<g class="leader" data-day="${d.id}" data-type="${it.type}"><path d="M${rn(tx)} ${rn(ty)}L${rn(x)} ${rn(y)}" stroke="${color}" stroke-width="1.6" stroke-dasharray="2 3"/><circle cx="${rn(tx)}" cy="${rn(ty)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.5"/></g>`;
     const ic = loc.kind === 'poi' && !TRANSPORT.has(it.type) && ['igreja', 'fonte', 'ponte', 'castelo', 'gondola', 'torre'].includes(loc.poi.ic) ? loc.poi.ic : (TYPE_IC[it.type] || 'visita');
-    pins.push(pinSVG({x, y, color, ic, num: counters[d.id], id: it.id, kind: 'item', day: d.id, type: it.type, custom: loc.kind === 'custom', conflict: CONFLICTS.has(it.id)}));
+    pins.push(pinSVG({x, y, color, ic, num: counters[d.id], id: it.id, kind: 'item', day: d.id, type: it.type, custom: loc.kind === 'custom' && !loc.auto, conflict: CONFLICTS.has(it.id)}));
     (paths[d.id] ||= {color, pts: []}).pts.push([x, y - 14]);
   });
   // monumentos ilustrados: escolhe a posição livre mais próxima do ponto real
@@ -2877,6 +2890,11 @@ function cityMapSVG(c) {
   c.check = {moved, total};
   s += lms + leaders;
   Object.entries(paths).forEach(([did, pth]) => { if (pth.pts.length > 1) s += `<path class="dpath" data-day="${did}" d="${smoothPath(pth.pts, false)}" stroke="${pth.color}"/>`; });
+  const [ba0, ba1, bo0, bo1] = cfg.bbox;
+  s += sectionSuggestions(c).filter(p => p.lat >= ba0 && p.lat <= ba1 && p.lon >= bo0 && p.lon <= bo1).map(p => {
+    const [x, y] = pr.p(p.lat, p.lon);
+    return `<g class="sug-pt ${p.f ? '' : 'gem'}" data-sug="${p.id}" data-si="${c.si}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(p.name)} — clique para incluir no dia escolhido</title><circle r="13" fill="transparent"/><circle r="8" fill="${p.f ? '#fffaf0' : '#efe7fb'}" stroke="${p.f ? INK : '#7c3aed'}" stroke-width="2" stroke-dasharray="3 2"/><path d="M-3.5 0H3.5M0-3.5V3.5" stroke="${p.f ? INK : '#7c3aed'}" stroke-width="2" stroke-linecap="round"/></g>`;
+  }).join('');
   s += hotelPin + pins.join('');
   s += `<use href="#compass" x="${W - 80}" y="${rn(H - 82)}" width="62" height="62"/><text x="${W - 49}" y="${rn(H - 84)}" text-anchor="middle" font-size="13" class="f-bold" fill="${INK}">N</text>`;
   s += `<g transform="translate(18 ${rn(H - 22)})"><rect x="-8" y="-22" width="${rn(Math.max(m500, 128) + 16)}" height="32" rx="8" fill="#fffaf0" opacity=".85" ${sk(1.2)}/><path d="M0 0H${rn(m500)}" stroke="${INK}" stroke-width="5"/><path d="M${rn(m500 / 2)} 0H${rn(m500)}" stroke="#fffaf0" stroke-width="3"/><text x="0" y="-8" font-size="12" class="f-hand" fill="${INK}">500 m · a pé ~6 min</text></g>`;
@@ -2908,7 +2926,7 @@ function citySectionHTML(c) {
   const head = `<div class="city-head"><div class="medal-big"><svg viewBox="0 0 100 100"><use href="#lm-${P ? P.lm : 'pin'}"/></svg></div>
     <div><h3>${esc(s.base.toUpperCase())}</h3><div class="f-script">${weekday(s.checkin)} ${fmtBR(s.checkin)} → ${weekday(s.checkout)} ${fmtBR(s.checkout)} · ${s.nights} noite${s.nights > 1 ? 's' : ''}${hotel ? ' · ' + esc(hotel.name) : ' · hotel a escolher'}</div></div></div>`;
   if (!c.cfg) {
-    return `<section class="city-section" id="city-${c.si}" style="--c:${c.color}">${head}${c.key ? `<div class="card"><p class="muted" style="margin:0">Ainda não tenho o desenho detalhado de ${esc(s.base)}. As atividades estão abaixo, dia a dia.</p></div>` : ''}${dayListHTML(c.days)}${postcardsHTML(c)}</section>`;
+    return `<section class="city-section" id="city-${c.si}" style="--c:${c.color}">${head}${c.key ? `<div class="card"><p class="muted" style="margin:0">Ainda não tenho o desenho detalhado de ${esc(s.base)}. As atividades estão abaixo, dia a dia.</p></div>` : ''}${dayListHTML(c.days)}${sugCardHTML(c, true)}${postcardsHTML(c)}</section>`;
   }
   const unplaced = c.located.filter(x => x.loc.kind === 'city' && !['voo', 'transfer'].includes(x.it.type));
   const types = [...new Set(c.located.filter(x => x.loc.kind === 'poi' || x.loc.kind === 'custom').map(x => x.it.type))];
@@ -2932,6 +2950,7 @@ function citySectionHTML(c) {
           <button class="primary add-mode-btn ${addOn ? 'on' : ''}" data-add-mode="${c.si}">${addOn ? 'Cancelar (Esc)' : '+ Clicar no mapa para adicionar'}</button>
           <p class="muted" style="font-size:12px;margin:6px 0 0">Ou dê dois cliques em qualquer ponto do mapa. Para editar ou excluir, clique no marcador.</p>
         </div>
+        ${sugCardHTML(c, false)}
         <div class="card check-card"><h4>Verificação</h4>
           <div class="check-row ${pairs.length ? 'warn' : 'ok'}">${pairs.length ? `<b>${pairs.length} conflito${pairs.length > 1 ? 's' : ''} de horário</b>${pairs.map(({d, a, b}) => `<div class="check-item"><span>${weekday(d.date)} ${fmtBR(d.date)}:</span> <a href="#" data-open-item="${a.id}">${esc(a.start)} ${esc(a.title)}</a> × <a href="#" data-open-item="${b.id}">${esc(b.start)} ${esc(b.title)}</a></div>`).join('')}` : '<b>Horários OK</b> — nenhuma atividade se sobrepõe.'}</div>
           <div class="check-row ok"><b>Mapa sem sobreposição</b> — ${check.total} marcadores${check.moved ? `; ${check.moved} foram afastados do ponto exato para não cobrir outro (a linha pontilhada liga ao lugar real)` : ''}.</div>
@@ -3730,15 +3749,48 @@ function planHTML() {
   return `<div class="plan-grid"><div class="paper plan-paper">${planMapSVG()}</div><aside class="plan-side">${planSideHTML()}</aside></div>${planSeqHTML()}`;
 }
 
+/* ---------- sugestões no mapa do roteiro ---------- */
+const placeType = ic => ({comida: 'comida', compras: 'compras', passeio: 'passeio', foto: 'passeio', sol: 'passeio', barco: 'passeio', gondola: 'passeio'}[ic] || 'visita');
+const catOfSection = c => CAT[c.key] || IT_CITIES.find(x => norm(x.name) === norm(c.stay.base)) || null;
+function sectionSuggestions(c) {
+  const cat = catOfSection(c); if (!cat) return [];
+  const items = c.days.flatMap(d => d.items), ids = new Set(items.map(i => i.cat).filter(Boolean)), titles = new Set(items.map(i => norm(i.title)));
+  return cat.places.filter(p => !ids.has(p.id) && !titles.has(norm(p.name)));
+}
+function sugCardHTML(c, withDaySelect) {
+  const cat = catOfSection(c), list = sectionSuggestions(c); if (!cat || !list.length) return '';
+  const selDay = mapAddDay[c.si] && c.days.some(d => d.id === mapAddDay[c.si]) ? mapAddDay[c.si] : c.days[0]?.id;
+  const row = p => `<li><svg class="mini-ic" style="--tc:${p.f ? '#7a6a52' : '#7c3aed'}" viewBox="0 0 24 24"><use href="#ic-${p.ic}"/></svg><span><b>${esc(p.name)}</b><small>${esc(p.d)} · ~${fmtDur(p.h * 60)}${p.r ? ' · <b class="res">reserva</b>' : ''}</small></span><button data-sug="${p.id}" data-si="${c.si}" title="Incluir no dia escolhido">+</button></li>`;
+  const fam = list.filter(p => p.f), gems = list.filter(p => !p.f);
+  return `<div class="card sug-card"><h4>Mais lugares em ${esc(cat.name)}</h4>
+    ${withDaySelect ? `<select class="add-day" data-si="${c.si}" aria-label="Dia">${c.days.map(d => `<option value="${d.id}" ${d.id === selDay ? 'selected' : ''}>Incluir em: ${weekday(d.date)} ${fmtBR(d.date)}${d.title ? ' · ' + esc(d.title) : ''}</option>`).join('')}</select>`
+      : '<p class="muted" style="font-size:12px;margin:0 0 6px">Entram no dia escolhido em “Adicionar atividade”. No mapa, são os pontos com “+”.</p>'}
+    <div class="sug-scroll">${fam.length ? `<div class="sug-h">Imperdíveis</div><ul class="sug-list">${fam.map(row).join('')}</ul>` : ''}${gems.length ? `<div class="sug-h">Pouco conhecidos</div><ul class="sug-list">${gems.map(row).join('')}</ul>` : ''}</div>
+  </div>`;
+}
+function includeSuggestion(id, si) {
+  const P0 = PLACE[id], c = buildMapModel().cities[si]; if (!P0 || !c || !c.days.length) return;
+  const day = c.days.find(d => d.id === mapAddDay[si]) || c.days[0];
+  const wasSync = plan().genKey && plan().genKey === planKey();
+  const item = {id: uid(), start: '', end: '', type: placeType(P0.ic), title: P0.name, notes: P0.d + (P0.r ? ' Reserva antecipada recomendada.' : ''), cost: 0, status: P0.r ? 'reservar' : '', link: '', geo: {lat: P0.lat, lon: P0.lon}, cat: id};
+  commit(() => {
+    insertByTime(day, item);
+    const i = activeOcc(P0.city);
+    if (i >= 0 && !plan().cities[i].p.includes(id)) plan().cities[i].p.push(id);
+    if (wasSync) plan().genKey = planKey();
+  });
+  syncToast(item.id, 'new');
+}
+
 /* ---------- gerar calendário ---------- */
 function generateFromPlan(start) {
   const days = [], pcs = plan().cities.filter(pc => CAT[pc.k]);
   let date = start;
   const newDay = (base, title) => { const d = {id: uid(), date, base, title, note: '', items: []}; days.push(d); date = addDays(date, 1); return d; };
-  const typeOf = ic => ({comida: 'comida', compras: 'compras', passeio: 'passeio', foto: 'passeio', sol: 'passeio', barco: 'passeio', gondola: 'passeio'}[ic] || 'visita');
+  const typeOf = placeType;
   pcs.forEach((pc, i) => {
     const c = CAT[pc.k], prev = i && pcs[i - 1].k !== pc.k ? CAT[pcs[i - 1].k] : null, L = prev ? legInfo(prev, c) : null;
-    const items = pc.p.map(id => PLACE[id]).filter(Boolean).map(p => ({id: uid(), start: '', end: '', type: typeOf(p.ic), title: p.name, notes: p.d + (p.r ? ' Reserva antecipada recomendada.' : ''), cost: 0, status: p.r ? 'reservar' : '', link: '', _h: p.h}));
+    const items = pc.p.map(id => PLACE[id]).filter(Boolean).map(p => ({id: uid(), start: '', end: '', type: typeOf(p.ic), title: p.name, notes: p.d + (p.r ? ' Reserva antecipada recomendada.' : ''), cost: 0, status: p.r ? 'reservar' : '', link: '', geo: {lat: p.lat, lon: p.lon}, cat: p.id, _h: p.h}));
     const legItem = L ? {id: uid(), start: '', end: '', type: L.mode === 'carro' ? 'transfer' : L.mode, title: `${MODE[L.mode][0]} ${prev.name} → ${c.name}`, notes: `~${fmtDur(L.min)} · ${L.note}${L.est ? ' (estimativa)' : ''}`, cost: 0, status: L.mode === 'trem' && !L.est ? 'reservar' : '', link: ''} : null;
     const n = Math.max(0, +pc.n || 0);
     const target = n ? Array.from({length: n}, (_, j) => newDay(c.name, j === 0 ? (prev ? `${prev.name} → ${c.name}` : `Chegada em ${c.name}`) : c.name)) : [days[days.length - 1] || newDay(c.name, c.name)];
@@ -3896,6 +3948,8 @@ function setupMapEvents() {
   el.addEventListener('change', e => { if (e.target.classList.contains('add-day')) mapAddDay[+e.target.dataset.si] = e.target.value; });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && mapAdd) setMapAddMode(null); });
   el.addEventListener('click', e => {
+    const sug = e.target.closest('[data-sug]');
+    if (sug && !mapAdd) { includeSuggestion(sug.dataset.sug, +sug.dataset.si); return; }
     if (mapAdd) {
       const svg = e.target.closest('svg.citymap');
       if (svg && +svg.dataset.si === mapAdd.si && !e.target.closest('.pin, .edge-tag')) { addActivityAt(svg, e.clientX, e.clientY); return; }
@@ -3944,7 +3998,7 @@ function setupMapEvents() {
     const pin = e.target.closest('.pin');
     if (pin) { resetMapPos(pin.dataset.kind, pin.dataset.id); return; }
     const svg = e.target.closest('svg.citymap');
-    if (svg && !e.target.closest('.edge-tag')) addActivityAt(svg, e.clientX, e.clientY);
+    if (svg && !e.target.closest('.edge-tag, .sug-pt')) addActivityAt(svg, e.clientX, e.clientY);
   });
   el.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
