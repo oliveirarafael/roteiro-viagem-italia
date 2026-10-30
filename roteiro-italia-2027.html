@@ -358,6 +358,10 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .sug-list button:hover{background:#fde68a}
 .city-section>.sug-card{margin-top:12px;max-width:640px}
 .gen-st.ok{color:#15803d}
+.gen-st a,.hero-dates{color:#0f766e;font-weight:700}
+.hero-dates{text-decoration:none;font-size:.85em}
+.stat-btn{border:1px solid transparent;cursor:pointer;font:inherit;color:inherit}
+.stat-btn:hover{border-color:var(--ink)}
 .gen-st.warn{color:#c2410c}
 .pl-places{list-style:none;margin:0;padding:0}
 .pl-place label{display:flex;gap:8px;align-items:flex-start;padding:7px 4px;border-bottom:1px dashed #eadbb8;cursor:pointer;font-size:13px;font-weight:400;color:var(--ink)}
@@ -1026,7 +1030,7 @@ function renderHeader() {
   renderTripsPanel();
   const t = $('#tripTitle'); if (document.activeElement !== t) t.value = state.title;
   const days = state.days;
-  if (!days.length) { $('#stats').innerHTML = ''; return; }
+  if (!days.length) { $('#stats').innerHTML = '<button class="stat stat-btn" data-dates title="Definir as datas da viagem">Definir datas ✎</button>'; return; }
   const first = days[0].date, last = days[days.length - 1].date;
   const stays = getStays();
   const nights = stays.reduce((s, x) => s + x.nights, 0);
@@ -1042,7 +1046,7 @@ function renderHeader() {
   const total = state.checklist.length + res.length;
   const done = state.checklist.filter(c => c.done).length + res.filter(i => i.status === 'reservado').length;
   $('#stats').innerHTML = `
-    <span class="stat">${fmtBRY(first)} → ${fmtBRY(last)}</span>
+    <button class="stat stat-btn" data-dates title="Alterar nome e datas">${fmtBRY(first)} → ${fmtBRY(last)} ✎</button>
     <span class="stat"><b>${diffDays(first, last) + 1}</b> dias · <b>${nights}</b> noites</span>
     <span class="stat count">${count}</span>
     ${tabOn('checklist') ? `<span class="stat">Checklist <b>${done}/${total}</b></span>` : ''}
@@ -2990,7 +2994,7 @@ function renderMap() {
     el.innerHTML = `${modeBar}
     <div class="map-hero">
       <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
-      <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) : ''} · ${state.days.length} dias${m.cities.length ? ` · ${m.cities.length} cidade${m.cities.length > 1 ? 's' : ''}` : ''}</div>
+      <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) + ' <a href="#" class="hero-dates" data-dates title="Alterar datas">✎</a>' : '<a href="#" class="hero-dates" data-dates>definir datas ✎</a>'} · ${state.days.length} dias${m.cities.length ? ` · ${m.cities.length} cidade${m.cities.length > 1 ? 's' : ''}` : ''}</div>
       ${m.cities.length ? `<div class="map-jump">${m.cities.map(c => `<button data-goto="city-${c.si}" style="--c:${c.color}">${c.si + 1}. ${esc(c.stay.base.toUpperCase())}</button>`).join('')}</div>` : ''}
     </div>
     <div class="card map-note">O mapa ilustrado só cobre Itália e Suíça (Roma, Florença, Veneza, Milão e arredores). Nesta viagem o roteiro aparece abaixo, dia a dia: clique numa atividade para editar ou em “+ atividade” para incluir.${m.cities.length ? '' : ' Defina a cidade de pernoite de cada dia no Calendário para agrupar por cidade.'}</div>
@@ -3000,7 +3004,7 @@ function renderMap() {
   el.innerHTML = `${modeBar}
     <div class="map-hero">
       <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
-      <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) : ''} · ${m.cities.length} cidades-base · ${trips} passeios e bate-voltas</div>
+      <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) + ' <a href="#" class="hero-dates" data-dates title="Alterar datas">✎</a>' : '<a href="#" class="hero-dates" data-dates>definir datas ✎</a>'} · ${m.cities.length} cidades-base · ${trips} passeios e bate-voltas</div>
       <div class="map-jump">${m.cities.map(c => `<button data-goto="city-${c.si}" style="--c:${c.color}">${c.si + 1}. ${esc(c.stay.base.toUpperCase())}</button>`).join('')}</div>
     </div>
     <div class="map-overview">
@@ -3703,7 +3707,7 @@ const planKey = () => JSON.stringify(plan().cities.map(pc => [pc.k, pc.n, pc.p])
 const planStart = () => plan().start || state.days[0]?.date || addDays(todayStr(), 60);
 function genStatusHTML() {
   const g = plan().genKey;
-  if (!g) return `<span class="gen-st">começa em ${fmtBRY(planStart())}</span>`;
+  if (!g) return `<span class="gen-st">começa em ${fmtBRY(planStart())} <a href="#" data-dates>alterar</a></span>`;
   return g === planKey() ? '<span class="gen-st ok">✓ roteiro em dia com a sequência</span>' : '<span class="gen-st warn">a sequência mudou desde a última vez</span>';
 }
 function planHTML() {
@@ -4318,7 +4322,7 @@ function renderTripsPanel() {
       ${cities ? `<div class="tc-cities">${cities}</div>` : ''}
       <div class="tc-stats"><span><b>${sum.items}</b> atividade${sum.items === 1 ? '' : 's'}</span><span>checklist <b>${sum.clDone}/${sum.clN}</b></span>${when ? `<span>${when}</span>` : ''}</div>
       <div class="tc-bar" title="Checklist ${pct}%"><div style="width:${pct}%"></div></div>
-      <div class="tc-actions">${on ? '<button data-ta="close" class="primary">Continuar</button>' : '<button data-ta="open" class="primary">Abrir</button>'}<button data-ta="dup">Duplicar</button><button data-ta="export">Exportar</button><button data-ta="del" class="danger">Excluir</button></div>
+      <div class="tc-actions">${on ? '<button data-ta="close" class="primary">Continuar</button>' : '<button data-ta="open" class="primary">Abrir</button>'}<button data-ta="dates">Datas</button><button data-ta="dup">Duplicar</button><button data-ta="export">Exportar</button><button data-ta="del" class="danger">Excluir</button></div>
     </article>`;
   };
   const upcoming = list.filter(x => !x.sum.past), past = list.filter(x => x.sum.past);
@@ -4352,6 +4356,7 @@ function setupTripsPanel() {
     if (act === 'close') dlg.close();
     if (act === 'open') { dlg.close(); switchTrip(id); }
     if (act === 'dup') duplicateTrip(id);
+    if (act === 'dates') openDatesModal(id);
     if (act === 'del') deleteTrip(id);
     if (act === 'export') { const s = tripData(id); if (s) download('roteiro-' + (norm(s.title).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'viagem') + '.json', JSON.stringify(s, null, 2), 'application/json'); }
     if (act === 'new') openNewTripModal();
@@ -4363,6 +4368,61 @@ function setupTripsPanel() {
     tripsQuery = e.target.value; renderTripsPanel();
     const s = $('.dr-search', dlg); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
   });
+}
+function withDates(s, start, end) {
+  const out = JSON.parse(JSON.stringify(s));
+  if (!out.days.length) out.days = Array.from({length: diffDays(start, end) + 1}, (_, i) => ({id: uid(), date: addDays(start, i), base: '', title: '', note: '', items: []}));
+  else {
+    const delta = diffDays(out.days[0].date, start);
+    if (delta) { out.days.forEach(d => d.date = addDays(d.date, delta)); (out.checklist || []).forEach(c => { if (c.due) c.due = addDays(c.due, delta); }); }
+    let last = out.days[out.days.length - 1];
+    while (last.date < end) { last = {id: uid(), date: addDays(last.date, 1), base: isNoHotel(last.base) ? '' : last.base, title: '', note: '', items: []}; out.days.push(last); }
+    out.days = out.days.filter(d => d.date <= end);
+  }
+  out.plan ||= {cities: []}; out.plan.start = start;
+  return out;
+}
+function datesPreview(s, start, end) {
+  if (!start || !end || end < start) return '';
+  const n = diffDays(start, end) + 1;
+  if (!s.days.length) return `${n} dia${n > 1 ? 's' : ''}.`;
+  const delta = diffDays(s.days[0].date, start), parts = [];
+  if (delta) parts.push(`Todos os dias e atividades vão ${delta > 0 ? 'para frente' : 'para trás'} ${Math.abs(delta)} dia${Math.abs(delta) > 1 ? 's' : ''}.`);
+  const shiftedLast = addDays(s.days[s.days.length - 1].date, delta);
+  if (end > shiftedLast) parts.push(`${diffDays(shiftedLast, end)} dia(s) vazio(s) entram no fim.`);
+  if (end < shiftedLast) {
+    const cut = s.days.filter(d => addDays(d.date, delta) > end), items = cut.reduce((a, d) => a + d.items.length, 0);
+    parts.push(`${cut.length} dia(s) saem do fim${items ? ` — com <b>${items} atividade${items > 1 ? 's' : ''}</b>` : ''}.`);
+  }
+  return `${n} dia${n > 1 ? 's' : ''}. ${parts.join(' ') || 'Nada muda nas datas.'}`;
+}
+function openDatesModal(id = tripIndex.current) {
+  const s = tripData(id); if (!s) return;
+  const d0 = s.days[0]?.date || s.plan?.start || addDays(todayStr(), 60), d1 = s.days[s.days.length - 1]?.date || addDays(d0, 9);
+  openModal(`
+    <h3>Nome e datas do roteiro</h3>
+    <label>Nome da viagem<input name="title" required value="${esc(s.title)}"></label>
+    <div class="grid2">
+      <label>Primeiro dia<input type="date" name="start" required value="${d0}"></label>
+      <label>Último dia<input type="date" name="end" required value="${d1}"></label>
+    </div>
+    <p class="map-hint" id="dtHint"></p>
+    <div class="modal-conflict" id="dtErr"></div>
+    <div class="modal-actions"><span class="sp"></span><button type="button" data-m="cancel">Cancelar</button><button type="submit" class="primary">Salvar</button></div>`,
+    fd => {
+      const title = String(fd.get('title')).trim() || s.title, start = fd.get('start'), end = fd.get('end'), err = $('#dtErr');
+      const fail = msg => { err.textContent = msg; err.classList.add('on'); return false; };
+      if (!start || !end || end < start) return fail('O último dia precisa ser igual ou depois do primeiro.');
+      if (diffDays(start, end) > 119) return fail('Máximo de 120 dias por roteiro.');
+      const out = withDates(s, start, end); out.title = title;
+      const lost = s.days.reduce((a, d) => a + d.items.length, 0) - out.days.reduce((a, d) => a + d.items.length, 0);
+      if (lost > 0 && !confirm(`${lost} atividade${lost > 1 ? 's' : ''} nos dias que saem do fim ${lost > 1 ? 'serão removidas' : 'será removida'}. Continuar?`)) return false;
+      if (id === tripIndex.current) commit(() => { state.title = out.title; state.days = out.days; state.checklist = out.checklist; state.plan = out.plan; });
+      else { localStorage.setItem(tripKey(id), JSON.stringify(out)); Object.assign(tripIndex.trips.find(t => t.id === id), tripMeta(out)); saveIndex(); renderHeader(); }
+      toast(`<b>${esc(title)}</b>: ${fmtBRY(start)} a ${fmtBRY(end)}.`, id === tripIndex.current ? '<button data-t="undo">Desfazer</button>' : '', undo);
+    });
+  const f = mform, hint = () => { $('#dtHint').innerHTML = datesPreview(s, f.start.value, f.end.value); };
+  f.oninput = hint; hint();
 }
 function openNewTripModal() {
   const start = addDays(todayStr(), 60);
@@ -4415,6 +4475,7 @@ function init() {
   $('#tripTitle').addEventListener('change', e => commit(() => state.title = e.target.value.trim() || state.title, {render: false}));
   $('#undoBtn').addEventListener('click', undo);
   $('#tripsBtn').addEventListener('click', openTripsPanel);
+  document.addEventListener('click', e => { if (e.target.closest('[data-dates]') && !e.target.closest('#tripsPanel')) { e.preventDefault(); openDatesModal(); } });
   setupTripsPanel();
   window.addEventListener('storage', e => {
     if (e.key === INDEX_KEY && e.newValue) {
