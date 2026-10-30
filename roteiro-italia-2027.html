@@ -345,6 +345,8 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .ps-tag{font-family:system-ui,'Segoe UI',sans-serif;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--c);border:1.5px solid var(--c);border-radius:999px;padding:0 6px;vertical-align:middle}
 .pl-seq-foot{display:flex;justify-content:center;margin-top:12px}
 .mini-map{display:block;width:100%;height:auto;margin:6px 0 2px}
+.mm-tiles{filter:sepia(.2) saturate(.9)}
+.mm-hint{font-size:11.5px;color:#7a6a52;margin:2px 0 4px}
 .mm-pt{cursor:pointer}
 .mm-pt:hover circle:last-of-type{stroke:#f59e0b;stroke-width:3}
 .pl-places{list-style:none;margin:0;padding:0}
@@ -3609,23 +3611,38 @@ function planMapSVG() {
   s += `<use href="#compass" x="${W - 70}" y="14" width="54" height="54"/>`;
   return s + `<rect width="${W}" height="${H}" filter="url(#paperNoise)" opacity=".4" pointer-events="none"/></svg>`;
 }
+const merc = (lat, lon, z) => { const s = 256 * 2 ** z, r = lat * Math.PI / 180; return [(lon + 180) / 360 * s, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * s]; };
+const tileUrl = (z, x, y) => `https://tile.openstreetmap.org/${z}/${x}/${y}.png`;
 function cityMiniMapSVG(c) {
   const pc = activePC(c.k), sel = pc ? pc.p : [];
-  const pts = c.places.filter(p => haversine([c.lat, c.lon], [p.lat, p.lon]) < 12);
+  const dist = p => haversine([c.lat, c.lon], [p.lat, p.lon]);
+  const ds = c.places.map(dist).sort((x, y) => x - y), lim = Math.max(3, ds[Math.floor(ds.length / 2)] * 2.2);
+  const pts = c.places.filter(p => dist(p) <= lim), far = c.places.length - pts.length;
   if (pts.length < 2) return '';
-  let la0 = Math.min(...pts.map(p => p.lat)), la1 = Math.max(...pts.map(p => p.lat)), lo0 = Math.min(...pts.map(p => p.lon)), lo1 = Math.max(...pts.map(p => p.lon));
-  const padA = (la1 - la0) * .12 + .002, padO = (lo1 - lo0) * .12 + .002; la0 -= padA; la1 += padA; lo0 -= padO; lo1 += padO;
-  const W = 300, cs = Math.cos((la0 + la1) / 2 * Math.PI / 180), sx = W / ((lo1 - lo0) * cs), H = Math.min(260, Math.max(140, (la1 - la0) * sx));
-  const sy = H / (la1 - la0), pr = (lat, lon) => [(lon - lo0) * cs * sx, (la1 - lat) * sy];
-  const route = sel.map(id => PLACE[id]).filter(p => p && pts.includes(p)).map(p => pr(p.lat, p.lon));
-  let s = `<svg viewBox="0 0 ${W} ${rn(H)}" class="mini-map"><rect width="${W}" height="${rn(H)}" rx="10" fill="#f7edd5" stroke="#d9c49a"/>`;
-  if (route.length > 1) s += `<path d="M${route.map(([x, y]) => `${rn(x)} ${rn(y)}`).join('L')}" fill="none" stroke="${cityColor(c.name)}" stroke-width="2.5" stroke-dasharray="6 4"/>`;
+  const W = 320, Hmax = 270, pad = 24;
+  const la0 = Math.min(...pts.map(p => p.lat)), la1 = Math.max(...pts.map(p => p.lat)), lo0 = Math.min(...pts.map(p => p.lon)), lo1 = Math.max(...pts.map(p => p.lon));
+  let z = 16, a, b;
+  for (; z > 8; z--) { a = merc(la1, lo0, z); b = merc(la0, lo1, z); if (b[0] - a[0] <= W - 2 * pad && b[1] - a[1] <= Hmax - 2 * pad) break; }
+  a = merc(la1, lo0, z); b = merc(la0, lo1, z);
+  const H = Math.round(Math.max(180, Math.min(Hmax, b[1] - a[1] + 2 * pad)));
+  const ox = (a[0] + b[0]) / 2 - W / 2, oy = (a[1] + b[1]) / 2 - H / 2, n = 2 ** z;
+  const pr = (lat, lon) => { const [x, y] = merc(lat, lon, z); return [x - ox, y - oy]; };
+  let tiles = '';
+  for (let tx = Math.floor(ox / 256); tx <= Math.floor((ox + W) / 256); tx++) for (let ty = Math.floor(oy / 256); ty <= Math.floor((oy + H) / 256); ty++) {
+    if (ty < 0 || ty >= n) continue;
+    tiles += `<image href="${tileUrl(z, ((tx % n) + n) % n, ty)}" x="${rn(tx * 256 - ox)}" y="${rn(ty * 256 - oy)}" width="256" height="256"/>`;
+  }
+  const route = sel.map(id => PLACE[id]).filter(p => p && pts.includes(p)).map(p => pr(p.lat, p.lon)), col = cityColor(c.name), cid = 'mmclip-' + c.k;
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="mini-map"><defs><clipPath id="${cid}"><rect width="${W}" height="${H}" rx="10"/></clipPath></defs>
+    <g clip-path="url(#${cid})"><rect width="${W}" height="${H}" fill="#efe6d2"/><g class="mm-tiles" pointer-events="none">${tiles}</g>`;
+  if (route.length > 1) s += `<path d="M${route.map(([x, y]) => `${rn(x)} ${rn(y)}`).join('L')}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/><path d="M${route.map(([x, y]) => `${rn(x)} ${rn(y)}`).join('L')}" fill="none" stroke="${col}" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round"/>`;
   pts.forEach(p => {
     const [x, y] = pr(p.lat, p.lon), i = sel.indexOf(p.id);
-    s += `<g class="mm-pt ${i >= 0 ? 'on' : ''}" data-place="${p.id}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(p.name)}</title><circle r="12" fill="transparent"/>`
-      + (i >= 0 ? `<circle r="9" fill="${cityColor(c.name)}" stroke="${INK}" stroke-width="2"/><text y="4" text-anchor="middle" font-size="10" class="f-bold" fill="#fff">${i + 1}</text>` : `<circle r="5" fill="${p.f ? '#fffaf0' : '#e9dfc6'}" stroke="${INK}" stroke-width="1.6"/>`) + '</g>';
+    s += `<g class="mm-pt ${i >= 0 ? 'on' : ''}" data-place="${p.id}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(p.name)}${i >= 0 ? ' (clique para tirar)' : ' (clique para incluir)'}</title><circle r="12" fill="transparent"/>`
+      + (i >= 0 ? `<circle r="9.5" fill="${col}" stroke="#fff" stroke-width="2.5"/><text y="4" text-anchor="middle" font-size="10" class="f-bold" fill="#fff">${i + 1}</text>` : `<circle r="5.5" fill="${p.f ? '#fff' : '#d9c9f5'}" stroke="${INK}" stroke-width="1.8"/>`) + '</g>';
   });
-  return s + '</svg>';
+  s += `<text x="${W - 5}" y="${H - 5}" text-anchor="end" font-size="8.5" fill="#555" paint-order="stroke" stroke="#fff" stroke-width="3">© OpenStreetMap</text></g>`;
+  return s + `<rect width="${W}" height="${H}" rx="10" fill="none" stroke="#d9c49a" stroke-width="1.5"/></svg><p class="mm-hint">Pontos brancos: imperdíveis · lilás: pouco conhecidos · numerados: já escolhidos. Clique num ponto para incluir ou tirar.${far ? ` ${far} lugar${far > 1 ? 'es' : ''} mais distante${far > 1 ? 's' : ''} (excursões) só na lista abaixo.` : ''}</p>`;
 }
 
 /* ---------- painel lateral e sequência ---------- */
@@ -3650,7 +3667,7 @@ function planSideHTML() {
       <p class="pl-desc">${esc(c.d)}</p>
       <div class="pl-how"><b>Como chegar:</b> ${esc(c.via || '')}${L ? `<div class="pl-leg-line">${legHTML(L, prev, c)}</div>` : ''}</div>
       ${pc ? `<div class="pl-in">✓ ${occ.length > 1 ? `Paradas ${occ.map(i => i + 1).join(' e ')}` : `Parada ${idx + 1}`} do seu roteiro <button class="danger" data-pl="remove-occ" data-i="${idx}">Remover parada ${idx + 1}</button></div>
-          ${occBar}<button class="ink-btn pl-add" data-pl="add-again" data-city="${c.k}">+ Passar por ${esc(c.name)} de novo (ex.: voltar no fim)</button>`
+          ${occBar}<button class="ink-btn pl-add" data-pl="add-again" data-city="${c.k}" title="Incluir outra passagem por ${esc(c.name)}">+ Passar por aqui de novo (ex.: voltar no fim)</button>`
         : `<button class="ink-btn primary pl-add" data-pl="add-city" data-city="${c.k}">+ Incluir ${esc(c.name)} no roteiro</button>`}
       ${cityMiniMapSVG(c)}
       <h4>Imperdíveis</h4><ul class="pl-places">${fam.map(p => placeRowHTML(p, c, sel, idx)).join('')}</ul>
