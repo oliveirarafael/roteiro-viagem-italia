@@ -141,7 +141,7 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 
 /* ---------- calendário ---------- */
 .dim{opacity:.3}
-.board.cal{display:block}
+.board.cal{display:block;width:auto;min-width:0}
 .cal-wrap{overflow:auto;max-height:calc(100vh - 215px);min-height:420px;background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);position:relative}
 .cal{display:flex;width:max-content;min-width:100%}
 .cal-gutter{position:sticky;left:0;z-index:6;background:var(--panel);flex:0 0 50px;border-right:1px solid var(--line)}
@@ -456,7 +456,13 @@ dialog h3{font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;lett
 .pill-select.reservar{background:#fff1e6;color:#c2410c}
 .pill-select.reservado{background:#e7f6ec;color:#15803d}
 .ticket.reservado{background:#f6fbf6}
-@media (max-width:760px){.ticket{grid-template-columns:34px 60px 1fr;}.tk-price,.ticket .pill-select,.ticket .ink-btn{grid-column:span 1}}
+@media (max-width:760px){
+  .ticket{grid-template-columns:34px 58px minmax(0,1fr) auto;row-gap:8px}
+  .ticket>div:nth-child(3){grid-column:3 / -1}
+  .ticket .tk-price{grid-column:1 / 3;border-left:none;padding-left:0;text-align:left}
+  .ticket .pill-select{grid-column:3;justify-self:start;max-width:100%}
+  .ticket>a.ink-btn,.ticket>span:last-child{grid-column:4}
+}
 /* orçamento */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:16px}
 .kpi-sticker .lbl{font-size:12px;color:#7a6a52;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
@@ -600,10 +606,72 @@ dialog .chk{color:var(--ink);font-weight:400;flex-direction:row}
 .modal-actions{display:flex;gap:8px;margin-top:6px}
 .modal-actions .sp{flex:1}
 
-@media (max-width:720px){
-  .budget-grid{grid-template-columns:1fr}
-  .trip-title{font-size:17px}
+html,body{overflow-x:clip}
+.hotels{grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr))}
+.postcards,.plain-days{grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr))}
+dialog{max-height:92vh;overflow:auto}
+.map-pop{max-width:calc(100% - 12px)}
+.tab-hero>div:nth-child(2){flex:1 1 200px;min-width:0}
+
+@media (max-width:980px){
+  .top-inner{gap:8px 12px}
   .actions{margin-left:0}
+}
+@media (max-width:720px){
+  header.top{position:static}
+  .top-inner{padding:8px 12px}
+  .trip-switch{flex:1 1 100%;min-width:0}
+  .trip-title{font-size:17px}
+  .stats,.actions{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none;padding-bottom:2px}
+  .stats::-webkit-scrollbar,.actions::-webkit-scrollbar,.pills::-webkit-scrollbar{display:none}
+  .stats>*,.actions>*{flex:none;white-space:nowrap}
+  .actions .saved{display:none}
+  nav.tabs{padding:0 6px;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{padding:8px 10px}
+  .trip-menu .menu-pop{position:fixed;left:8px;right:8px;top:58px;min-width:0;max-height:75vh}
+  main{padding:12px 10px 50px}
+  .budget-grid{grid-template-columns:1fr}
+
+  .tab-hero{gap:10px;margin-bottom:14px}
+  .tab-hero .medal-big{width:60px;height:60px;border-width:3px}
+  .tab-hero .medal-big svg{width:30px;height:30px}
+  .hero-title{font-size:30px}
+  .hero-side{margin-left:0;width:100%}
+  .pills{max-width:100%;overflow-x:auto;scrollbar-width:none}
+  .pills button{white-space:nowrap;flex:none;padding:5px 10px}
+
+  .map-title{font-size:clamp(26px,9vw,40px);-webkit-text-stroke:1.5px #3b2a1e;text-shadow:2px 2px 0 #3b2a1e}
+  .map-sub{font-size:18px}
+  .map-jump button{padding:4px 10px;font-size:13px}
+  .paper{padding:5px;border-radius:12px;box-shadow:var(--shadow),inset 0 0 0 3px #f7edd5,inset 0 0 0 4px #b88d55}
+  .city-head{gap:10px}
+  .city-head .medal-big{width:58px;height:58px;border-width:3px}
+  .city-head .medal-big svg{width:44px;height:44px}
+  .city-head h3{font-size:28px}
+  .city-head .f-script{font-size:16px}
+  .city-paper:has(.placing)::after{white-space:normal;width:86%;text-align:center}
+  .stay-head2{flex-wrap:wrap}
+  .stay-head2 h3{font-size:22px}
+  .stay-head2 .f-script{font-size:16px}
+
+  .toolbar input[type=search]{min-width:0;flex:1 1 160px}
+  .cal-wrap{max-height:calc(100vh - 120px);min-height:360px}
+  .cal-day{flex-basis:146px;width:146px}
+
+  .ticket{gap:8px;padding:8px 10px}
+  .tk-notes{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .info-cols,.cl-cols{columns:1}
+
+  dialog form{padding:14px 14px}
+  .modal-actions{flex-wrap:wrap}
+  .sync-toast{bottom:10px;flex-wrap:wrap;font-size:13px;padding:9px 10px 9px 12px;width:calc(100vw - 20px)}
+}
+@media (max-width:480px){
+  .grid2{grid-template-columns:1fr}
+  .hero-title{font-size:26px}
+  .kpi-sticker .big{font-size:26px}
+  .bars .bar-row{grid-template-columns:84px 1fr 72px;gap:6px;font-size:12.5px}
 }
 @media print{
   header.top,.toolbar,.hint,.day-foot,.day-handle,.menu,.add-day-card,.item-links,nav.tabs{display:none!important}
@@ -3216,7 +3284,7 @@ function openMapPop(pinEl) {
   const pr = paper.getBoundingClientRect(), r = pinEl.getBoundingClientRect();
   let left = r.left - pr.left + r.width / 2 - 150, top = r.top - pr.top - pop.offsetHeight - 8;
   if (top < 4) top = r.bottom - pr.top + 8;
-  pop.style.left = Math.min(Math.max(left, 6), pr.width - 306) + 'px';
+  pop.style.left = Math.max(6, Math.min(left, pr.width - pop.offsetWidth - 6)) + 'px';
   pop.style.top = top + 'px';
   const form = $('.pop-form', pop);
   if (form) form.oninput = () => {
