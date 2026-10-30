@@ -31,7 +31,16 @@ small{color:var(--muted)}
 .flag{height:5px;background:linear-gradient(90deg,var(--green) 0 33.3%,#fff 33.3% 66.6%,var(--red) 66.6%)}
 header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .top-inner{max-width:1500px;margin:0 auto;padding:10px 18px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
-.trip-title{font-size:20px;font-weight:700;border:none;background:transparent;min-width:260px;flex:0 1 420px;padding:2px 4px;border-radius:6px}
+.trip-title{font-size:20px;font-weight:700;border:none;background:transparent;min-width:0;flex:1;padding:2px 4px;border-radius:6px}
+.trip-switch{display:flex;align-items:center;gap:6px;flex:0 1 560px;min-width:280px}
+.trip-menu summary{font-size:12.5px;white-space:nowrap;border:1.5px solid var(--ink);border-radius:999px;padding:3px 10px;color:var(--ink)}
+.trip-menu .menu-pop{left:0;right:auto;top:32px;min-width:300px;max-height:70vh;overflow:auto}
+.trip-head{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:6px 10px 4px}
+.trip-opt{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
+.trip-opt small{font-size:11.5px}
+.trip-opt.on{background:#e6f4f1}
+.trip-opt.on b::before{content:"✓ ";color:#0f766e}
+.trip-menu hr{border:none;border-top:1px dashed var(--line);margin:4px 6px}
 .trip-title:focus{outline:2px solid #cfe9e5;background:#fff}
 .stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .stat{background:#f3f1ea;border-radius:999px;padding:4px 10px;font-size:12.5px;white-space:nowrap}
@@ -272,6 +281,18 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .pop-conflict.on{display:block}
 .map-pop{width:300px}
 .map-hint{margin:-4px 0 0;font-size:12px;color:var(--muted)}
+.map-note{margin:4px 0 18px;font-size:13.5px;line-height:1.45}
+.plain-days{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:12px 0}
+.plain-day{background:#fffaf0;border:2px solid var(--ink);border-radius:12px;padding:10px 12px;box-shadow:3px 3px 0 var(--ink)}
+.plain-day .muted{font-size:12.5px;margin:6px 0 0}
+.pd-head{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;font-size:13.5px}
+.pd-head span{color:var(--muted)}
+.pd-head .pc-add{margin-left:auto}
+.plain-day ul{list-style:none;margin:6px 0 0;padding:0}
+.plain-day li{display:flex;gap:6px;align-items:center;font-size:13px;padding:4px 0;cursor:pointer;border-bottom:1px dashed #eadbb8}
+.plain-day li:last-child{border-bottom:none}
+.plain-day li:hover span{text-decoration:underline}
+.plain-day time{font-weight:700;min-width:40px}
 .ai-step{margin:0;font-size:13.5px;color:var(--ink);line-height:1.4}
 .ai-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .ai-ok{color:#15803d;font-size:12.5px;font-weight:700}
@@ -598,7 +619,10 @@ dialog .chk{color:var(--ink);font-weight:400;flex-direction:row}
 <div class="flag"></div>
 <header class="top">
   <div class="top-inner">
-    <input id="tripTitle" class="trip-title" aria-label="Título da viagem">
+    <div class="trip-switch">
+      <input id="tripTitle" class="trip-title" aria-label="Título da viagem">
+      <details class="menu trip-menu" id="tripMenu"><summary title="Trocar, criar ou excluir roteiros">Meus roteiros ▾</summary><div class="menu-pop" id="tripMenuPop"></div></details>
+    </div>
     <div class="stats" id="stats"></div>
     <div class="actions">
       <span class="saved" id="saved">salvo</span>
@@ -1082,14 +1106,31 @@ function migrate(s) {
   s.days.forEach(d => { d.id ||= uid(); d.items ||= []; d.items.forEach(i => { i.id ||= uid(); }); });
   return s;
 }
-function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.days)) return migrate(s); } catch (e) {}
+const INDEX_KEY = 'roteiros-index', FIRST_TRIP = 'italia-2027';
+const tripKey = id => id === FIRST_TRIP ? KEY : 'roteiro:' + id;
+function readTrip(id) {
+  try { const s = JSON.parse(localStorage.getItem(tripKey(id))); if (s && Array.isArray(s.days)) return migrate(s); } catch (e) {}
   return null;
 }
-let state = load() || defaultState();
+function loadIndex() {
+  try { const x = JSON.parse(localStorage.getItem(INDEX_KEY)); if (x && Array.isArray(x.trips) && x.trips.length) return x; } catch (e) {}
+  return {current: FIRST_TRIP, trips: [{id: FIRST_TRIP}]};
+}
+const tripMeta = s => ({title: s.title, start: s.days[0]?.date || '', end: s.days[s.days.length - 1]?.date || ''});
+const saveIndex = () => localStorage.setItem(INDEX_KEY, JSON.stringify(tripIndex));
+let tripIndex = loadIndex();
+let state = readTrip(tripIndex.current);
+if (!state) {
+  tripIndex.current = FIRST_TRIP;
+  if (!tripIndex.trips.some(t => t.id === FIRST_TRIP)) tripIndex.trips.unshift({id: FIRST_TRIP});
+  state = readTrip(FIRST_TRIP) || defaultState();
+}
+Object.assign(tripIndex.trips.find(t => t.id === tripIndex.current), tripMeta(state));
 let savedTimer;
 function save() {
-  localStorage.setItem(KEY, JSON.stringify(state));
+  localStorage.setItem(tripKey(tripIndex.current), JSON.stringify(state));
+  Object.assign(tripIndex.trips.find(t => t.id === tripIndex.current), tripMeta(state), {updated: Date.now()});
+  saveIndex();
   const el = $('#saved'); el.classList.add('on'); clearTimeout(savedTimer); savedTimer = setTimeout(() => el.classList.remove('on'), 900);
 }
 const undoStack = []; let lastSnap = 0;
@@ -1160,6 +1201,7 @@ function computeConflicts() {
 const conflictText = id => (CONFLICTS.get(id) || []).map(o => `${o.start}${o.end ? '–' + o.end : ''} ${o.title}`).join('; ');
 function renderHeader() {
   CONFLICTS = computeConflicts();
+  renderTripMenu();
   const t = $('#tripTitle'); if (document.activeElement !== t) t.value = state.title;
   const days = state.days;
   if (!days.length) { $('#stats').innerHTML = ''; return; }
@@ -2118,8 +2160,15 @@ const INFO_HTML = `
 </div>
 <div class="card"><h3>Minhas anotações</h3><textarea class="notes-area" id="notesArea" placeholder="Restaurantes indicados, contatos, códigos de reserva..."></textarea></div>`;
 function renderInfo() {
-  const el = $('#tab-info');
-  if (!el.dataset.ready) {
+  const el = $('#tab-info'), mode = coversMap(buildMapModel()) ? 'italia' : 'outro';
+  if (el.dataset.ready !== mode && mode === 'outro') {
+    el.innerHTML = tabHero('INFORMAÇÕES', 'anotações desta viagem', 'info', '#1d4ed8')
+      + `<div class="card map-note">As informações pesquisadas (entrada, clima, ingressos, carro...) são da viagem pela Itália e Suíça. Para este destino, use as anotações abaixo — ou peça para outra IA pesquisar pelo botão “Modelo p/ IA”.</div>
+      <div class="sticker"><h3><span class="ic-dot" style="--c:#a16207">${icSvg('lapis')}</span>Minhas anotações</h3><textarea class="notes-area" id="notesArea" placeholder="Restaurantes indicados, contatos, códigos de reserva..."></textarea></div>`;
+    el.dataset.ready = mode;
+    $('#notesArea').addEventListener('input', e => commit(() => state.notes = e.target.value, {render: false, debounce: true}));
+  }
+  if (el.dataset.ready !== mode) {
     const tmp = document.createElement('div');
     tmp.innerHTML = INFO_HTML;
     const cards = $$('.info-cols > .card', tmp);
@@ -2131,7 +2180,7 @@ function renderInfo() {
     el.innerHTML = tabHero('INFORMAÇÕES', 'pesquisado em fontes oficiais · confira perto da data', 'info', '#1d4ed8')
       + `<div class="info-cols">${html}</div>
       <div class="sticker"><h3><span class="ic-dot" style="--c:#a16207">${icSvg('lapis')}</span>Minhas anotações</h3>${notes.querySelector('textarea').outerHTML}</div>`;
-    el.dataset.ready = '1';
+    el.dataset.ready = mode;
     $('#notesArea').addEventListener('input', e => commit(() => state.notes = e.target.value, {render: false, debounce: true}));
   }
   $('#notesArea').value = state.notes;
@@ -3042,7 +3091,7 @@ function citySectionHTML(c) {
   const head = `<div class="city-head"><div class="medal-big"><svg viewBox="0 0 100 100"><use href="#lm-${P ? P.lm : 'pin'}"/></svg></div>
     <div><h3>${esc(s.base.toUpperCase())}</h3><div class="f-script">${weekday(s.checkin)} ${fmtBR(s.checkin)} → ${weekday(s.checkout)} ${fmtBR(s.checkout)} · ${s.nights} noite${s.nights > 1 ? 's' : ''}${hotel ? ' · ' + esc(hotel.name) : ' · hotel a escolher'}</div></div></div>`;
   if (!c.cfg) {
-    return `<section class="city-section" id="city-${c.si}" style="--c:${c.color}">${head}<div class="card"><p class="muted" style="margin:0">Ainda não tenho o desenho detalhado de ${esc(s.base)}. As atividades aparecem no mapa geral e nos cartões abaixo.</p></div>${postcardsHTML(c)}</section>`;
+    return `<section class="city-section" id="city-${c.si}" style="--c:${c.color}">${head}${c.key ? `<div class="card"><p class="muted" style="margin:0">Ainda não tenho o desenho detalhado de ${esc(s.base)}. As atividades estão abaixo, dia a dia.</p></div>` : ''}${dayListHTML(c.days)}${postcardsHTML(c)}</section>`;
   }
   const unplaced = c.located.filter(x => x.loc.kind === 'city' && !['voo', 'transfer'].includes(x.it.type));
   const types = [...new Set(c.located.filter(x => x.loc.kind === 'poi' || x.loc.kind === 'custom').map(x => x.it.type))];
@@ -3076,6 +3125,13 @@ function citySectionHTML(c) {
       </aside>
     </div>${postcardsHTML(c)}</section>`;
 }
+function dayListHTML(days) {
+  return `<div class="plain-days">${days.map(d => `<div class="plain-day">
+    <div class="pd-head"><b>${weekday(d.date)} ${fmtBR(d.date)}</b>${d.title ? `<span>${esc(d.title)}</span>` : ''}<button class="pc-add" data-add-day="${d.id}">+ atividade</button></div>
+    ${d.items.length ? `<ul>${d.items.map(it => `<li data-item="${it.id}" title="Clique para editar"><time>${esc(it.start)}</time><svg class="mini-ic" style="--tc:${(TYPES[it.type] || TYPES.livre).color}" viewBox="0 0 24 24"><use href="#ic-${TYPE_IC[it.type] || 'visita'}"/></svg><span>${esc(it.title)}</span></li>`).join('')}</ul>` : '<p class="muted">Nenhuma atividade ainda.</p>'}
+  </div>`).join('')}</div>`;
+}
+const coversMap = m => m.cities.some(c => c.key) || Object.keys(m.visits).length > 0;
 function applyMapFilters() {
   $$('#tab-mapa .pin[data-kind="item"], #tab-mapa .leader').forEach(p => p.classList.toggle('off', mapHiddenDays.has(p.dataset.day) || mapHiddenTypes.has(p.dataset.type)));
   $$('#tab-mapa .dpath').forEach(p => p.classList.toggle('off', mapHiddenDays.has(p.dataset.day)));
@@ -3088,6 +3144,17 @@ function renderMap() {
   const trips = Object.keys(m.visits).filter(k => PLACES[k] && PLACES[k].kind !== 'airport').length;
   const title = (state.title.split('·')[0] || 'Itália + Suíça').trim().toUpperCase();
   const first = state.days[0], last = state.days[state.days.length - 1];
+  if (!coversMap(m)) {
+    el.innerHTML = `
+    <div class="map-hero">
+      <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
+      <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) : ''} · ${state.days.length} dias${m.cities.length ? ` · ${m.cities.length} cidade${m.cities.length > 1 ? 's' : ''}` : ''}</div>
+      ${m.cities.length ? `<div class="map-jump">${m.cities.map(c => `<button data-goto="city-${c.si}" style="--c:${c.color}">${c.si + 1}. ${esc(c.stay.base.toUpperCase())}</button>`).join('')}</div>` : ''}
+    </div>
+    <div class="card map-note">O mapa ilustrado só cobre Itália e Suíça (Roma, Florença, Veneza, Milão e arredores). Nesta viagem o roteiro aparece abaixo, dia a dia: clique numa atividade para editar ou em “+ atividade” para incluir.${m.cities.length ? '' : ' Defina a cidade de pernoite de cada dia no Calendário para agrupar por cidade.'}</div>
+    ${m.cities.length ? m.cities.map(citySectionHTML).join('') : dayListHTML(state.days)}`;
+    return;
+  }
   el.innerHTML = `
     <div class="map-hero">
       <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
@@ -3240,8 +3307,10 @@ function setupMapEvents() {
       if (target) { target.scrollIntoView({behavior: 'smooth', block: 'start'}); if (target.classList.contains('postcard')) { target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash'); } }
       return;
     }
-    const li = e.target.closest('.postcard li[data-item]');
+    const li = e.target.closest('.postcard li[data-item], .plain-day li[data-item]');
     if (li) { openItemModal(li.dataset.item); return; }
+    const addDay = e.target.closest('[data-add-day]');
+    if (addDay) { const d = dayById(addDay.dataset.addDay); if (d) openItemModal(null, d.id, suggestStart(d)); return; }
     const chip = e.target.closest('.day-chip');
     if (chip) { const id = chip.dataset.day; mapHiddenDays.has(id) ? mapHiddenDays.delete(id) : mapHiddenDays.add(id); chip.classList.toggle('off'); applyMapFilters(); return; }
     const tf = e.target.closest('.type-filters label');
@@ -3329,7 +3398,7 @@ function exportIcs() {
     });
   });
   lines.push('END:VCALENDAR');
-  download('roteiro-italia-2027.ics', lines.join('\r\n'), 'text/calendar');
+  download(fileSlug() + '.ics', lines.join('\r\n'), 'text/calendar');
 }
 
 /* ======================= modelo para IA ======================= */
@@ -3362,7 +3431,7 @@ Você é um planejador de viagens experiente. ${review ? 'Revise o roteiro atual
 - Viajantes: ${+s.settings.travelers || 1} · quartos de hotel: ${+s.settings.rooms || 1}
 - Voos já definidos (não alterar):
 ${flights.join('\n') || '  - (nenhum)'}
-- Cidades de pernoite atuais: ${cities || '(a definir)'}
+- Cidades de pernoite atuais: ${cities || '[ESCREVA AQUI: países e cidades que quer visitar, ou peça uma sugestão]'}
 - Moeda: o viajante usa dólar como moeda principal (câmbio ~US$ ${fx().toLocaleString('pt-BR', {minimumFractionDigits: 2})} por €), mas no JSON **todos os valores vão em euro**, que é o preço cobrado no local. O aplicativo converte.
 - Preferências do viajante: [ESCREVA AQUI: ritmo, interesses, orçamento, restrições, o que não pode faltar]
 
@@ -3407,7 +3476,7 @@ function parseAiJson(txt) {
     try { return JSON.parse(s.replace(/,\s*([}\]])/g, '$1')); } catch (e2) { throw new Error('o JSON está com erro de formatação (' + err.message + ').'); }
   }
 }
-function fromTemplate(t) {
+function fromTemplate(t, asNew = false) {
   const W = [];
   const arr = v => Array.isArray(v) ? v : [];
   const str = v => v == null ? '' : String(v).trim();
@@ -3448,26 +3517,29 @@ function fromTemplate(t) {
   }
   const checklist = Array.isArray(t.checklist) ? t.checklist.filter(c => c && str(c.tarefa)).map(c => ({id: uid(), cat: str(c.categoria) || 'Geral', text: str(c.tarefa), due: ymd(c.prazo), link: fixUrl(str(c.link)), done: !!c.feito, must: !!c.obrigatorio, info: str(c.detalhes),
     links: arr(c.links).filter(l => l && str(l.url)).map(l => [str(l.titulo) || siteName(l.url), fixUrl(str(l.url))])})) : null;
-  const S = state.settings;
-  const next = {...state, version: 1, title: str(t.titulo) || state.title,
+  const S = asNew ? {...defaultSettings(), tab: state.settings.tab, eurUsd: state.settings.eurUsd} : state.settings;
+  const next = {...state, version: 1, title: str(t.titulo) || (asNew ? 'Roteiro importado' : state.title),
     settings: {...S, travelers: Math.max(1, parseInt(t.viajantes) || S.travelers), rooms: Math.max(1, parseInt(t.quartos) || S.rooms)},
-    days, hotels: hotels || state.hotels, checklist: checklist || state.checklist, notes: t.anotacoes != null ? str(t.anotacoes) : state.notes};
-  return {next: JSON.parse(JSON.stringify(next)), W, keptHotels: !hotels, keptChecklist: !checklist};
+    days, hotels: hotels || (asNew ? [] : state.hotels), checklist: checklist || (asNew ? basicChecklist(days[days.length - 1].date) : state.checklist),
+    notes: t.anotacoes != null ? str(t.anotacoes) : asNew ? '' : state.notes};
+  return {next: JSON.parse(JSON.stringify(next)), W, keptHotels: !hotels && !asNew, keptChecklist: !checklist && !asNew};
 }
-function importAnyText(txt) {
+function importAnyText(txt, asNew = false) {
   const obj = parseAiJson(txt);
   if (Array.isArray(obj.days)) {
+    if (asNew) { addTrip(migrate(obj)); toast(`Backup importado como novo roteiro: <b>${esc(state.title)}</b>.`); return true; }
     if (!confirm('Substituir o roteiro atual por este backup? Dá para desfazer em seguida.')) return false;
     snapshot(); state = migrate(obj); save(); renderAll();
     toast('Backup importado.', '<button data-t="undo">Desfazer</button>', undo);
     return true;
   }
   if (!Array.isArray(obj.dias)) throw new Error('o JSON não tem a lista "dias".');
-  const {next, W, keptHotels, keptChecklist} = fromTemplate(obj);
+  const {next, W, keptHotels, keptChecklist} = fromTemplate(obj, asNew);
   const nItems = next.days.reduce((a, d) => a + d.items.length, 0);
   const summary = `${next.days.length} dias (${fmtBR(next.days[0].date)} → ${fmtBR(next.days[next.days.length - 1].date)}), ${nItems} atividades, `
     + `${next.hotels.length} hotéis${keptHotels ? ' (mantidos os atuais)' : ''}, ${next.checklist.length} tarefas${keptChecklist ? ' (mantidas as atuais)' : ''}`;
-  if (!confirm(`Importar o roteiro da IA?\n\n${summary}.${W.length ? '\n\nAvisos:\n• ' + W.join('\n• ') : ''}\n\nIsto substitui o roteiro atual (dá para desfazer).`)) return false;
+  if (!confirm(`Importar o roteiro da IA?\n\n${summary}.${W.length ? '\n\nAvisos:\n• ' + W.join('\n• ') : ''}\n\n${asNew ? 'Ele será criado como um novo roteiro.' : 'Isto substitui o roteiro atual (dá para desfazer).'}`)) return false;
+  if (asNew) { addTrip(migrate(next)); toast(`Novo roteiro importado: ${esc(summary)}.`); return true; }
   snapshot(); state = migrate(next); save(); renderAll();
   toast(`Roteiro importado: ${esc(summary)}.`, '<button data-t="undo">Desfazer</button>', undo);
   return true;
@@ -3487,6 +3559,7 @@ function openAiModal() {
     <div class="ai-row"><button type="button" data-m="copy" class="primary">Copiar modelo</button><button type="button" data-m="dl">Baixar .md</button><span class="ai-ok" id="aiOk"></span></div>
     <p class="ai-step"><b>2.</b> Cole aqui a resposta da IA — pode ser o texto inteiro, o JSON é encontrado sozinho — ou escolha o arquivo salvo.</p>
     <textarea name="answer" rows="8" spellcheck="false" placeholder='{ "formato": "${AI_FORMAT}", "dias": [ ... ] }'></textarea>
+    <label class="chk"><input type="checkbox" name="asNew"> Criar como um novo roteiro (manter “${esc(state.title)}” como está)</label>
     <div class="modal-conflict" id="aiErr"></div>
     <div class="modal-actions">
       <button type="button" data-m="file">Escolher arquivo…</button>
@@ -3497,7 +3570,7 @@ function openAiModal() {
     fd => {
       const err = $('#aiErr');
       if (!String(fd.get('answer') || '').trim()) { err.textContent = 'Cole a resposta da IA ou escolha um arquivo.'; err.classList.add('on'); return false; }
-      try { return importAnyText(fd.get('answer')); } catch (e) { err.textContent = 'Não foi possível importar: ' + e.message; err.classList.add('on'); return false; }
+      try { return importAnyText(fd.get('answer'), !!fd.get('asNew')); } catch (e) { err.textContent = 'Não foi possível importar: ' + e.message; err.classList.add('on'); return false; }
     },
     act => {
       const ok = $('#aiOk'), text = () => aiTemplate(mform.review.checked);
@@ -3506,6 +3579,120 @@ function openAiModal() {
       if (act === 'file') $('#importFile').click();
       return false;
     });
+}
+
+/* ======================= vários roteiros ======================= */
+function basicChecklist(end) {
+  const C = (cat, text, due = '', x = {}) => ({id: uid(), cat, text, due, link: '', done: false, ...x});
+  const before = n => end ? addDays(end, -n) : '';
+  return [
+    C('Documentos e entrada', 'Passaporte válido por pelo menos 6 meses depois da volta', '', {must: true, info: 'Muitos países exigem 3 a 6 meses de validade além da data de saída. Confira também se o destino pede visto ou autorização eletrônica.'}),
+    C('Documentos e entrada', 'Conferir exigências de entrada do destino (visto, autorização eletrônica, vacinas)', '', {must: true}),
+    C('Documentos e entrada', 'Seguro-viagem com cobertura médica e repatriação (levar apólice)', '', {must: true}),
+    C('Documentos e entrada', 'Imprimir/baixar passagens, reservas e seguro', '', {must: true}),
+    C('Documentos e entrada', 'Cópias digitais dos documentos numa pasta offline + e-mail para você mesmo'),
+    C('Hospedagem', 'Reservar hospedagem de todas as noites (de preferência com cancelamento grátis)', '', {must: true}),
+    C('Dinheiro', 'Cartão/conta global em dólar + 2º cartão de outra bandeira'),
+    C('Dinheiro', 'Na maquininha, pagar sempre na moeda local — recusar a conversão para dólar (DCC)'),
+    C('Dinheiro', 'Avisar o banco e liberar compras internacionais'),
+    C('Saúde', 'Remédios de uso contínuo + receita'),
+    C('Tecnologia', 'eSIM/chip internacional que cubra todos os países do roteiro'),
+    C('Tecnologia', 'Adaptadores de tomada do destino'),
+    C('Embarque e volta', 'Check-in online do voo de ida', ''),
+    C('Embarque e volta', 'Check-in online do voo de volta', before(1)),
+  ];
+}
+function blankState({title, start, end, city, travelers, checklist}) {
+  const n = Math.min(120, Math.max(1, diffDays(start, end) + 1));
+  return {version: 1, title, settings: {...defaultSettings(), travelers},
+    days: Array.from({length: n}, (_, i) => ({id: uid(), date: addDays(start, i), base: city, title: '', note: '', items: []})),
+    hotels: [], checklist: checklist ? basicChecklist(addDays(start, n - 1)) : [], notes: ''};
+}
+const fileSlug = () => 'roteiro-' + (norm(state.title).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'viagem');
+function resetTripUi() {
+  undoStack.length = 0; $('#undoBtn').disabled = true;
+  mapHiddenDays.clear(); mapHiddenTypes.clear(); clInfoOpen.clear(); hotelEditing.clear(); setMapAddMode(null);
+}
+function switchTrip(id) {
+  if (id === tripIndex.current) return;
+  if (tripIndex.trips.some(t => t.id === tripIndex.current)) localStorage.setItem(tripKey(tripIndex.current), JSON.stringify(state));
+  const s = readTrip(id) || (id === FIRST_TRIP ? defaultState() : null);
+  if (!s) { alert('Não encontrei os dados desse roteiro.'); return; }
+  const tab = state.settings.tab;
+  tripIndex.current = id; state = s; state.settings.tab = tab;
+  resetTripUi(); save(); renderAll(); window.scrollTo({top: 0});
+}
+function addTrip(s) {
+  const id = uid();
+  tripIndex.trips.push({id, ...tripMeta(s)});
+  localStorage.setItem(tripKey(id), JSON.stringify(s));
+  switchTrip(id);
+}
+function deleteTrip() {
+  if (tripIndex.trips.length < 2) { alert('Este é o único roteiro. Crie outro antes de excluir este.'); return; }
+  if (!confirm(`Excluir o roteiro “${state.title}”? Isso não pode ser desfeito — se quiser guardar, use “Exportar” antes.`)) return;
+  const id = tripIndex.current;
+  localStorage.removeItem(tripKey(id));
+  tripIndex.trips = tripIndex.trips.filter(t => t.id !== id);
+  tripIndex.current = '';
+  switchTrip(tripIndex.trips[0].id);
+  toast('Roteiro excluído.');
+}
+function renderTripMenu() {
+  const pop = $('#tripMenuPop'); if (!pop) return;
+  const range = t => t.start ? `${fmtBRY(t.start)} → ${fmtBRY(t.end)}` : 'sem datas';
+  pop.innerHTML = `<div class="trip-head">Meus roteiros (${tripIndex.trips.length})</div>`
+    + tripIndex.trips.map(t => `<button class="trip-opt ${t.id === tripIndex.current ? 'on' : ''}" data-trip="${t.id}"><b>${esc(t.title || 'Sem título')}</b><small>${range(t)}</small></button>`).join('')
+    + `<hr><button data-trip-act="new">+ Novo roteiro</button><button data-trip-act="dup">Duplicar este roteiro</button><button data-trip-act="del" class="danger">Excluir este roteiro</button>`;
+  $('#resetBtn').hidden = tripIndex.current !== FIRST_TRIP;
+}
+function openNewTripModal(mode = 'blank') {
+  const today = todayStr(), start = addDays(today, 60);
+  openModal(`
+    <h3>Novo roteiro</h3>
+    <label>Nome da viagem<input name="title" required value="${mode === 'dup' ? esc(state.title + ' (cópia)') : ''}" placeholder="Ex.: Portugal · Maio 2027" autofocus></label>
+    <div class="grid2">
+      <label>Primeiro dia<input type="date" name="start" required value="${mode === 'dup' ? state.days[0]?.date || start : start}"></label>
+      <label>Último dia<input type="date" name="end" required value="${mode === 'dup' ? state.days[state.days.length - 1]?.date || addDays(start, 9) : addDays(start, 9)}"></label>
+      <label>Cidade inicial (opcional)<input name="city" placeholder="Ex.: Lisboa"></label>
+      <label>Viajantes<input type="number" name="travelers" min="1" value="${+state.settings.travelers || 2}"></label>
+    </div>
+    <label>Começar com<select name="mode">
+      <option value="blank" ${mode === 'blank' ? 'selected' : ''}>Do zero (dias vazios)</option>
+      <option value="dup" ${mode === 'dup' ? 'selected' : ''}>Cópia do roteiro atual (datas deslocadas para o 1º dia)</option>
+      <option value="sample">Exemplo Itália + Suíça (datas deslocadas para o 1º dia)</option>
+    </select></label>
+    <label class="chk"><input type="checkbox" name="checklist" checked> Incluir checklist básico (documentos, dinheiro, saúde, embarque)</label>
+    <p class="map-hint" id="ntHint"></p>
+    <div class="modal-conflict" id="ntErr"></div>
+    <div class="modal-actions"><span class="sp"></span><button type="button" data-m="cancel">Cancelar</button><button type="submit" class="primary">Criar roteiro</button></div>`,
+    fd => {
+      const title = String(fd.get('title')).trim(), start = fd.get('start'), end = fd.get('end'), m = fd.get('mode');
+      const err = $('#ntErr');
+      if (!start) { err.textContent = 'Escolha o primeiro dia.'; err.classList.add('on'); return false; }
+      if (m === 'blank' && (!end || end < start)) { err.textContent = 'O último dia precisa ser igual ou depois do primeiro.'; err.classList.add('on'); return false; }
+      if (m === 'blank' && diffDays(start, end) > 119) { err.textContent = 'Máximo de 120 dias por roteiro.'; err.classList.add('on'); return false; }
+      const travelers = Math.max(1, parseInt(fd.get('travelers')) || 1);
+      let s;
+      if (m === 'blank') s = blankState({title: title || 'Nova viagem', start, end, city: String(fd.get('city') || '').trim(), travelers, checklist: !!fd.get('checklist')});
+      else {
+        s = m === 'dup' ? JSON.parse(JSON.stringify(state)) : defaultState();
+        const delta = s.days.length ? diffDays(s.days[0].date, start) : 0;
+        if (delta) { s.days.forEach(d => d.date = addDays(d.date, delta)); s.checklist.forEach(c => { if (c.due) c.due = addDays(c.due, delta); }); }
+        s.title = title || s.title; s.settings.travelers = travelers;
+      }
+      addTrip(s);
+      if (m === 'blank') toast(`Roteiro <b>${esc(s.title)}</b> criado com ${s.days.length} dias vazios. Adicione atividades no Calendário ou peça para outra IA montar.`, '<button data-t="ai">Modelo p/ IA</button>', openAiModal);
+      else toast(`Roteiro <b>${esc(s.title)}</b> criado.`);
+    });
+  const f = mform, hint = () => {
+    const blank = f.mode.value === 'blank';
+    f.city.disabled = f.checklist.disabled = !blank; f.end.disabled = !blank;
+    const n = f.start.value && f.end.value ? diffDays(f.start.value, f.end.value) + 1 : 0;
+    $('#ntHint').textContent = blank ? (n > 0 ? `${n} dia${n > 1 ? 's' : ''}, todos com pernoite em “${f.city.value.trim() || 'a definir'}”. Depois é só mudar a cidade de cada dia no Calendário.` : '')
+      : 'O roteiro inteiro é copiado (atividades, hotéis e checklist) e as datas mudam para começar no 1º dia escolhido.';
+  };
+  f.oninput = hint; hint();
 }
 
 /* ======================= abas e init ======================= */
@@ -3530,8 +3717,19 @@ function init() {
   $('#tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab); });
   $('#tripTitle').addEventListener('change', e => commit(() => state.title = e.target.value.trim() || state.title, {render: false}));
   $('#undoBtn').addEventListener('click', undo);
+  $('#tripMenuPop').addEventListener('click', e => {
+    const b = e.target.closest('[data-trip], [data-trip-act]'); if (!b) return;
+    $('#tripMenu').open = false;
+    if (b.dataset.trip) switchTrip(b.dataset.trip);
+    else if (b.dataset.tripAct === 'del') deleteTrip();
+    else openNewTripModal(b.dataset.tripAct === 'dup' ? 'dup' : 'blank');
+  });
   window.addEventListener('storage', e => {
-    if (e.key !== KEY || !e.newValue) return;
+    if (e.key === INDEX_KEY && e.newValue) {
+      try { const x = JSON.parse(e.newValue); tripIndex.trips = x.trips; if (!x.trips.some(t => t.id === tripIndex.current)) { tripIndex.current = ''; switchTrip(x.trips[0].id); } else renderTripMenu(); } catch (err) {}
+      return;
+    }
+    if (e.key !== tripKey(tripIndex.current) || !e.newValue) return;
     try { const tab = state.settings.tab; state = migrate(JSON.parse(e.newValue)); state.settings.tab = tab; renderAll(); } catch (err) {}
   });
   $('#undoBtn').disabled = true;
@@ -3539,13 +3737,13 @@ function init() {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.target.closest('input,textarea')) { e.preventDefault(); undo(); }
   });
   document.addEventListener('click', e => { $$('details.menu[open]').forEach(m => { if (!m.contains(e.target)) m.removeAttribute('open'); }); });
-  $('#exportBtn').addEventListener('click', () => download('roteiro-italia-2027.json', JSON.stringify(state, null, 2), 'application/json'));
+  $('#exportBtn').addEventListener('click', () => download(fileSlug() + '.json', JSON.stringify(state, null, 2), 'application/json'));
   $('#importBtn').addEventListener('click', () => $('#importFile').click());
   $('#aiBtn').addEventListener('click', openAiModal);
   $('#importFile').addEventListener('change', async e => {
     const file = e.target.files[0]; if (!file) return;
     try {
-      if (importAnyText(await file.text()) && modal.open) modal.close();
+      if (importAnyText(await file.text(), modal.open && !!mform.asNew?.checked) && modal.open) modal.close();
     } catch (err) { alert('Não foi possível importar: ' + err.message); }
     e.target.value = '';
   });
