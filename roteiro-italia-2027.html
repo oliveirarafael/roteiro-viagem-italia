@@ -1396,7 +1396,7 @@ function renderHeader() {
     <span class="stat">${fmtBRY(first)} → ${fmtBRY(last)}</span>
     <span class="stat"><b>${diffDays(first, last) + 1}</b> dias · <b>${nights}</b> noites</span>
     <span class="stat count">${count}</span>
-    <span class="stat">Checklist <b>${done}/${total}</b></span>
+    ${tabOn('checklist') ? `<span class="stat">Checklist <b>${done}/${total}</b></span>` : ''}
     ${CONFLICTS.size ? `<span class="stat warn-stat" title="Atividades do mesmo dia com horários que se sobrepõem">Conflitos de horário: <b>${CONFLICTS.size}</b> atividades</span>` : '<span class="stat ok-stat">Horários sem conflito</span>'}`;
 }
 
@@ -2921,11 +2921,13 @@ function toast(msg, btn = '', onBtn = () => {}) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('on'), 8000);
 }
 function syncToast(id, kind, title = '') {
-  if (kind === 'del') return toast(`<b>${esc(title)}</b> saiu do Calendário e do Roteiro.`, '<button data-t="undo">Desfazer</button>', undo);
+  const cal = tabOn('roteiro');
+  if (kind === 'del') return toast(`<b>${esc(title)}</b> saiu ${cal ? 'do Calendário e ' : ''}do Roteiro.`, '<button data-t="undo">Desfazer</button>', undo);
   const f = findItem(id); if (!f) return;
-  const where = itemMapWhere(id);
-  toast(`<b>${esc(f.item.title)}</b> ${kind === 'new' ? 'adicionada' : 'atualizada'} no Calendário (${weekday(f.day.date)} ${fmtBR(f.day.date)}${f.item.start ? ' · ' + esc(f.item.start) : ''})${where ? ` e no Roteiro (${esc(where)})` : ''}.`,
-    `<button data-t="go">${state.settings.tab === 'mapa' ? 'Ver no Calendário' : 'Ver no Roteiro'}</button>`, () => revealItem(id));
+  const where = itemMapWhere(id), when = `${weekday(f.day.date)} ${fmtBR(f.day.date)}${f.item.start ? ' · ' + esc(f.item.start) : ''}`;
+  toast(cal ? `<b>${esc(f.item.title)}</b> ${kind === 'new' ? 'adicionada' : 'atualizada'} no Calendário (${when})${where ? ` e no Roteiro (${esc(where)})` : ''}.`
+    : `<b>${esc(f.item.title)}</b> ${kind === 'new' ? 'adicionada' : 'atualizada'} no Roteiro (${when}${where ? ` · ${esc(where)}` : ''}).`,
+    tabOn(state.settings.tab === 'mapa' ? 'roteiro' : 'mapa') ? `<button data-t="go">${state.settings.tab === 'mapa' ? 'Ver no Calendário' : 'Ver no Roteiro'}</button>` : '', () => revealItem(id));
 }
 function revealItem(id) {
   const f = findItem(id); if (!f) return;
@@ -4102,7 +4104,8 @@ function setupPlanner() {
       if (hasItems && !confirm('Isto substitui os dias e as atividades do calendário pelo plano (hotéis e checklist ficam). Dá para desfazer. Continuar?')) return;
       const days = generateFromPlan(start);
       commit(() => state.days = days);
-      toast(`Calendário gerado: ${days.length} dias a partir de ${fmtBRY(start)}. Os horários ficam em branco para você ajustar.`, '<button data-t="cal">Ver calendário</button>', () => setTab('roteiro'));
+      if (tabOn('roteiro')) toast(`Calendário gerado: ${days.length} dias a partir de ${fmtBRY(start)}. Os horários ficam em branco para você ajustar.`, '<button data-t="cal">Ver calendário</button>', () => setTab('roteiro'));
+      else toast(`Roteiro gerado: ${days.length} dias a partir de ${fmtBRY(start)}.`, '<button data-t="route">Ver dia a dia</button>', () => commit(() => state.settings.mapMode = 'route'));
     }
   });
   el.addEventListener('change', e => { if (e.target.matches('input[data-place]')) planTogglePlace(e.target.dataset.place); });
@@ -4124,7 +4127,7 @@ function openMapPop(pinEl) {
   let html;
   if (kind === 'hotel') {
     const h = state.hotels.find(x => x.id === pinEl.dataset.id); if (!h) return;
-    html = `<div class="pop-meta"><span class="tag" style="--tc:#7c3aed">Hotel</span>${h.status === 'reservado' ? '<span class="badge reservado">Reservado</span>' : ''}</div><h5>${esc(h.name)}</h5><div class="pop-notes">${esc(h.area)}\n${esc(h.notes)}</div><div class="pop-actions"><button data-pop="hotels">Ver hotéis</button>${h.mapPos ? '<button data-pop="reset">Posição automática</button>' : ''}</div>`;
+    html = `<div class="pop-meta"><span class="tag" style="--tc:#7c3aed">Hotel</span>${h.status === 'reservado' ? '<span class="badge reservado">Reservado</span>' : ''}</div><h5>${esc(h.name)}</h5><div class="pop-notes">${esc(h.area)}\n${esc(h.notes)}</div><div class="pop-actions">${tabOn('hoteis') ? '<button data-pop="hotels">Ver hotéis</button>' : ''}${h.mapPos ? '<button data-pop="reset">Posição automática</button>' : ''}</div>`;
   } else {
     const f = findItem(pinEl.dataset.id); if (!f) return;
     const it = f.item, ty = TYPES[it.type] || TYPES.livre;
@@ -4707,7 +4710,10 @@ function openNewTripModal(mode = 'blank') {
 
 /* ======================= abas e init ======================= */
 const RENDER = {roteiro: renderBoard, mapa: renderMap, checklist: renderChecklist, hoteis: renderHotels, transporte: renderTransport, orcamento: renderBudget, info: renderInfo};
+const TABS_ON = ['mapa'];
+const tabOn = t => TABS_ON.includes(t);
 function setTab(tab) {
+  if (!tabOn(tab)) tab = TABS_ON[0];
   state.settings.tab = tab; save();
   $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   $$('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + tab));
@@ -4716,7 +4722,7 @@ function setTab(tab) {
 }
 function renderAll() {
   renderHeader();
-  const tab = state.settings.tab in RENDER ? state.settings.tab : 'roteiro';
+  const tab = tabOn(state.settings.tab) ? state.settings.tab : TABS_ON[0];
   $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   $$('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + tab));
   RENDER[tab]();
@@ -4724,6 +4730,8 @@ function renderAll() {
 
 function init() {
   document.body.insertAdjacentHTML('afterbegin', buildSprite());
+  $$('#tabs button').forEach(b => { b.hidden = !tabOn(b.dataset.tab); });
+  if (TABS_ON.length < 2) $('#tabs').style.display = 'none';
   $('#tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab); });
   $('#tripTitle').addEventListener('change', e => commit(() => state.title = e.target.value.trim() || state.title, {render: false}));
   $('#undoBtn').addEventListener('click', undo);
