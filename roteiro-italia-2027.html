@@ -3793,7 +3793,15 @@ function setupPlanner() {
     if (act === 'pup') commit(() => swap(pcs[i].p, j, j - 1));
     if (act === 'pdown') commit(() => swap(pcs[i].p, j, j + 1));
     if (act === 'pdel') commit(() => pcs[i].p.splice(j, 1));
-    if (act === 'clear' && confirm('Limpar todas as cidades e lugares do plano?')) commit(() => state.plan.cities = []);
+    if (act === 'clear' && confirm('Limpar o roteiro inteiro? Saem todas as cidades e lugares do “Planejar pela Itália” e todos os dias e atividades do “Mapa do roteiro”. As datas da viagem continuam. Dá para desfazer.')) {
+      commit(() => {
+        state.plan.cities = []; delete state.plan.genKey;
+        state.days = state.days.map(d => ({...d, base: '', title: '', note: '', items: []}));
+        state.settings.mapMode = 'plan';
+      });
+      planSel = null; planOcc = null; renderMap();
+      toast('Roteiro limpo.', '<button data-t="undo">Desfazer</button>', undo);
+    }
     if (act === 'gen') {
       const start = planStart(), update = !!plan().genKey;
       if (update && state.days.some(d => d.items.length) && !confirm('Atualizar o roteiro com a sequência atual? Os dias e as atividades serão recriados a partir do plano (dá para desfazer).')) return;
