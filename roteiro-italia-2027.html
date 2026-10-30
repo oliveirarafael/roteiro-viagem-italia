@@ -338,6 +338,7 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .pl-in{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;color:#15803d;margin-bottom:8px}
 .pl-in button{margin-left:auto;font-size:12px;padding:2px 10px;border-radius:999px}
 .pl-add{width:100%;justify-content:center;margin-bottom:8px}
+.pl-note{font-size:12.5px;color:#6b5a44;background:#f6ecd6;border-radius:10px;padding:8px 10px;margin:4px 0 0}
 .pl-occ{display:flex;flex-wrap:wrap;align-items:center;gap:5px;font-size:12px;color:#7a6a52;margin:0 0 8px}
 .pl-occ button{border:1.5px solid var(--ink);border-radius:999px;background:#fff;padding:2px 10px;font-size:12px;font-weight:700}
 .pl-occ button.on{background:var(--c);color:#fff}
@@ -3576,15 +3577,6 @@ function planAddCity(k, again = false) {
   plan().cities.push({k, n: again ? 1 : CAT[k].n, p: []});
   planOcc = plan().cities.length - 1;
 }
-function planTogglePlace(id) {
-  const P0 = PLACE[id]; if (!P0) return;
-  commit(() => {
-    if (activeOcc(P0.city) < 0) planAddCity(P0.city);
-    planOcc = activeOcc(P0.city);
-    const pc = plan().cities[planOcc], i = pc.p.indexOf(id);
-    if (i >= 0) pc.p.splice(i, 1); else pc.p.push(id);
-  });
-}
 
 /* ---------- mapa da Itália ---------- */
 const BALKANS = [[45.2, 16], [45.17, 14.69], [44.95, 14.85], [44.55, 15.05], [44.1, 15.25], [43.75, 15.75], [43.5, 16.3], [43.25, 16.95], [43.0, 17.45], [42.65, 18.05], [42.4, 18.55], [42.1, 19.1], [41.85, 19.38], [41.4, 19.45], [40.95, 19.42], [40.45, 19.4], [40.05, 19.85], [39.7, 20.05], [39.3, 20.3], [38.8, 20.65], [38.2, 21.2], [37.9, 21.15], [37.6, 21.65], [36.8, 21.7], [36.3, 22.5], [36.3, 23.5], [45.2, 23.5]];
@@ -3646,38 +3638,28 @@ function planMapSVG() {
 }
 
 /* ---------- painel lateral e sequência ---------- */
-function placeRowHTML(p, c, sel, cur) {
-  const on = sel.includes(p.id);
-  const other = occOf(c.k).filter(i => i !== cur && plan().cities[i].p.includes(p.id)).map(i => i + 1);
-  return `<li class="pl-place ${on ? 'on' : ''}"><label><input type="checkbox" data-place="${p.id}" ${on ? 'checked' : ''}>
-    <svg class="mini-ic" style="--tc:${on ? cityColor(c.name) : '#7a6a52'}" viewBox="0 0 24 24"><use href="#ic-${p.ic}"/></svg>
-    <span class="pp-main"><b>${esc(p.name)}</b>${other.length ? `<small class="pp-other">já incluído na parada ${other.join(' e ')}</small>` : ''}<small>${esc(p.d)}</small>
-    <small class="pp-meta">~${fmtDur(p.h * 60)}${p.r ? ' · <b class="res">reserva antecipada</b>' : ''} · <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(p.name + ' ' + c.name)}" target="_blank" rel="noopener">fotos</a> · <a href="${mapsUrl(p.name + ', ' + c.name + ', Itália')}" target="_blank" rel="noopener">mapa</a></small></span></label></li>`;
-}
 function planSideHTML() {
   if (planSel && CAT[planSel]) {
     const c = CAT[planSel], occ = occOf(c.k), idx = activeOcc(c.k), pc = plan().cities[idx] || null, sel = pc ? pc.p : [];
     const pcs = plan().cities, prev = idx > 0 ? CAT[pcs[idx - 1].k] : pcs.length && !pc ? CAT[pcs[pcs.length - 1].k] : null;
     const L = prev && prev.k !== c.k ? legInfo(prev, c) : null;
-    const fam = c.places.filter(p => p.f), gems = c.places.filter(p => !p.f);
-    const occBar = occ.length > 1 ? `<div class="pl-occ"><span>Lugares desta passagem:</span>${occ.map(i => `<button class="${i === idx ? 'on' : ''}" data-pl="occ" data-i="${i}">Parada ${i + 1}${i === occ[0] ? ' (ida)' : i === occ[occ.length - 1] ? ' (volta)' : ''}</button>`).join('')}</div>` : '';
+    const famN = c.places.filter(p => p.f).length, gemN = c.places.length - famN;
     return `<div class="card pl-detail" style="--c:${cityColor(c.name)}">
       <button class="pl-back" data-pl="back">← Todas as cidades</button>
       <h3>${esc(c.name)}</h3><div class="pl-reg">${esc(c.reg)} · sugestão: ${c.n} noite${c.n > 1 ? 's' : ''}</div>
       <p class="pl-desc">${esc(c.d)}</p>
       <div class="pl-how"><b>Como chegar:</b> ${esc(c.via || '')}${L ? `<div class="pl-leg-line">${legHTML(L, prev, c)}</div>` : ''}</div>
       ${pc ? `<div class="pl-in">✓ ${occ.length > 1 ? `Paradas ${occ.map(i => i + 1).join(' e ')}` : `Parada ${idx + 1}`} do seu roteiro <button class="danger" data-pl="remove-occ" data-i="${idx}">Remover parada ${idx + 1}</button></div>
-          ${occBar}<button class="ink-btn pl-add" data-pl="add-again" data-city="${c.k}" title="Incluir outra passagem por ${esc(c.name)}">+ Passar por aqui de novo (ex.: voltar no fim)</button>`
+          <button class="ink-btn pl-add" data-pl="add-again" data-city="${c.k}" title="Incluir outra passagem por ${esc(c.name)}">+ Passar por aqui de novo (ex.: voltar no fim)</button>`
         : `<button class="ink-btn primary pl-add" data-pl="add-city" data-city="${c.k}">+ Incluir ${esc(c.name)} no roteiro</button>`}
-      <h4>Imperdíveis</h4><ul class="pl-places">${fam.map(p => placeRowHTML(p, c, sel, idx)).join('')}</ul>
-      ${gems.length ? `<h4>Pouco conhecidos</h4><ul class="pl-places">${gems.map(p => placeRowHTML(p, c, sel, idx)).join('')}</ul>` : ''}
+      <p class="pl-note">${famN} lugares imperdíveis e ${gemN} pouco conhecidos em ${esc(c.name)}. Você escolhe os lugares depois de gerar o roteiro, no <b>Mapa do roteiro</b>.</p>
     </div>`;
   }
   const q = norm(planQuery);
   const match = c => !q || norm(c.name).includes(q) || norm(c.reg).includes(q) || c.places.some(p => norm(p.name).includes(q));
   return `<div class="card pl-browse">
     <h3>Cidades da Itália</h3>
-    <p class="muted" style="font-size:12.5px;margin:0 0 8px">Clique numa cidade (aqui ou no mapa) para ver os lugares famosos e os pouco conhecidos e montar sua sequência.</p>
+    <p class="muted" style="font-size:12.5px;margin:0 0 8px">Clique numa cidade (aqui ou no mapa) para ver como chegar e incluir na sua sequência.</p>
     <input class="pl-search" type="search" placeholder="Buscar cidade, região ou lugar…" value="${esc(planQuery)}">
     ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const occ = occOf(c.k); return `<button class="pl-chip ${occ.length ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${occ.length ? `<span>${occ.map(i => i + 1).join('·')}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
   </div>`;
@@ -3707,7 +3689,7 @@ function planSeqHTML() {
         <div class="ps-move"><button data-pl="up" data-i="${i}" title="Mover para antes" ${i ? '' : 'disabled'}>↑</button><button data-pl="down" data-i="${i}" title="Mover para depois" ${i < pcs.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="del" data-i="${i}" title="Remover" class="danger">×</button></div></div>
       ${items.length ? `<ol class="ps-places">${items.map((p, j) => `${j ? `<li class="ps-walk"><span>${icSvg(walkInfo(items[j - 1], p, c).ic)}</span>${walkInfo(items[j - 1], p, c).txt}</li>` : ''}<li class="ps-place"><span class="pn">${j + 1}</span><span class="pt">${esc(p.name)}${p.r ? ' <b class="res">reserva</b>' : ''}<small>~${fmtDur(p.h * 60)}</small></span>
           <span class="ps-pm"><button data-pl="pup" data-i="${i}" data-j="${j}" ${j ? '' : 'disabled'}>↑</button><button data-pl="pdown" data-i="${i}" data-j="${j}" ${j < items.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="pdel" data-i="${i}" data-j="${j}" class="danger">×</button></span></li>`).join('')}</ol>`
-        : `<p class="muted ps-none">Nenhum lugar escolhido. <a href="#" data-pl="sel" data-city="${c.k}" data-i="${i}">Escolher lugares</a></p>`}
+        : `<p class="muted ps-none">Nenhum lugar ainda. Depois de gerar, escolha os lugares no <b>Mapa do roteiro</b>.</p>`}
     </article>`;
   }).join('');
   const first = CAT[pcs[0].k], last = CAT[pcs[pcs.length - 1].k];
@@ -3950,7 +3932,6 @@ function setupPlanner() {
       else toast(msg, '<button data-t="route">Ver dia a dia</button>', () => commit(() => state.settings.mapMode = 'route'));
     }
   });
-  el.addEventListener('change', e => { if (e.target.matches('input[data-place]')) planTogglePlace(e.target.dataset.place); });
   el.addEventListener('input', e => {
     if (!e.target.classList.contains('pl-search')) return;
     planQuery = e.target.value;
