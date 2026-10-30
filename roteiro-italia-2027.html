@@ -338,6 +338,12 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .pl-in{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;color:#15803d;margin-bottom:8px}
 .pl-in button{margin-left:auto;font-size:12px;padding:2px 10px;border-radius:999px}
 .pl-add{width:100%;justify-content:center;margin-bottom:8px}
+.pl-occ{display:flex;flex-wrap:wrap;align-items:center;gap:5px;font-size:12px;color:#7a6a52;margin:0 0 8px}
+.pl-occ button{border:1.5px solid var(--ink);border-radius:999px;background:#fff;padding:2px 10px;font-size:12px;font-weight:700}
+.pl-occ button.on{background:var(--c);color:#fff}
+.pp-other{color:#0f766e!important;font-weight:700}
+.ps-tag{font-family:system-ui,'Segoe UI',sans-serif;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--c);border:1.5px solid var(--c);border-radius:999px;padding:0 6px;vertical-align:middle}
+.pl-seq-foot{display:flex;justify-content:center;margin-top:12px}
 .mini-map{display:block;width:100%;height:auto;margin:6px 0 2px}
 .mm-pt{cursor:pointer}
 .mm-pt:hover circle:last-of-type{stroke:#f59e0b;stroke-width:3}
@@ -3526,12 +3532,21 @@ function walkInfo(p, q, city) {
 const plan = () => (state.plan ||= {cities: []});
 const planCity = k => plan().cities.find(c => c.k === k);
 let planSel = null, planQuery = '';
-function planAddCity(k) { if (!planCity(k)) plan().cities.push({k, n: CAT[k].n, p: []}); }
+let planOcc = null;
+const occOf = k => plan().cities.map((pc, i) => pc.k === k ? i : -1).filter(i => i >= 0);
+const activeOcc = k => { const occ = occOf(k); return occ.includes(planOcc) ? planOcc : occ.length ? occ[0] : -1; };
+const activePC = k => plan().cities[activeOcc(k)] || null;
+function planAddCity(k, again = false) {
+  if (!again && occOf(k).length) return;
+  plan().cities.push({k, n: again ? 1 : CAT[k].n, p: []});
+  planOcc = plan().cities.length - 1;
+}
 function planTogglePlace(id) {
   const P0 = PLACE[id]; if (!P0) return;
   commit(() => {
-    planAddCity(P0.city);
-    const pc = planCity(P0.city), i = pc.p.indexOf(id);
+    if (activeOcc(P0.city) < 0) planAddCity(P0.city);
+    planOcc = activeOcc(P0.city);
+    const pc = plan().cities[planOcc], i = pc.p.indexOf(id);
     if (i >= 0) pc.p.splice(i, 1); else pc.p.push(id);
   });
 }
@@ -3541,7 +3556,8 @@ const BALKANS = [[45.2, 16], [45.17, 14.69], [44.95, 14.85], [44.55, 15.05], [44
 const PLAN_MAP = (() => { const k = 64, c = 0.743, lo0 = 6.4, la1 = 47.3; return {W: Math.round((18.7 - lo0) * c * k), H: Math.round((la1 - 36.4) * k), p: (lat, lon) => [(lon - lo0) * c * k, (la1 - lat) * k]}; })();
 function planMapSVG() {
   const {W, H, p} = PLAN_MAP, poly = pts => smoothPath(pts.map(([a, b]) => p(a, b)), true), line = pts => smoothPath(pts.map(([a, b]) => p(a, b)), false);
-  const seq = plan().cities.map(pc => CAT[pc.k]).filter(Boolean), inPlan = new Map(seq.map((c, i) => [c.k, i]));
+  const seq = plan().cities.map(pc => CAT[pc.k]).filter(Boolean), inPlan = new Map();
+  seq.forEach((c, i) => { if (!inPlan.has(c.k)) inPlan.set(c.k, []); inPlan.get(c.k).push(i + 1); });
   let s = `<svg viewBox="0 0 ${W} ${H}" class="plan-svg" role="img" aria-label="Mapa interativo da Itália">`;
   s += `<rect width="${W}" height="${H}" fill="url(#seaGrad)"/>`;
   [[39.4, 11.2], [42.2, 9.2], [40.2, 13.4], [38.6, 17.8], [43.1, 14.6], [37.0, 17.0], [41.0, 17.9], [39.0, 15.0]].forEach(([a, b], i) => { const [x, y] = p(a, b); s += `<use href="#wave" x="${rn(x)}" y="${rn(y)}" width="${30 + (i % 3) * 6}" height="10"/>`; });
@@ -3556,7 +3572,8 @@ function planMapSVG() {
   s += txt('MAR TIRRENO', 40.3, 11.6, {size: 18}) + txt('MAR ADRIÁTICO', 43.2, 15.2, {size: 15, rot: -38}) + txt('MAR JÔNICO', 38.4, 18.0, {size: 14}) + txt('MAR LÍGURE', 43.65, 8.6, {size: 13}) + txt('SUÍÇA', 46.75, 8.3, {size: 13, fill: '#b0413e'});
   // rota
   for (let i = 1; i < seq.length; i++) {
-    const a = seq[i - 1], b = seq[i], L = legInfo(a, b), [x1, y1] = p(a.lat, a.lon), [x2, y2] = p(b.lat, b.lon), col = MODE[L.mode][2];
+    const a = seq[i - 1], b = seq[i]; if (a.k === b.k) continue;
+    const L = legInfo(a, b), [x1, y1] = p(a.lat, a.lon), [x2, y2] = p(b.lat, b.lon), col = MODE[L.mode][2];
     const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, bend = Math.min(30, len * .18);
     const cx = mx - dy / len * bend, cy = my + dx / len * bend;
     s += `<path d="M${rn(x1)} ${rn(y1)}Q${rn(cx)} ${rn(cy)} ${rn(x2)} ${rn(y2)}" fill="none" stroke="${col}" stroke-width="3.2" stroke-dasharray="${L.mode === 'voo' ? '7 7' : L.mode === 'barco' ? '2 6' : '10 6'}" stroke-linecap="round" class="route-anim"/>`;
@@ -3568,16 +3585,16 @@ function planMapSVG() {
   const ordered = [...IT_CITIES].sort((a, b) => (inPlan.has(a.k) - inPlan.has(b.k)) || (a.k === planSel) - (b.k === planSel));
   let dots = '';
   ordered.forEach(c => {
-    const [x, y] = p(c.lat, c.lon), i = inPlan.get(c.k), on = i != null, sel = c.k === planSel;
-    const col = on ? cityColor(c.name) : '#fffaf0';
-    dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(c.name)} — ${esc(c.reg)}${on ? ` (parada ${i + 1})` : ' · clique para ver os lugares'}</title>
-      <circle r="16" fill="transparent"/>${sel ? '<circle r="17" fill="none" stroke="#f59e0b" stroke-width="4"/>' : ''}
-      <circle r="${on ? 11 : 6}" fill="${col}" stroke="${INK}" stroke-width="${on ? 2.5 : 2}"/>${on ? `<text y="4.5" text-anchor="middle" font-size="12" class="f-bold" fill="#fff">${i + 1}</text>` : ''}</g>`;
-    boxes.push({x0: x - (on ? 12 : 7), x1: x + (on ? 12 : 7), y0: y - (on ? 12 : 7), y1: y + (on ? 12 : 7)});
+    const [x, y] = p(c.lat, c.lon), nums = inPlan.get(c.k), on = !!nums, sel = c.k === planSel;
+    const col = on ? cityColor(c.name) : '#fffaf0', numTxt = on ? nums.join('·') : '', rw = on ? Math.max(11, numTxt.length * 4 + 6) : 6;
+    dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(c.name)} — ${esc(c.reg)}${on ? ` (parada${nums.length > 1 ? 's' : ''} ${nums.join(' e ')})` : ' · clique para ver os lugares'}</title>
+      <circle r="16" fill="transparent"/>${sel ? `<rect x="${-rw - 6}" y="-17" width="${2 * rw + 12}" height="34" rx="17" fill="none" stroke="#f59e0b" stroke-width="4"/>` : ''}
+      ${on ? `<rect x="${-rw}" y="-11" width="${2 * rw}" height="22" rx="11" fill="${col}" stroke="${INK}" stroke-width="2.5"/><text y="4.5" text-anchor="middle" font-size="${nums.length > 1 ? 11 : 12}" class="f-bold" fill="#fff">${numTxt}</text>` : `<circle r="6" fill="${col}" stroke="${INK}" stroke-width="2"/>`}</g>`;
+    boxes.push({x0: x - (on ? rw + 1 : 7), x1: x + (on ? rw + 1 : 7), y0: y - (on ? 12 : 7), y1: y + (on ? 12 : 7)});
   });
   ordered.slice().reverse().forEach(c => {
     const on = inPlan.has(c.k), sel = c.k === planSel;
-    const [x, y] = p(c.lat, c.lon), fs = on || sel ? 13 : 10.5, w = c.name.length * fs * .56 + 6, h = fs + 3, off = on ? 14 : 9;
+    const [x, y] = p(c.lat, c.lon), fs = on || sel ? 13 : 10.5, w = c.name.length * fs * .56 + 6, h = fs + 3, off = on ? Math.max(14, inPlan.get(c.k).join('·').length * 4 + 9) : 9;
     const cands = [[off, -h / 2, 'start'], [-off - w, -h / 2, 'end'], [-w / 2, -off - h, 'middle'], [-w / 2, off, 'middle']];
     for (const [dx, dy, anchor] of cands) {
       const r = {x0: x + dx, x1: x + dx + w, y0: y + dy, y1: y + dy + h};
@@ -3593,7 +3610,7 @@ function planMapSVG() {
   return s + `<rect width="${W}" height="${H}" filter="url(#paperNoise)" opacity=".4" pointer-events="none"/></svg>`;
 }
 function cityMiniMapSVG(c) {
-  const pc = planCity(c.k), sel = pc ? pc.p : [];
+  const pc = activePC(c.k), sel = pc ? pc.p : [];
   const pts = c.places.filter(p => haversine([c.lat, c.lon], [p.lat, p.lon]) < 12);
   if (pts.length < 2) return '';
   let la0 = Math.min(...pts.map(p => p.lat)), la1 = Math.max(...pts.map(p => p.lat)), lo0 = Math.min(...pts.map(p => p.lon)), lo1 = Math.max(...pts.map(p => p.lon));
@@ -3612,29 +3629,32 @@ function cityMiniMapSVG(c) {
 }
 
 /* ---------- painel lateral e sequência ---------- */
-function placeRowHTML(p, c, sel) {
+function placeRowHTML(p, c, sel, cur) {
   const on = sel.includes(p.id);
+  const other = occOf(c.k).filter(i => i !== cur && plan().cities[i].p.includes(p.id)).map(i => i + 1);
   return `<li class="pl-place ${on ? 'on' : ''}"><label><input type="checkbox" data-place="${p.id}" ${on ? 'checked' : ''}>
     <svg class="mini-ic" style="--tc:${on ? cityColor(c.name) : '#7a6a52'}" viewBox="0 0 24 24"><use href="#ic-${p.ic}"/></svg>
-    <span class="pp-main"><b>${esc(p.name)}</b><small>${esc(p.d)}</small>
+    <span class="pp-main"><b>${esc(p.name)}</b>${other.length ? `<small class="pp-other">já incluído na parada ${other.join(' e ')}</small>` : ''}<small>${esc(p.d)}</small>
     <small class="pp-meta">~${fmtDur(p.h * 60)}${p.r ? ' · <b class="res">reserva antecipada</b>' : ''} · <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(p.name + ' ' + c.name)}" target="_blank" rel="noopener">fotos</a> · <a href="${mapsUrl(p.name + ', ' + c.name + ', Itália')}" target="_blank" rel="noopener">mapa</a></small></span></label></li>`;
 }
 function planSideHTML() {
   if (planSel && CAT[planSel]) {
-    const c = CAT[planSel], pc = planCity(c.k), sel = pc ? pc.p : [], idx = plan().cities.indexOf(pc);
-    const prev = idx > 0 ? CAT[plan().cities[idx - 1].k] : plan().cities.length && !pc ? CAT[plan().cities[plan().cities.length - 1].k] : null;
-    const L = prev ? legInfo(prev, c) : null;
+    const c = CAT[planSel], occ = occOf(c.k), idx = activeOcc(c.k), pc = plan().cities[idx] || null, sel = pc ? pc.p : [];
+    const pcs = plan().cities, prev = idx > 0 ? CAT[pcs[idx - 1].k] : pcs.length && !pc ? CAT[pcs[pcs.length - 1].k] : null;
+    const L = prev && prev.k !== c.k ? legInfo(prev, c) : null;
     const fam = c.places.filter(p => p.f), gems = c.places.filter(p => !p.f);
+    const occBar = occ.length > 1 ? `<div class="pl-occ"><span>Lugares desta passagem:</span>${occ.map(i => `<button class="${i === idx ? 'on' : ''}" data-pl="occ" data-i="${i}">Parada ${i + 1}${i === occ[0] ? ' (ida)' : i === occ[occ.length - 1] ? ' (volta)' : ''}</button>`).join('')}</div>` : '';
     return `<div class="card pl-detail" style="--c:${cityColor(c.name)}">
       <button class="pl-back" data-pl="back">← Todas as cidades</button>
       <h3>${esc(c.name)}</h3><div class="pl-reg">${esc(c.reg)} · sugestão: ${c.n} noite${c.n > 1 ? 's' : ''}</div>
       <p class="pl-desc">${esc(c.d)}</p>
       <div class="pl-how"><b>Como chegar:</b> ${esc(c.via || '')}${L ? `<div class="pl-leg-line">${legHTML(L, prev, c)}</div>` : ''}</div>
-      ${pc ? `<div class="pl-in">✓ Parada ${idx + 1} do seu roteiro · ${sel.length} lugar${sel.length === 1 ? '' : 'es'} <button class="danger" data-pl="remove-city" data-city="${c.k}">Remover cidade</button></div>`
+      ${pc ? `<div class="pl-in">✓ ${occ.length > 1 ? `Paradas ${occ.map(i => i + 1).join(' e ')}` : `Parada ${idx + 1}`} do seu roteiro <button class="danger" data-pl="remove-occ" data-i="${idx}">Remover parada ${idx + 1}</button></div>
+          ${occBar}<button class="ink-btn pl-add" data-pl="add-again" data-city="${c.k}">+ Passar por ${esc(c.name)} de novo (ex.: voltar no fim)</button>`
         : `<button class="ink-btn primary pl-add" data-pl="add-city" data-city="${c.k}">+ Incluir ${esc(c.name)} no roteiro</button>`}
       ${cityMiniMapSVG(c)}
-      <h4>Imperdíveis</h4><ul class="pl-places">${fam.map(p => placeRowHTML(p, c, sel)).join('')}</ul>
-      ${gems.length ? `<h4>Pouco conhecidos</h4><ul class="pl-places">${gems.map(p => placeRowHTML(p, c, sel)).join('')}</ul>` : ''}
+      <h4>Imperdíveis</h4><ul class="pl-places">${fam.map(p => placeRowHTML(p, c, sel, idx)).join('')}</ul>
+      ${gems.length ? `<h4>Pouco conhecidos</h4><ul class="pl-places">${gems.map(p => placeRowHTML(p, c, sel, idx)).join('')}</ul>` : ''}
     </div>`;
   }
   const q = norm(planQuery);
@@ -3643,7 +3663,7 @@ function planSideHTML() {
     <h3>Cidades da Itália</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 8px">Clique numa cidade (aqui ou no mapa) para ver os lugares famosos e os pouco conhecidos e montar sua sequência.</p>
     <input class="pl-search" type="search" placeholder="Buscar cidade, região ou lugar…" value="${esc(planQuery)}">
-    ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const i = plan().cities.findIndex(x => x.k === c.k); return `<button class="pl-chip ${i >= 0 ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${i >= 0 ? `<span>${i + 1}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
+    ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const occ = occOf(c.k); return `<button class="pl-chip ${occ.length ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${occ.length ? `<span>${occ.map(i => i + 1).join('·')}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
   </div>`;
 }
 function legHTML(L, a, b) {
@@ -3658,19 +3678,26 @@ function planSeqHTML() {
     const c = CAT[pc.k]; if (!c) return '';
     nights += +pc.n || 0; places += pc.p.length;
     let leg = '';
-    if (i > 0) { const a = CAT[pcs[i - 1].k], L = legInfo(a, c); totalMin += L.min; leg = `<div class="pl-leg-row">${legHTML(L, a, c)}</div>`; }
-    const items = pc.p.map(id => PLACE[id]).filter(Boolean);
+    if (i > 0) {
+      const a = CAT[pcs[i - 1].k];
+      if (a.k === c.k) leg = `<div class="pl-leg-row"><small>Mesma cidade da parada anterior: sem deslocamento.</small></div>`;
+      else { const L = legInfo(a, c); totalMin += L.min; leg = `<div class="pl-leg-row">${legHTML(L, a, c)}</div>`; }
+    }
+    const items = pc.p.map(id => PLACE[id]).filter(Boolean), occ = occOf(pc.k);
+    const tag = occ.length > 1 ? (i === occ[0] ? 'ida' : i === occ[occ.length - 1] ? 'volta' : 'passagem') : '';
     return `${leg}<article class="pl-stop" style="--c:${cityColor(c.name)}">
-      <div class="ps-head"><span class="ps-num">${i + 1}</span><div class="ps-title"><b data-pl="sel" data-city="${c.k}">${esc(c.name)}</b><small>${esc(c.reg)}</small></div>
+      <div class="ps-head"><span class="ps-num">${i + 1}</span><div class="ps-title"><b data-pl="sel" data-city="${c.k}" data-i="${i}">${esc(c.name)}${tag ? ` <span class="ps-tag">${tag}</span>` : ''}</b><small>${esc(c.reg)}</small></div>
         <div class="ps-nights" title="Noites nesta cidade"><button data-pl="n-" data-i="${i}">−</button><span>${pc.n} noite${pc.n === 1 ? '' : 's'}</span><button data-pl="n+" data-i="${i}">+</button></div>
         <div class="ps-move"><button data-pl="up" data-i="${i}" title="Mover para antes" ${i ? '' : 'disabled'}>↑</button><button data-pl="down" data-i="${i}" title="Mover para depois" ${i < pcs.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="del" data-i="${i}" title="Remover" class="danger">×</button></div></div>
       ${items.length ? `<ol class="ps-places">${items.map((p, j) => `${j ? `<li class="ps-walk"><span>${icSvg(walkInfo(items[j - 1], p, c).ic)}</span>${walkInfo(items[j - 1], p, c).txt}</li>` : ''}<li class="ps-place"><span class="pn">${j + 1}</span><span class="pt">${esc(p.name)}${p.r ? ' <b class="res">reserva</b>' : ''}<small>~${fmtDur(p.h * 60)}</small></span>
           <span class="ps-pm"><button data-pl="pup" data-i="${i}" data-j="${j}" ${j ? '' : 'disabled'}>↑</button><button data-pl="pdown" data-i="${i}" data-j="${j}" ${j < items.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="pdel" data-i="${i}" data-j="${j}" class="danger">×</button></span></li>`).join('')}</ol>`
-        : `<p class="muted ps-none">Nenhum lugar escolhido. <a href="#" data-pl="sel" data-city="${c.k}">Escolher lugares</a></p>`}
+        : `<p class="muted ps-none">Nenhum lugar escolhido. <a href="#" data-pl="sel" data-city="${c.k}" data-i="${i}">Escolher lugares</a></p>`}
     </article>`;
   }).join('');
-  return `<section class="pl-seq"><div class="pl-seq-head"><h3>Sua sequência</h3><span class="pl-tot">${pcs.length} cidade${pcs.length > 1 ? 's' : ''} · ${nights} noite${nights === 1 ? '' : 's'} · ${places} lugar${places === 1 ? '' : 'es'} · ~${fmtDur(totalMin)} de deslocamento</span>
-    <span class="sp"></span><button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">Gerar calendário</button></div>${parts}</section>`;
+  const first = CAT[pcs[0].k], last = CAT[pcs[pcs.length - 1].k];
+  const back = pcs.length > 1 && first && last && first.k !== last.k ? `<button class="ink-btn pl-back-to" data-pl="return" data-city="${first.k}">↩ Voltar para ${esc(first.name)} no fim</button>` : '';
+  return `<section class="pl-seq"><div class="pl-seq-head"><h3>Sua sequência</h3><span class="pl-tot">${pcs.length} parada${pcs.length > 1 ? 's' : ''} · ${nights} noite${nights === 1 ? '' : 's'} · ${places} lugar${places === 1 ? '' : 'es'} · ~${fmtDur(totalMin)} de deslocamento</span>
+    <span class="sp"></span><button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">Gerar calendário</button></div>${parts}${back ? `<div class="pl-seq-foot">${back}</div>` : ''}</section>`;
 }
 function planHTML() {
   return `<div class="plan-grid"><div class="paper plan-paper">${planMapSVG()}</div><aside class="plan-side">${planSideHTML()}</aside></div>${planSeqHTML()}`;
@@ -3683,7 +3710,7 @@ function generateFromPlan(start) {
   const newDay = (base, title) => { const d = {id: uid(), date, base, title, note: '', items: []}; days.push(d); date = addDays(date, 1); return d; };
   const typeOf = ic => ({comida: 'comida', compras: 'compras', passeio: 'passeio', foto: 'passeio', sol: 'passeio', barco: 'passeio', gondola: 'passeio'}[ic] || 'visita');
   pcs.forEach((pc, i) => {
-    const c = CAT[pc.k], prev = i ? CAT[pcs[i - 1].k] : null, L = prev ? legInfo(prev, c) : null;
+    const c = CAT[pc.k], prev = i && pcs[i - 1].k !== pc.k ? CAT[pcs[i - 1].k] : null, L = prev ? legInfo(prev, c) : null;
     const items = pc.p.map(id => PLACE[id]).filter(Boolean).map(p => ({id: uid(), start: '', end: '', type: typeOf(p.ic), title: p.name, notes: p.d + (p.r ? ' Reserva antecipada recomendada.' : ''), cost: 0, status: p.r ? 'reservar' : '', link: '', _h: p.h}));
     const legItem = L ? {id: uid(), start: '', end: '', type: L.mode === 'carro' ? 'transfer' : L.mode, title: `${MODE[L.mode][0]} ${prev.name} → ${c.name}`, notes: `~${fmtDur(L.min)} · ${L.note}${L.est ? ' (estimativa)' : ''}`, cost: 0, status: L.mode === 'trem' && !L.est ? 'reservar' : '', link: ''} : null;
     const n = Math.max(0, +pc.n || 0);
@@ -3715,15 +3742,17 @@ function setupPlanner() {
     e.preventDefault();
     const pcs = plan().cities, i = +b.dataset.i, j = +b.dataset.j, act = b.dataset.pl;
     const swap = (arr, a, c) => { [arr[a], arr[c]] = [arr[c], arr[a]]; };
-    if (act === 'sel') { planSel = b.dataset.city; renderMap(); $('#tab-mapa .plan-grid')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+    if (act === 'sel') { planSel = b.dataset.city; if (b.dataset.i != null) planOcc = i; renderMap(); $('#tab-mapa .plan-grid')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }
     if (act === 'back') { planSel = null; renderMap(); }
+    if (act === 'occ') { planOcc = i; renderMap(); }
     if (act === 'add-city') commit(() => planAddCity(b.dataset.city));
-    if (act === 'remove-city') commit(() => state.plan.cities = pcs.filter(x => x.k !== b.dataset.city));
+    if (act === 'add-again' || act === 'return') { commit(() => planAddCity(b.dataset.city, true)); if (act === 'return') toast(`${esc(CAT[b.dataset.city].name)} incluída de novo no fim (1 noite). Ajuste as noites e escolha os lugares da volta.`); }
+    if (act === 'remove-occ') commit(() => { pcs.splice(i, 1); planOcc = null; });
     if (act === 'n-') commit(() => pcs[i].n = Math.max(0, pcs[i].n - 1));
     if (act === 'n+') commit(() => pcs[i].n = Math.min(30, pcs[i].n + 1));
-    if (act === 'up') commit(() => swap(pcs, i, i - 1));
-    if (act === 'down') commit(() => swap(pcs, i, i + 1));
-    if (act === 'del') commit(() => pcs.splice(i, 1));
+    if (act === 'up') commit(() => { swap(pcs, i, i - 1); planOcc = null; });
+    if (act === 'down') commit(() => { swap(pcs, i, i + 1); planOcc = null; });
+    if (act === 'del') commit(() => { pcs.splice(i, 1); planOcc = null; });
     if (act === 'pup') commit(() => swap(pcs[i].p, j, j - 1));
     if (act === 'pdown') commit(() => swap(pcs[i].p, j, j + 1));
     if (act === 'pdel') commit(() => pcs[i].p.splice(j, 1));
