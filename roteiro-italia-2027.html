@@ -375,6 +375,18 @@ dialog h3{font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;lett
 .cl-list .x,.cl-list .cl-link{opacity:0;transition:opacity .15s}
 .cl-list li:hover .x,.cl-list li:hover .cl-link{opacity:1}
 .cl-link svg{width:15px;height:15px;color:#0f766e}
+.cl-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.cl-main .cl-text{flex:none;width:100%}
+.cl-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding-left:3px}
+.must-chip{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#b91c1c;background:#fde8e8;border:1.5px solid #b91c1c;border-radius:999px;padding:0 7px;line-height:16px}
+.cl-site{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:#0f766e;text-decoration:none;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-site:hover{text-decoration:underline}
+.cl-site svg{width:12px;height:12px;flex:none}
+.cl-more{font-size:11.5px;font-weight:700;color:#0f766e;background:none;border:none;padding:0;cursor:pointer;text-decoration:underline dotted}
+.cl-info{margin:2px 0 4px 3px;padding:7px 9px;background:#fffaf0;border:1px dashed #d9c49a;border-radius:9px;font-size:12.5px;line-height:1.45;color:#4a3b2a}
+.cl-info p{margin:0}
+.cl-info ul{margin:5px 0 0;padding-left:16px}
+.cl-info a{color:#0f766e;font-weight:600}
 .cl-date{font-size:11.5px;color:#7a6a52;white-space:nowrap;flex:none;font-weight:600}
 .sticker .cl-add{margin-top:4px}
 .sticker .cl-add input{border:none;border-top:1px dashed #eadbb8;border-radius:0;background:transparent;padding:7px 2px 2px;font-size:13px;width:100%}
@@ -911,28 +923,82 @@ function defaultHotels() {
   ];
 }
 
-function defaultChecklist() {
-  const C = (cat, text, due = '', link = '') => ({id: uid(), cat, text, due, link, done: false});
-  return [
-    C('Documentos e entrada', 'Passaporte válido até pelo menos 23/05/2027 (3 meses após a saída) — ideal ter 6 meses', '2026-11-30'),
-    C('Documentos e entrada', 'Seguro-viagem com cobertura mínima de €30.000 válido no Schengen e na Suíça (levar apólice impressa)', '2027-01-15'),
-    C('Documentos e entrada', 'ETIAS: acompanhar se entra em vigor antes da viagem (ainda sem data; taxa €20; só no site oficial)', '2027-01-15', 'https://travel-europe.europa.eu/etias_en'),
-    C('Documentos e entrada', 'Imprimir/baixar passagens, reservas de hotel, seguro e ingressos (a imigração pode pedir)', '2027-02-01'),
-    C('Documentos e entrada', 'Imigração com EES: foto + 4 digitais na primeira entrada — prever tempo de fila em Fiumicino', '', 'https://travel-europe.europa.eu/ees_en'),
-    C('Hospedagem', 'Reservar hotel em Roma (07→11/02, 4 noites) com cancelamento grátis', '2026-11-30'),
-    C('Hospedagem', 'Reservar hotel em Florença (11→14/02, 3 noites)', '2026-11-30'),
-    C('Hospedagem', 'Reservar hotel em Veneza (14→17/02, 3 noites) — San Valentino lota', '2026-11-30'),
-    C('Hospedagem', 'Reservar hotel em Milão (17→23/02, 6 noites)', '2026-11-30'),
-    C('Hospedagem', 'Pedir guarda de malas/early check-in em Roma (chegada ~8h30)', '2027-01-31'),
+const LK = {
+  pid: ['DETRAN-SP: emitir a PID (use o DETRAN do seu estado)', 'https://servicos.sp.gov.br/fcarta/91833900-1B04-426B-8CFB-E6D6D96DD21E'],
+  cnhIt: ['Consulado do Brasil em Milão: dirigir na Itália com CNH', 'https://www.gov.br/mre/pt-br/consulado-milao/informacoes-uteis/carteira-nacional-de-habilitacao-cnh'],
+  aci: ['ACI: guia oficial para turistas ao volante (PDF)', 'https://aci.gov.it/app/uploads/2026/06/INGLESE-INFORMAZIONI-UTILI-PER-TURISTI-STRANIERI.pdf'],
+  inverno: ['Polizia di Stato: pneus de inverno e correntes', 'https://www.poliziadistato.it/articolo/385a5387e6e5f7a256783370'],
+  passos: ['Situação dos passos Bernina e Maloja', 'https://www.livigno.eu/de/passe-livigno'],
+  ztlRoma: ['Roma Mobilità: ZTL do centro e horários', 'https://romamobilita.it/muoversi-a-roma/ztl-in-centro/'],
+  ztlGuia: ['Guia de ZTL cidade por cidade', 'https://www.autovia.it/ztl-italia-guida-citta/'],
+  areaC: ['Comune di Milano: Area C', 'https://www.comune.milano.it/argomenti/mobilita/area-c'],
+  vinheta: ['Via (site oficial): e-vignette suíça', 'https://via.admin.ch/shop'],
+  autostrade: ['Autostrade per l’Italia', 'https://www.autostrade.it/'],
+  meios: ['Governo italiano: tabela de meios de subsistência', 'https://www.esteri.it/it/servizi-opportunita/ingressosoggiornoinitalia/mezzi_finanziari/tabella_mezzi_sussistenza/'],
+  entrada: ['Consulado da Itália: documentos pedidos na entrada', 'https://consportoalegre.esteri.it/pt/servizi-consolari-e-visti/servizi-per-il-cittadino-straniero/visti/visto-para-turismo-e-transito-ate-90-dias/'],
+  etias: ['ETIAS (site oficial da UE)', 'https://travel-europe.europa.eu/etias'],
+  ees: ['EES (site oficial da UE)', 'https://travel-europe.europa.eu/ees_en'],
+  cin: ['Ministério do Turismo: CIN obrigatório', 'https://www.ministeroturismo.gov.it/cin-termine-per-lacquisizione-spostato-al-1-gennaio-2025/'],
+  consMilao: ['Consulado do Brasil em Milão', 'https://www.gov.br/mre/pt-br/consulado-milao'],
+};
+const TICKET_RULES = [
+  [/museus vaticanos/, 60, 'Museus Vaticanos', 'as vendas abrem ~60 dias antes e esgotam rápido', 'Ingresso nominal (€20 + €5 de reserva): o nome precisa bater com o passaporte. Compre só no site oficial; revendedores cobram bem mais.'],
+  [/^coliseu/, 30, 'Coliseu + Fórum + Palatino', 'as vendas abrem 30 dias antes', '€18, nominal e com horário. A Full Experience (arena e subterrâneo) abre só 7 dias antes. Leve o passaporte.'],
+  [/galleria borghese/, 45, 'Galleria Borghese', 'sem data fixa de abertura: reserve com 1 a 2 meses', 'Reserva obrigatória: entradas a cada 2h, no máximo 360 pessoas. Retire o ingresso 30 min antes.'],
+  [/uffizi/, 60, 'Uffizi', 'o calendário abre por trimestre, ~2 meses antes', '€29 comprando antes (€25 no dia, com fila longa). Nominal, com horário.'],
+  [/accademia/, 60, 'Accademia (Davi)', 'reserve ~2 meses antes', 'Os horários da manhã esgotam primeiro.'],
+  [/brunelleschi/, 60, 'Cúpula de Brunelleschi', 'reserve assim que abrir: a subida tem horário fixo', 'Brunelleschi Pass €30, nominal. São 463 degraus, sem elevador.'],
+  [/torre de pisa/, 30, 'Torre de Pisa', 'subida com horário marcado: reserve ~1 mês antes', 'Bolsas ficam no guarda-volumes; menores de 8 anos não sobem.'],
+  [/basilica de sao marcos/, 90, 'Basílica de São Marcos (entrada sem fila)', 'a reserva abre 90 dias antes (opcional)', 'Sem reserva a fila pode ser longa. Ombros e joelhos cobertos; mochilas não entram.'],
+  [/palacio ducal/, 31, 'Palácio Ducal', 'o preço de €30 só vale comprando online com 30+ dias (depois, €35)', 'Inclui Museo Correr e Biblioteca Marciana.'],
+  [/^duomo \+ terra/, 30, 'Duomo de Milão + terraços', 'reserve ~1 mês antes', 'Escada €22 / elevador €26. Os terraços fecham com chuva forte ou gelo.'],
+];
+function ticketChecklist(days) {
+  return TICKET_RULES.flatMap(([re, before, name, rule, info]) => {
+    const d = days.find(x => x.items.some(i => re.test(norm(i.title)))); if (!d) return [];
+    const it = d.items.find(i => re.test(norm(i.title)));
+    return [{id: uid(), cat: 'Ingressos (datas de abertura)', text: `${name} (${weekday(d.date)} ${fmtBR(d.date)}): ${rule}`, due: addDays(d.date, -before), link: it.link || '', done: it.status === 'reservado', must: !!it.status, info}];
+  });
+}
+function defaultChecklist(days = defaultDays(), keepNewFlag = false) {
+  const C = (cat, text, due = '', link = '', x = {}) => ({id: uid(), cat, text, due, link, done: false, ...x});
+  const N = (...a) => ({...C(...a), _new: true});
+  const D = 'Documentos e entrada', H = 'Hospedagem', CAR = 'Carro (dirigir na Itália)';
+  const list = [
+    C(D, 'Passaporte válido até pelo menos 23/05/2027 (3 meses após a saída do Schengen) — ideal ter 6 meses e páginas em branco', '2026-11-30', LK.entrada[1], {must: true, info: 'Sem isso a companhia aérea não deixa embarcar. Se precisar renovar, o agendamento na Polícia Federal pode levar semanas.'}),
+    C(D, 'Seguro-viagem com cobertura mínima de €30.000 válido no Schengen e na Suíça (levar apólice impressa)', '2027-01-15', '', {must: true, info: 'Para brasileiro isento de visto não é formalmente exigido, mas a imigração pode pedir e o atendimento médico na Europa é caríssimo. Confira: despesas médicas, repatriação, Suíça incluída e cobertura para acidente dirigindo carro alugado.'}),
+    N(D, 'Comprovar meios financeiros: ~€400 por pessoa para 17 dias (tabela oficial italiana para 2+ viajantes) — cartão de crédito com limite e extrato recente no celular', '2027-02-01', LK.meios[1], {must: true, info: 'A polícia de fronteira pode pedir passagem de volta, hospedagem de todas as noites e prova de dinheiro. Tabela oficial para 2 ou mais pessoas, viagem de 11 a 20 dias: €25,82 fixos + €22,21 por dia, por pessoa.', links: [LK.meios, LK.entrada]}),
+    C(D, 'Imprimir/baixar passagens, reservas de hotel, seguro e ingressos (a imigração pode pedir)', '2027-02-01', '', {must: true}),
+    N(D, 'Cópias digitais de passaporte, CNH, PID, seguro e cartões numa pasta offline no celular + e-mail para você mesmo', '2027-02-01'),
+    C(D, 'Imigração com EES: foto + 4 digitais na primeira entrada — prever tempo de fila em Fiumicino', '', LK.ees[1]),
+    C(D, 'ETIAS: ainda sem data de início (a previsão de fim de 2026 foi retirada em jul/2026). Hoje não há nada para pedir nem pagar — site cobrando ETIAS é golpe. Acompanhar.', '2027-01-15', LK.etias[1], {info: 'Quando começar, custará €20, será pedido só no site/app oficial e terá período de transição. A UE vai avisar a data com meses de antecedência.'}),
+    N(D, 'Anotar contatos de emergência: 112 (Itália e Suíça), consulados do Brasil em Roma e Milão, seguro-viagem e banco', '2027-02-01', LK.consMilao[1]),
+    C(H, 'Reservar hotel em Roma (07→11/02, 4 noites) com cancelamento grátis', '2026-11-30', '', {must: true}),
+    C(H, 'Reservar hotel em Florença (11→14/02, 3 noites)', '2026-11-30', '', {must: true}),
+    C(H, 'Reservar hotel em Veneza (14→17/02, 3 noites) — San Valentino lota', '2026-11-30', '', {must: true}),
+    C(H, 'Reservar hotel em Milão (17→23/02, 6 noites)', '2026-11-30', '', {must: true}),
+    C(H, 'Pedir guarda de malas/early check-in em Roma (chegada ~8h30)', '2027-01-31'),
+    N(H, 'Se for dirigir: preferir hotéis com garagem (perguntar o preço por noite) e pedir que registrem a placa na ZTL', '2027-01-15', LK.ztlGuia[1], {info: 'Hotéis dentro da ZTL (Florença, Pisa, Roma...) podem comunicar a placa à prefeitura para liberar a entrada até a garagem. Sem isso, cada passagem pela câmera vira multa. Em Veneza não há carros: estacione em Piazzale Roma ou no Tronchetto.'}),
+    N(H, 'Apartamento (Airbnb/Booking): conferir no anúncio o CIN, código nacional obrigatório desde 2025 — anúncio sem CIN é irregular', '', LK.cin[1]),
     C('Transporte', 'Confirmar o terminal de Fiumicino (FCO) da ida e da volta', '2026-11-15'),
     C('Transporte', 'Comprar o trem Milão → Roma de 23/02, de manhã (folga para o voo das 22:30)', '2026-12-15', 'https://www.italotreno.com/'),
     C('Transporte', 'Comprar os trens de alta velocidade assim que as tarifas promocionais abrirem (Trenitalia / Italo)', '2026-12-15', 'https://www.italotreno.com/'),
     C('Transporte', 'Reservar assentos do Bernina Express (sáb 20/02) no site da RhB', '2027-01-15', 'https://www.rhb.ch/en/panoramic-trains/bernina-express'),
     C('Transporte', 'Baixar apps: Trenitalia, Italo, Trenord, AVM Venezia, SBB Mobile e mapas offline do Google Maps', '2027-02-01'),
     C('Transporte', 'Lembrar: bilhete regional de papel precisa ser validado antes de embarcar (multa)', ''),
-    C('Ingressos (datas de abertura)', 'Cenáculo (Última Ceia): acompanhar a abertura do lote de fev/2027 em cenacolovinciano.org — extras às quartas, 12h (Itália)', '2026-12-01', 'https://cenacolovinciano.org/en/'),
-    C('Ingressos (datas de abertura)', 'Coliseu: vendas abrem 30 dias antes → comprar em 10/01/2027', '2027-01-10', 'https://ticketing.colosseo.it/'),
-    C('Ingressos (datas de abertura)', 'Vaticano, Borghese, Uffizi, Accademia, Cúpula de Brunelleschi e Torre de Pisa: comprar assim que o calendário abrir', '2026-12-20'),
+    C('Ingressos (datas de abertura)', 'Cenáculo (Última Ceia): acompanhar a abertura do lote de fev/2027 em cenacolovinciano.org — extras às quartas, 12h (Itália)', '2026-12-01', 'https://cenacolovinciano.org/en/', {must: true, info: CENACOLO_INFO}),
+    ...ticketChecklist(days).map(t => ({...t, _new: true})),
+    N(CAR, 'Decidir os trechos de carro: nas cidades grandes ele atrapalha (ZTL, garagem cara, Veneza sem carros). O ideal é alugar só para Toscana, lagos e Alpes e usar trem entre Roma, Florença, Veneza e Milão', '2026-11-30', '', {info: 'O trem rápido Roma → Florença leva 1h30 e deixa no centro; de carro são ~3h, mais o estacionamento fora da ZTL.'}),
+    N(CAR, 'PID — Permissão Internacional para Dirigir: pedir no DETRAN do seu estado (online, ~5 a 10 dias úteis)', '2026-12-15', LK.pid[1], {must: true, info: 'Na Itália a CNH brasileira só vale com a PID ou com tradução juramentada, e as locadoras pedem a PID. Ela vale até 3 anos ou até o vencimento da CNH. Na Suíça também é recomendada.', links: [LK.pid, LK.cnhIt, LK.aci]}),
+    N(CAR, 'Levar a CNH FÍSICA válida (a CNH digital não é aceita na Itália) — confirmar que não vence antes de 23/02/2027', '2026-12-15', LK.cnhIt[1], {must: true}),
+    N(CAR, 'Reservar o carro: cartão de CRÉDITO no nome do motorista principal (caução), seguro com franquia zero e câmbio automático reservado cedo', '2026-12-15', LK.aci[1], {must: true, info: 'Muitas locadoras exigem CNH há 1–2 anos e idade mínima (taxa extra abaixo de 25). Carro automático é mais caro e acaba primeiro. Na retirada, filme o carro inteiro e confira combustível, colete e triângulo.'}),
+    N(CAR, 'Inverno: confirmar no contrato pneus de inverno ou correntes a bordo — obrigatório de 15/11 a 15/04 nos trechos sinalizados (passos Maloja e Bernina: 15/10 a 30/04)', '2027-01-15', LK.inverno[1], {must: true, info: 'Multa de €85 a €318 e proibição de seguir viagem, mesmo sem neve. As locadoras costumam cobrar uma “winterisation fee”.', links: [LK.inverno, LK.passos]}),
+    N(CAR, 'ZTL: NÃO entrar de carro nos centros históricos (Roma, Florença, Pisa, Verona...) — câmeras multam e a multa chega meses depois pela locadora, com taxa', '', LK.ztlGuia[1], {must: true, info: 'Placa: círculo branco com borda vermelha, “Zona Traffico Limitato” e os horários. Roma: centro proibido seg–sex 6h30–18h e sáb 14h–18h (e sex/sáb 23h–3h). Estacione fora e entre a pé ou de transporte.', links: [LK.ztlGuia, LK.ztlRoma]}),
+    N(CAR, 'Milão — Área C (centro): €7,50 por dia, seg–sex 7h30–19h30; pagar e ativar até a meia-noite do dia seguinte (depois custa €22,50)', '', LK.areaC[1]),
+    N(CAR, 'Se o carro for à Suíça: avisar a locadora (taxa de fronteira, ~€7–16/dia) e ter a vinheta de CHF 40 para as autoestradas suíças', '2027-01-15', LK.vinheta[1], {info: 'A vinheta 2027 vale de 01/12/2026 a 31/01/2028 e fica vinculada à placa. Compre só no site oficial (há sites falsos); dá para consultar se o carro alugado já tem. Pelos passos Maloja e Bernina não há autoestrada. Sem vinheta: multa de CHF 200.'}),
+    N(CAR, 'Regras básicas: farol baixo aceso fora das cidades, colete refletivo e triângulo no carro, álcool até 0,5 g/l (zero para quem tem CNH há menos de 3 anos) e radares em toda parte', '', LK.aci[1]),
+    N(CAR, 'Pedágios: pagar com cartão nas cabines “Carte” ou em dinheiro nas brancas — nunca nas faixas amarelas “Telepass”', '', LK.autostrade[1]),
+    N(CAR, 'Baixar mapas offline e ativar no Google Maps/Waze os alertas de ZTL e de radar', '2027-02-01'),
     C('Dinheiro', 'Cartão/conta global em dólar (ex.: Wise, Nomad) + 2º cartão de outra bandeira', '2027-01-15'),
     C('Dinheiro', 'Na maquininha e no caixa eletrônico, sempre pagar em EUR — recusar a conversão para dólar (DCC sai mais caro)', ''),
     C('Dinheiro', 'Avisar o banco e liberar compras internacionais', '2027-02-01'),
@@ -953,10 +1019,12 @@ function defaultChecklist() {
     C('Embarque e volta', 'Tax free: validar as notas na alfândega do aeroporto ANTES de despachar a mala', '2027-02-23'),
     C('Embarque e volta', 'Cota de isenção da Receita Federal: US$ 1.000 por pessoa (via aérea)', '2027-02-23'),
   ];
+  return keepNewFlag ? list : list.map(({_new, ...c}) => c);
 }
+const CENACOLO_INFO = 'Vendas em lotes trimestrais às 12h (hora da Itália): o lote de set–dez/2026 abriu em 23/06/2026 e o de 2027 ainda não foi anunciado. Toda quarta, ao meio-dia, saem ingressos extras para a semana seguinte. Esgota em minutos.';
 
-const defaultSettings = () => ({tab: 'mapa', view: 'cal', calIntro: true, returnFco: true, guideFix1: true, hideDone: false, clFilter: 'all', travelers: 2, rooms: 1, eurUsd: 1.12, usdMain: true, tourTax: 5, dailyExtra: 20, flightsUsd: 0});
-const defaultState = () => ({version: 1, title: 'Itália + Suíça · Fevereiro 2027', settings: defaultSettings(), days: defaultDays(), hotels: defaultHotels(), checklist: defaultChecklist(), notes: ''});
+const defaultSettings = () => ({tab: 'mapa', view: 'cal', calIntro: true, returnFco: true, guideFix1: true, usdMain: true, clV2: true, hideDone: false, clFilter: 'all', travelers: 2, rooms: 1, eurUsd: 1.12, tourTax: 5, dailyExtra: 20, flightsUsd: 0});
+const defaultState = () => { const days = defaultDays(); return {version: 1, title: 'Itália + Suíça · Fevereiro 2027', settings: defaultSettings(), days, hotels: defaultHotels(), checklist: defaultChecklist(days), notes: ''}; };
 
 /* ======================= estado ======================= */
 const KEY = 'roteiro-italia-2027';
@@ -990,6 +1058,24 @@ function migrate(s) {
     (s.checklist || []).forEach(c => { if (/conta global em euro/.test(c.text)) c.text = 'Cartão/conta global em dólar (ex.: Wise, Nomad) + 2º cartão de outra bandeira'; });
     if (s.checklist && !s.checklist.some(c => /DCC/.test(c.text))) s.checklist.push({id: uid(), cat: 'Dinheiro', text: 'Na maquininha e no caixa eletrônico, sempre pagar em EUR — recusar a conversão para dólar (DCC sai mais caro)', due: '', link: '', done: false});
     s.settings = {...st, eurUsd: 1.12, usdMain: true};
+  }
+  if (!(s.settings && s.settings.clV2) && Array.isArray(s.checklist) && Array.isArray(s.days)) {
+    const fresh = defaultChecklist(s.days, true);
+    const patch = (re, from) => s.checklist.forEach(c => { if (re.test(c.text)) { const f = fresh.find(x => from.test(x.text)); if (f) Object.assign(c, {must: f.must, info: f.info, links: f.links, link: c.link || f.link}); } });
+    patch(/^Passaporte válido/, /^Passaporte válido/);
+    patch(/^Seguro-viagem/, /^Seguro-viagem/);
+    patch(/^Imprimir\/baixar/, /^Imprimir\/baixar/);
+    patch(/^Reservar hotel em/, /^Reservar hotel em Roma/);
+    patch(/^Cenáculo/, /^Cenáculo/);
+    s.checklist.forEach(c => { if (/^ETIAS/.test(c.text)) Object.assign(c, fresh.find(x => /^ETIAS/.test(x.text)), {id: c.id, done: c.done, _new: undefined}); });
+    s.checklist = s.checklist.filter(c => c.done || !/^(Coliseu: vendas abrem|Vaticano, Borghese, Uffizi)/.test(c.text));
+    fresh.filter(f => f._new && !s.checklist.some(c => c.text === f.text)).forEach(({_new, ...f}) => {
+      const lastSame = s.checklist.map(c => c.cat).lastIndexOf(f.cat);
+      const anchor = lastSame >= 0 ? lastSame : s.checklist.map(c => c.cat).lastIndexOf('Ingressos (datas de abertura)');
+      s.checklist.splice(anchor >= 0 ? anchor + 1 : s.checklist.length, 0, f);
+    });
+    s.checklist.forEach(c => delete c._new);
+    s.settings = {...(s.settings || {}), clV2: true};
   }
   s.settings = {...defaultSettings(), ...(s.settings || {})};
   s.hotels ||= []; s.checklist ||= []; s.notes ??= ''; s.title ||= 'Minha viagem';
@@ -1656,7 +1742,7 @@ function dueClass(due, done) {
   const left = diffDays(todayStr(), due);
   return left < 0 ? 'overdue' : left <= 14 ? 'soon' : '';
 }
-const CAT_IC = [[/document|entrada|passaporte/, 'info'], [/hosped|hotel/, 'hotel'], [/transp|trem/, 'trem'], [/ingress/, 'visita'], [/dinheiro|cart/, 'moeda'], [/saude|remed/, 'saude'], [/tecno|chip|celular/, 'celular'], [/bagag|mala|roupa/, 'mala'], [/embarq|volta|voo/, 'voo']];
+const CAT_IC = [[/carro|dirig|volante/, 'carro'], [/document|entrada|passaporte/, 'info'], [/hosped|hotel/, 'hotel'], [/transp|trem/, 'trem'], [/ingress/, 'visita'], [/dinheiro|cart/, 'moeda'], [/saude|remed/, 'saude'], [/tecno|chip|celular/, 'celular'], [/bagag|mala|roupa/, 'mala'], [/embarq|volta|voo/, 'voo']];
 const CAT_COLORS = ['#b91c1c', '#7e22ce', '#0e7490', '#c05d2f', '#1f9d55', '#be123c', '#1d4ed8', '#a16207', '#475569'];
 const catIcon = cat => (CAT_IC.find(([re]) => re.test(norm(cat))) || [0, 'check'])[1];
 const icSvg = ic => `<svg viewBox="0 0 24 24"><use href="#ic-${ic}"/></svg>`;
@@ -1667,6 +1753,8 @@ function progressRing(pct, color) {
   const r = 26, C = 2 * Math.PI * r;
   return `<svg class="ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="${r}" fill="#fffaf0" stroke="#efe3c6" stroke-width="8"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${rn(C * pct / 100)} ${rn(C)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-size="15" class="f-bold" fill="#3b2a1e">${pct}%</text></svg>`;
 }
+const clInfoOpen = new Set();
+const siteName = u => { try { return new URL(fixUrl(u)).hostname.replace(/^www\./, ''); } catch (e) { return 'site'; } };
 function renderChecklist() {
   const el = $('#tab-checklist'), F = state.settings.clFilter || 'all';
   const cats = [...new Set(state.checklist.map(c => c.cat))];
@@ -1675,8 +1763,9 @@ function renderChecklist() {
   const done = state.checklist.filter(c => c.done).length + res.filter(x => x.i.status === 'reservado').length;
   const pct = total ? Math.round(done / total * 100) : 0;
   const lateN = state.checklist.filter(c => dueClass(c.due, c.done) === 'overdue').length;
-  const show = (isDone, urgent) => F === 'all' || (F === 'pending' && !isDone) || (F === 'late' && !isDone && urgent);
-  const resShown = res.filter(({d, i}) => show(i.status === 'reservado', diffDays(todayStr(), d.date) <= 60));
+  const mustN = state.checklist.filter(c => c.must).length, mustDone = state.checklist.filter(c => c.must && c.done).length;
+  const show = (isDone, urgent, must) => F === 'all' || (F === 'pending' && !isDone) || (F === 'late' && !isDone && urgent) || (F === 'must' && must);
+  const resShown = F === 'must' ? [] : res.filter(({d, i}) => show(i.status === 'reservado', diffDays(todayStr(), d.date) <= 60));
   const resCard = resShown.length ? `<section class="sticker" style="--c:#0f766e">
       <h3><span class="ic-dot">${icSvg('calendario')}</span>Reservas do roteiro<span class="cl-count">${res.filter(x => x.i.status === 'reservado').length}/${res.length}</span></h3>
       <div class="mini-bar"><div style="width:${res.length ? Math.round(res.filter(x => x.i.status === 'reservado').length / res.length * 100) : 0}%"></div></div>
@@ -1688,7 +1777,7 @@ function renderChecklist() {
       <p class="muted-note" style="margin:8px 0 0">Vem do calendário: atividades marcadas como “A reservar”.</p>
     </section>` : '';
   const catCards = cats.map((cat, ci) => {
-    const all = state.checklist.filter(c => c.cat === cat), list = all.filter(c => show(c.done, !!dueClass(c.due, c.done)));
+    const all = state.checklist.filter(c => c.cat === cat), list = all.filter(c => show(c.done, !!dueClass(c.due, c.done), c.must));
     if (!list.length && F !== 'all') return '';
     const dn = all.filter(c => c.done).length;
     return `<section class="sticker" data-cat="${esc(cat)}" style="--c:${CAT_COLORS[ci % CAT_COLORS.length]}">
@@ -1696,8 +1785,11 @@ function renderChecklist() {
       <div class="mini-bar"><div style="width:${all.length ? Math.round(dn / all.length * 100) : 0}%"></div></div>
       <ul class="cl-list">${list.map(c => `<li class="${c.done ? 'done' : ''}" data-cid="${c.id}">
         <label class="tick"><input type="checkbox" class="cl-done" ${c.done ? 'checked' : ''}><span></span></label>
-        <textarea class="cl-text" rows="1">${esc(c.text)}</textarea>
-        ${c.link ? `<a class="cl-link" href="${esc(c.link)}" target="_blank" rel="noopener" title="Abrir link">${icSvg('link')}</a>` : ''}
+        <div class="cl-main">
+          <textarea class="cl-text" rows="1">${esc(c.text)}</textarea>
+          ${c.must || c.info || c.link || (c.links || []).length ? `<div class="cl-meta">${c.must ? '<span class="must-chip" title="Sem isso a viagem fica comprometida">obrigatório</span>' : ''}${c.link ? `<a class="cl-site" href="${esc(fixUrl(c.link))}" target="_blank" rel="noopener">${icSvg('link')}${esc(siteName(c.link))}</a>` : ''}${c.info || (c.links || []).length ? `<button type="button" class="cl-more" data-cl="info">${clInfoOpen.has(c.id) ? 'ocultar' : 'detalhes'}</button>` : ''}</div>` : ''}
+          ${clInfoOpen.has(c.id) ? `<div class="cl-info">${c.info ? `<p>${esc(c.info)}</p>` : ''}${(c.links || []).length ? `<ul>${c.links.map(([l, u]) => `<li><a href="${esc(fixUrl(u))}" target="_blank" rel="noopener">${esc(l)}</a></li>`).join('')}</ul>` : ''}</div>` : ''}
+        </div>
         <input type="date" class="due ${dueClass(c.due, c.done)}" value="${c.due}" title="Prazo">
         <button class="x" data-cl="del" title="Excluir">×</button></li>`).join('')}</ul>
       <form class="cl-add"><input name="text" placeholder="+ adicionar item" required></form>
@@ -1705,7 +1797,7 @@ function renderChecklist() {
   }).join('');
   el.innerHTML = tabHero('CHECKLIST', `${done} de ${total} prontos${lateN ? ` · <b style="color:#b91c1c">${lateN} atrasado${lateN > 1 ? 's' : ''}</b>` : ''}`, 'check', '#1f9d55',
       `${progressRing(pct, '#1f9d55')}
-       <div class="pills">${[['all', 'Tudo'], ['pending', 'Pendentes'], ['late', 'Urgentes']].map(([k, l]) => `<button data-clf="${k}" class="${F === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+       <div class="pills">${[['all', 'Tudo'], ['pending', 'Pendentes'], ['late', 'Urgentes'], ['must', `Obrigatórios ${mustDone}/${mustN}`]].map(([k, l]) => `<button data-clf="${k}" class="${F === k ? 'on' : ''}">${l}</button>`).join('')}</div>
        <button class="ink-btn small" data-cl="add-cat">+ Categoria</button>`)
     + (resCard || catCards ? `<div class="cl-cols">${resCard}${catCards}</div>` : `<div class="cl-empty">Nada por aqui — tudo em dia!</div>`);
   $$('.cl-text', el).forEach(autoGrow);
@@ -1728,6 +1820,7 @@ function setupChecklistEvents() {
     const fb = e.target.closest('[data-clf]');
     if (fb) { commit(() => state.settings.clFilter = fb.dataset.clf); return; }
     const b = e.target.closest('[data-cl]'); if (!b) return;
+    if (b.dataset.cl === 'info') { const id = b.closest('[data-cid]').dataset.cid; clInfoOpen.has(id) ? clInfoOpen.delete(id) : clInfoOpen.add(id); renderChecklist(); return; }
     if (b.dataset.cl === 'del') { const id = b.closest('[data-cid]').dataset.cid; commit(() => state.checklist = state.checklist.filter(c => c.id !== id)); }
     if (b.dataset.cl === 'add-cat') { const name = prompt('Nome da nova categoria:'); if (name && name.trim()) { const text = prompt('Primeiro item da categoria:') || 'Novo item'; commit(() => state.checklist.push({id: uid(), cat: name.trim(), text, due: '', link: '', done: false})); } }
   });
@@ -1936,13 +2029,14 @@ function setupBudgetEvents() {
 
 /* ======================= informações ======================= */
 const INFO_CARDS = [
-  ['info', '#1d4ed8', 'Entrada na Europa', 'Sem visto até 90 dias; passaporte válido + seguro de €30 mil.', false],
+  ['info', '#1d4ed8', 'Entrada na Europa', 'Sem visto até 90 dias; passaporte, seguro, reservas e meios financeiros.', false],
   ['sol', '#e09f3e', 'Clima e fuso', 'Itália = Brasília +4h. Frio de 0 a 14°C; St. Moritz abaixo de zero.', false],
   ['calendario', '#b91c1c', 'Datas que afetam o roteiro', 'Museus grátis em 07/02, Vaticano fechado em 11/02 e às segundas vários museus fecham.', true],
   ['visita', '#c05d2f', 'Ingressos principais', 'Vaticano €25, Coliseu €18, Uffizi €29, Última Ceia €15.', false],
   ['gondola', '#0e7490', 'Veneza', 'Sem taxa de acesso em fevereiro; passe de vaporetto 72h por €45.', false],
   ['trem', '#dc2626', 'Suíça (bate-volta)', 'Franco suíço, roaming diferente e tomada tipo J.', false],
   ['moeda', '#1f9d55', 'Etiqueta e dinheiro', 'Coperto é normal, gorjeta não é obrigatória.', false],
+  ['carro', '#b45309', 'Dirigir na Itália e na Suíça', 'CNH física + PID, cuidado com as ZTL e vinheta suíça.', false],
   ['link', '#475569', 'Fontes oficiais', 'Links usados na pesquisa (outubro/2026).', false],
 ];
 const INFO_HTML = `
@@ -1950,10 +2044,10 @@ const INFO_HTML = `
   <div class="card"><h3>Entrada na Europa (passaporte brasileiro)</h3><ul>
     <li>Sem visto para turismo até 90 dias a cada 180 (Itália e Suíça são Schengen).</li>
     <li>Passaporte válido por pelo menos 3 meses após a saída do Schengen.</li>
-    <li>Seguro-viagem com cobertura mínima de €30.000 pode ser exigido — leve a apólice.</li>
+    <li>Seguro-viagem: para quem não precisa de visto não é exigência formal, mas a imigração pode pedir. Leve apólice com no mínimo €30.000, válida também na Suíça.</li>
     <li><b>EES</b> em operação plena desde 10/04/2026: na primeira entrada coletam foto e 4 digitais (fim do carimbo). Conte com fila maior em Fiumicino.</li>
-    <li><b>ETIAS</b> ainda sem data de início. Quando começar, custará €20 e terá período de transição. Peça só no site oficial — os outros são intermediários ou golpe.</li>
-    <li>A imigração pode pedir passagem de volta, reservas de hotel e comprovação de meios financeiros.</li>
+    <li><b>ETIAS</b> segue sem data: a previsão de fim de 2026 foi retirada em julho/2026. Hoje não há nada para pedir nem pagar — site cobrando ETIAS é golpe. Quando começar, custará €20.</li>
+    <li>A imigração pode pedir passagem de volta, reservas de hotel e comprovação de meios financeiros. Pela tabela oficial italiana, para 2 pessoas e 17 dias são ~€400 por pessoa (cartão com limite e extrato servem).</li>
   </ul></div>
   <div class="card"><h3>Clima e fuso</h3><ul>
     <li>Fuso: Itália/Suíça = Brasília <b>+4h</b> em fevereiro.</li>
@@ -1997,6 +2091,17 @@ const INFO_HTML = `
     <li>Café no balcão custa menos que sentado à mesa.</li>
     <li>Igrejas: ombros e joelhos cobertos.</li>
     <li>Tax free: peça o formulário nas compras e valide no aeroporto antes do check-in.</li>
+  </ul></div>
+  <div class="card"><h3>Dirigir na Itália e na Suíça</h3><ul>
+    <li><b>Documentos:</b> CNH física válida + <b>PID</b> (ou tradução juramentada). CNH digital não vale. A PID sai no DETRAN do seu estado em 5–10 dias úteis.</li>
+    <li><b>Locadora:</b> cartão de crédito no nome do motorista para a caução; muitas exigem CNH há 1–2 anos. Para ir à Suíça, avise na reserva (taxa de fronteira).</li>
+    <li><b>ZTL:</b> centros históricos com câmeras — não entre. A multa chega meses depois, cobrada pela locadora. Hotel dentro da ZTL pode registrar sua placa.</li>
+    <li><b>Milão:</b> Área C custa €7,50/dia (seg–sex 7h30–19h30).</li>
+    <li><b>Inverno:</b> pneus de inverno ou correntes obrigatórios de 15/11 a 15/04 nos trechos sinalizados; multa até €318.</li>
+    <li><b>Suíça:</b> vinheta de CHF 40 para as autoestradas (só no site oficial via.admin.ch). Sem vinheta: multa de CHF 200.</li>
+    <li><b>Na estrada:</b> farol baixo aceso fora das cidades, colete e triângulo no carro, álcool até 0,5 g/l, pedágio com cartão nas cabines “Carte” (nunca na faixa Telepass).</li>
+    <li>Dica: use trem entre Roma, Florença, Veneza e Milão e alugue o carro só para Toscana, lagos ou Alpes.</li>
+    <li><a href="https://www.gov.br/mre/pt-br/consulado-milao/informacoes-uteis/carteira-nacional-de-habilitacao-cnh" target="_blank" rel="noopener">Consulado em Milão: CNH</a> · <a href="https://aci.gov.it/app/uploads/2026/06/INGLESE-INFORMAZIONI-UTILI-PER-TURISTI-STRANIERI.pdf" target="_blank" rel="noopener">Guia ACI (PDF)</a> · <a href="https://www.autovia.it/ztl-italia-guida-citta/" target="_blank" rel="noopener">ZTL por cidade</a> · <a href="https://www.comune.milano.it/argomenti/mobilita/area-c" target="_blank" rel="noopener">Área C</a> · <a href="https://via.admin.ch/shop" target="_blank" rel="noopener">Vinheta suíça</a></li>
   </ul></div>
   <div class="card"><h3>Fontes</h3><ul style="font-size:12.5px">
     <li><a href="https://carnevale.venezia.it/" target="_blank" rel="noopener">Carnevale di Venezia 2027</a></li>
@@ -2048,6 +2153,7 @@ const IC = {
   voo: '<path d="M10.5 13.5 3 11l1.5-1.5 8 .5 4-4.5c1-1 2.6-1.2 3.2-.6s.4 2.2-.6 3.2L14.6 12l.5 8-1.5 1.5L11 14z"/>',
   barco: '<path d="M3 16h18l-3 4H6z"/><path d="M12 3v13M12 4l6 9h-6"/>',
   onibus: '<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 21v-3M16 21v-3"/>',
+  carro: '<path d="M4 15l1.6-4.6A2 2 0 0 1 7.5 9h9a2 2 0 0 1 1.9 1.4L20 15M3 15h18v3H3z"/><circle cx="7" cy="18.5" r="1.5"/><circle cx="17" cy="18.5" r="1.5"/>',
   transfer: '<rect x="5" y="7" width="14" height="12" rx="2"/><path d="M9 7V5h6v2M9 11v4M15 11v4"/>',
   visita: '<path d="M3 9l9-5 9 5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
   passeio: '<circle cx="13" cy="4" r="2"/><path d="M11 21l2-6-3-3 1-4 3 3 3 1M10 12l-3 2"/>',
@@ -3235,7 +3341,7 @@ function toTemplate(s) {
     dias: s.days.map(d => ({data: d.date, cidade_pernoite: d.base, titulo: d.title || '', observacao: d.note || '',
       atividades: d.items.map(i => ({inicio: i.start || '', fim: i.end || '', tipo: i.type, titulo: i.title, notas: i.notes || '', custo_eur: +i.cost || 0, reserva: i.status || '', link: i.link || '', ...(i.poi ? {local_mapa: i.poi} : {})}))})),
     hoteis: s.hotels.map(h => ({cidade: h.city, nome: h.name, endereco: h.area || '', preco_noite_eur: +h.price || 0, notas: h.notes || '', escolhido: !!h.chosen, status: h.status || 'sugestao', codigo_reserva: h.conf || ''})),
-    checklist: s.checklist.map(c => ({categoria: c.cat, tarefa: c.text, prazo: c.due || '', link: c.link || '', feito: !!c.done})),
+    checklist: s.checklist.map(c => ({categoria: c.cat, tarefa: c.text, prazo: c.due || '', link: c.link || '', feito: !!c.done, obrigatorio: !!c.must, detalhes: c.info || '', links: (c.links || []).map(([titulo, url]) => ({titulo, url}))})),
     anotacoes: s.notes || '',
   };
 }
@@ -3267,7 +3373,7 @@ ${review
 - Pesquise na internet horários, dias de fechamento, preços e necessidade de reserva para as datas da viagem. Se não tiver certeza, escreva "(conferir)" nas notas.
 - Inclua os deslocamentos (trem, ônibus, barco, transfer) como atividades, com horário, preço e link de compra.
 - Sugira de 2 a 4 hotéis por cidade de pernoite, com no máximo 1 marcado como escolhido.
-- Monte um checklist de preparação (documentos, reservas e datas de abertura de vendas, dinheiro, saúde, bagagem).
+- Monte um checklist de preparação (documentos, reservas e datas de abertura de vendas, hospedagem, carro se houver, dinheiro, saúde, bagagem), com link oficial em cada item sempre que existir.
 
 ## 3. Regras do formato
 - Datas "AAAA-MM-DD"; horários "HH:MM" (24h). "fim" pode ser "" quando não fizer sentido.
@@ -3282,7 +3388,7 @@ ${review
 ${pois}
   Para outros lugares, omita o campo e escreva o nome do lugar no título. Também viram cartão-postal no mapa quando aparecem no título: ${known}.
 - Hotéis: "cidade" igual à cidade_pernoite; "preco_noite_eur" por quarto; "status" "sugestao", "reservado" ou "descartado".
-- Checklist: "prazo" "AAAA-MM-DD" ou ""; "feito" true/false.
+- Checklist: "prazo" "AAAA-MM-DD" ou ""; "feito" true/false; "obrigatorio" true só para o que impede a viagem se faltar (documentos, reservas essenciais); "detalhes" explica o porquê e as regras; "links" lista sites oficiais com {"titulo", "url"}.
 - Não crie campos novos, não escreva comentários dentro do JSON e não deixe vírgula sobrando.
 
 ## 4. Formato${review ? ' (igual ao roteiro da seção 5)' : ' — exemplo com o começo da viagem; devolva o roteiro COMPLETO'}
@@ -3340,7 +3446,8 @@ function fromTemplate(t) {
       return {id: uid(), city, name: str(h.nome), area: str(h.endereco), price: num(h.preco_noite_eur), notes: str(h.notas), chosen: pick, status: ['sugestao', 'reservado', 'descartado'].includes(st) ? st : 'sugestao', conf: str(h.codigo_reserva)};
     });
   }
-  const checklist = Array.isArray(t.checklist) ? t.checklist.filter(c => c && str(c.tarefa)).map(c => ({id: uid(), cat: str(c.categoria) || 'Geral', text: str(c.tarefa), due: ymd(c.prazo), link: fixUrl(str(c.link)), done: !!c.feito})) : null;
+  const checklist = Array.isArray(t.checklist) ? t.checklist.filter(c => c && str(c.tarefa)).map(c => ({id: uid(), cat: str(c.categoria) || 'Geral', text: str(c.tarefa), due: ymd(c.prazo), link: fixUrl(str(c.link)), done: !!c.feito, must: !!c.obrigatorio, info: str(c.detalhes),
+    links: arr(c.links).filter(l => l && str(l.url)).map(l => [str(l.titulo) || siteName(l.url), fixUrl(str(l.url))])})) : null;
   const S = state.settings;
   const next = {...state, version: 1, title: str(t.titulo) || state.title,
     settings: {...S, travelers: Math.max(1, parseInt(t.viajantes) || S.travelers), rooms: Math.max(1, parseInt(t.quartos) || S.rooms)},
