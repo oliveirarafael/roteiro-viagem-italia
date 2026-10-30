@@ -820,10 +820,6 @@ dialog{max-height:92vh;overflow:auto}
     <div class="actions">
       <span class="saved" id="saved">salvo</span>
       <button id="undoBtn" title="Desfazer (Ctrl+Z)">Desfazer</button>
-      <button id="aiBtn" title="Gerar o pedido para outra IA montar o roteiro e importar a resposta">Modelo p/ IA</button>
-      <button id="exportBtn" title="Baixar backup em JSON">Exportar</button>
-      <button id="importBtn" title="Carregar backup ou resposta da IA (JSON)">Importar</button>
-      <input type="file" id="importFile" accept="application/json,.json,.txt,.md,text/plain,text/markdown" hidden>
     </div>
   </div>
   <nav class="tabs" id="tabs">
@@ -846,7 +842,6 @@ dialog{max-height:92vh;overflow:auto}
       <span style="flex:1"></span>
       <button id="addDayBtn" class="ink-btn small primary">+ Adicionar dia</button>
       <button id="shiftTrip" class="ink-btn small">Mudar data de início</button>
-      <button id="icsBtn" class="ink-btn small" title="Exportar atividades para Google Agenda / Outlook">Exportar .ics</button>
     </div>
     <details class="howto"><summary>Como usar o calendário</summary><p class="hint" id="hint"></p></details>
     <div class="route" id="route"></div>
@@ -1989,7 +1984,7 @@ function renderInfo() {
   const el = $('#tab-info'), mode = coversMap(buildMapModel()) ? 'italia' : 'outro';
   if (el.dataset.ready !== mode && mode === 'outro') {
     el.innerHTML = tabHero('INFORMAÇÕES', 'anotações desta viagem', 'info', '#1d4ed8')
-      + `<div class="card map-note">As informações pesquisadas (entrada, clima, ingressos, carro...) são da viagem pela Itália e Suíça. Para este destino, use as anotações abaixo — ou peça para outra IA pesquisar pelo botão “Modelo p/ IA”.</div>
+      + `<div class="card map-note">As informações pesquisadas (entrada, clima, ingressos, carro...) são da viagem pela Itália e Suíça. Para este destino, use as anotações abaixo.</div>
       <div class="sticker"><h3><span class="ic-dot" style="--c:#a16207">${icSvg('lapis')}</span>Minhas anotações</h3><textarea class="notes-area" id="notesArea" placeholder="Restaurantes indicados, contatos, códigos de reserva..."></textarea></div>`;
     el.dataset.ready = mode;
     $('#notesArea').addEventListener('input', e => commit(() => state.notes = e.target.value, {render: false, debounce: true}));
@@ -4013,218 +4008,6 @@ function setupMapEvents() {
   });
 }
 
-/* ======================= exportações ======================= */
-function download(name, content, type) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([content], {type}));
-  a.download = name; a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-function exportIcs() {
-  const icsEsc = s => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/[,;]/g, m => '\\' + m);
-  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Roteiro Italia//PT-BR', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:' + icsEsc(state.title)];
-  state.days.forEach((d, di) => {
-    const tz = di === 0 && isNoHotel(d.base) ? 'America/Sao_Paulo' : 'Europe/Rome';
-    d.items.filter(i => i.start).forEach(i => {
-      const ds = d.date.replace(/-/g, '');
-      let endDate = d.date;
-      if (i.end && i.end <= i.start) endDate = addDays(d.date, 1);
-      lines.push('BEGIN:VEVENT', `UID:${i.id}@roteiro-italia`, `DTSTAMP:${stamp}`, `DTSTART;TZID=${tz}:${ds}T${i.start.replace(':', '')}00`);
-      if (i.end) lines.push(`DTEND;TZID=${tz}:${endDate.replace(/-/g, '')}T${i.end.replace(':', '')}00`); else lines.push('DURATION:PT1H');
-      lines.push('SUMMARY:' + icsEsc(i.title), 'LOCATION:' + icsEsc(d.base), 'DESCRIPTION:' + icsEsc([i.notes, i.link].filter(Boolean).join('\n')), 'END:VEVENT');
-    });
-  });
-  lines.push('END:VCALENDAR');
-  download(fileSlug() + '.ics', lines.join('\r\n'), 'text/calendar');
-}
-
-/* ======================= modelo para IA ======================= */
-const AI_FORMAT = 'roteiro-viagem/1';
-const FENCE = '```';
-function toTemplate(s) {
-  return {
-    formato: AI_FORMAT, titulo: s.title, viajantes: +s.settings.travelers || 1, quartos: +s.settings.rooms || 1,
-    dias: s.days.map(d => ({data: d.date, cidade_pernoite: d.base, titulo: d.title || '', observacao: d.note || '',
-      atividades: d.items.map(i => ({inicio: i.start || '', fim: i.end || '', tipo: i.type, titulo: i.title, notas: i.notes || '', custo_eur: +i.cost || 0, reserva: i.status || '', link: i.link || '', ...(i.poi ? {local_mapa: i.poi} : {})}))})),
-    hoteis: s.hotels.map(h => ({cidade: h.city, nome: h.name, endereco: h.area || '', preco_noite_eur: +h.price || 0, notas: h.notes || '', escolhido: !!h.chosen, status: h.status || 'sugestao', codigo_reserva: h.conf || ''})),
-    checklist: s.checklist.map(c => ({categoria: c.cat, tarefa: c.text, prazo: c.due || '', link: c.link || '', feito: !!c.done, obrigatorio: !!c.must, detalhes: c.info || '', links: (c.links || []).map(([titulo, url]) => ({titulo, url}))})),
-    anotacoes: s.notes || '',
-  };
-}
-function aiTemplate(review) {
-  const s = state, days = s.days, first = days[0], last = days[days.length - 1], T = toTemplate(s);
-  const flights = days.flatMap(d => d.items.filter(i => i.type === 'voo').map(i => `  - ${weekday(d.date)} ${fmtBRY(d.date)}${i.start ? ' ' + i.start : ''}${i.end ? '–' + i.end : ''}: ${i.title}${i.notes ? ' (' + i.notes + ')' : ''}`));
-  const cities = getStays().map(x => `${x.base} (${x.nights} noite${x.nights > 1 ? 's' : ''})`).join(' → ');
-  const ex = {...T, dias: T.dias.slice(0, 2).map(d => ({...d, atividades: d.atividades.slice(0, 3)})), hoteis: T.hoteis.slice(0, 1), checklist: T.checklist.slice(0, 1)};
-  if (!ex.dias.some(d => d.atividades.length)) ex.dias = [{data: '2027-05-01', cidade_pernoite: 'Roma', titulo: 'Roma antiga', observacao: '', atividades: [
-    {inicio: '09:00', fim: '12:00', tipo: 'visita', titulo: 'Coliseu, Fórum Romano e Palatino', notas: 'Ingresso nominal com horário marcado.', custo_eur: 18, reserva: 'reservar', link: 'https://ticketing.colosseo.it/', local_mapa: 'coliseu'},
-    {inicio: '12:30', fim: '', tipo: 'comida', titulo: 'Almoço no bairro Monti', notas: '', custo_eur: 25, reserva: '', link: ''}]}];
-  if (!ex.hoteis.length) ex.hoteis = [{cidade: 'Roma', nome: 'Nome do hotel', endereco: 'Bairro', preco_noite_eur: 150, notas: 'Por que vale a pena.', escolhido: false, status: 'sugestao', codigo_reserva: ''}];
-  if (!ex.checklist.length) ex.checklist = [{categoria: 'Documentos e entrada', tarefa: 'Passaporte válido por pelo menos 3 meses após a volta', prazo: '', link: '', feito: false, obrigatorio: true, detalhes: 'Exigência para entrar no espaço Schengen.', links: []}];
-  const planTxt = plan().cities.filter(pc => CAT[pc.k]).map((pc, i) => `  ${i + 1}. ${CAT[pc.k].name} (${pc.n} noite${pc.n === 1 ? '' : 's'})${pc.p.length ? ': ' + pc.p.map(id => PLACE[id]?.name).filter(Boolean).join('; ') : ''}`).join('\n');
-  const pois = Object.entries(CITY_MAPS).map(([k, c]) => `  - ${PLACES[k]?.name || k}: ${c.pois.map(p => `\`${p.k}\` (${p.name})`).join(', ')}`).join('\n');
-  const known = Object.values(PLACES).filter(p => p.kind !== 'base').map(p => p.name).join(', ');
-  return `# Roteiro de viagem — modelo para preencher
-
-Você é um planejador de viagens experiente. ${review ? 'Revise o roteiro atual (seção 5)' : 'Monte o roteiro completo desta viagem'} e responda **somente com um bloco ${FENCE}json** no formato da seção 4. A resposta será importada automaticamente num aplicativo, então siga o formato à risca.
-
-## 1. Sobre a viagem
-- Título: ${s.title}
-- Período: ${first ? `${fmtBRY(first.date)} a ${fmtBRY(last.date)} (${days.length} dias)` : '[ESCREVA AQUI as datas de ida e volta]'}${planTxt ? `\n- Cidades e lugares que já escolhi, nesta ordem (respeite a sequência e as noites):\n${planTxt}` : ''}
-- Viajantes: ${+s.settings.travelers || 1} · quartos de hotel: ${+s.settings.rooms || 1}
-- Voos já definidos (não alterar):
-${flights.join('\n') || '  - (nenhum)'}
-- Cidades de pernoite atuais: ${cities || (planTxt ? '(ver a lista acima)' : '[ESCREVA AQUI: cidades que quer visitar, ou peça uma sugestão]')}
-- Moeda: o viajante usa dólar como moeda principal (câmbio ~US$ ${fx().toLocaleString('pt-BR', {minimumFractionDigits: 2})} por €), mas no JSON **todos os valores vão em euro**, que é o preço cobrado no local. O aplicativo converte.
-- Preferências do viajante: [ESCREVA AQUI: ritmo, interesses, orçamento, restrições, o que não pode faltar]
-
-## 2. O que fazer
-${review
-    ? '- Mantenha os voos e tudo que estiver com "reserva": "reservado".\n- Corrija horários impossíveis, sobreposições e visitas em dias de fechamento; melhore a ordem das visitas para andar menos.\n- Complete notas, custos e links oficiais que faltarem.'
-    : '- Um objeto por dia, cobrindo TODAS as datas do período, do dia do voo de ida ao dia do voo de volta.\n- Inclua refeições sugeridas e momentos livres.'}
-- Pesquise na internet horários, dias de fechamento, preços e necessidade de reserva para as datas da viagem. Se não tiver certeza, escreva "(conferir)" nas notas.
-- Inclua os deslocamentos (trem, ônibus, barco, transfer) como atividades, com horário, preço e link de compra.
-- Sugira de 2 a 4 hotéis por cidade de pernoite, com no máximo 1 marcado como escolhido.
-- Monte um checklist de preparação (documentos, reservas e datas de abertura de vendas, hospedagem, carro se houver, dinheiro, saúde, bagagem), com link oficial em cada item sempre que existir.
-
-## 3. Regras do formato
-- Datas "AAAA-MM-DD"; horários "HH:MM" (24h). "fim" pode ser "" quando não fizer sentido.
-- "dias" em ordem cronológica, sem pular datas.
-- "cidade_pernoite": cidade onde se dorme naquela noite, sempre com a mesma grafia (ex.: sempre "Florença"). Use "Voo" quando a noite for dentro do avião e no dia do voo de volta.
-- Bate-volta: a cidade_pernoite continua sendo a base; o destino aparece no título das atividades (ex.: "Trem Florença → Pisa").
-- "tipo": ${Object.keys(TYPES).map(k => `"${k}"`).join(', ')}. (voo, trem, barco, onibus e transfer contam como transporte.)
-- "custo_eur": número por pessoa, em euro, sem símbolo (0 se grátis).
-- "reserva": "" (não precisa), "reservar" (comprar antes) ou "reservado" (já comprado).
-- "link": site oficial ou de compra, começando com https:// — ou "".
-- "local_mapa" (opcional): fixa o pino num ponto do mapa ilustrado. Use somente estas chaves:
-${pois}
-  Para outros lugares, omita o campo e escreva o nome do lugar no título. Também viram cartão-postal no mapa quando aparecem no título: ${known}.
-- Hotéis: "cidade" igual à cidade_pernoite; "preco_noite_eur" por quarto; "status" "sugestao", "reservado" ou "descartado".
-- Checklist: "prazo" "AAAA-MM-DD" ou ""; "feito" true/false; "obrigatorio" true só para o que impede a viagem se faltar (documentos, reservas essenciais); "detalhes" explica o porquê e as regras; "links" lista sites oficiais com {"titulo", "url"}.
-- Não crie campos novos, não escreva comentários dentro do JSON e não deixe vírgula sobrando.
-
-## 4. Formato${review ? ' (igual ao roteiro da seção 5)' : ' — exemplo com o começo da viagem; devolva o roteiro COMPLETO'}
-${FENCE}json
-${JSON.stringify(ex, null, 2)}
-${FENCE}
-${review ? `\n## 5. Roteiro atual para revisar\n${FENCE}json\n${JSON.stringify(T, null, 2)}\n${FENCE}\n` : ''}`;
-}
-function parseAiJson(txt) {
-  const fences = [...String(txt || '').matchAll(/```(?:json|JSON)?\s*([\s\S]*?)```/g)].map(m => m[1]).sort((a, b) => b.length - a.length);
-  let s = fences[0] || String(txt || '');
-  const a = s.indexOf('{'), b = s.lastIndexOf('}');
-  if (a < 0 || b < a) throw new Error('não encontrei um JSON no texto colado.');
-  s = s.slice(a, b + 1);
-  try { return JSON.parse(s); } catch (err) {
-    try { return JSON.parse(s.replace(/,\s*([}\]])/g, '$1')); } catch (e2) { throw new Error('o JSON está com erro de formatação (' + err.message + ').'); }
-  }
-}
-function fromTemplate(t, asNew = false) {
-  const W = [];
-  const arr = v => Array.isArray(v) ? v : [];
-  const str = v => v == null ? '' : String(v).trim();
-  const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isFinite(n) && n > 0 ? round2(n) : 0; };
-  const hhmm = v => { const m = str(v).match(/^(\d{1,2})[:h.](\d{2})$/); return m && +m[1] < 24 && +m[2] < 60 ? m[1].padStart(2, '0') + ':' + m[2] : ''; };
-  const ymd = v => /^\d{4}-\d{2}-\d{2}$/.test(str(v)) && !isNaN(parseD(str(v))) ? str(v) : '';
-  const TYPE_AL = {aviao: 'voo', comboio: 'trem', balsa: 'barco', vaporetto: 'barco', ferry: 'barco', bus: 'onibus', taxi: 'transfer', traslado: 'transfer', museu: 'visita', atracao: 'visita', tour: 'passeio', refeicao: 'comida', restaurante: 'comida', almoco: 'comida', jantar: 'comida', hospedagem: 'hotel', descanso: 'livre'};
-  const typeOf = v => { const k = norm(str(v)); return TYPES[k] ? k : TYPE_AL[k]; };
-  const allPois = Object.values(CITY_MAPS).flatMap(c => c.pois.map(p => p.k));
-  let badTypes = 0, badPois = 0, noTime = 0;
-  const days = arr(t.dias).map((d, n) => {
-    const date = ymd(d && d.data);
-    if (!date) { W.push(`Dia ${n + 1}: data inválida (“${str(d && d.data)}”), ignorado.`); return null; }
-    const items = arr(d.atividades).map(a => {
-      const type = typeOf(a.tipo); if (!type) badTypes++;
-      const it = {id: uid(), start: hhmm(a.inicio), end: hhmm(a.fim), type: type || 'visita', title: str(a.titulo) || 'Atividade', notes: str(a.notas), cost: num(a.custo_eur), status: {reservar: 'reservar', reservado: 'reservado'}[norm(str(a.reserva))] || '', link: fixUrl(str(a.link))};
-      if (!it.start) noTime++;
-      if (str(a.local_mapa)) { const k = allPois.find(p => p.toLowerCase() === norm(str(a.local_mapa))); if (k) it.poi = k; else badPois++; }
-      return it;
-    }).sort((x, y) => (x.start || '99:99').localeCompare(y.start || '99:99'));
-    return {id: uid(), date, base: str(d.cidade_pernoite) || 'Voo', title: str(d.titulo), note: str(d.observacao), items};
-  }).filter(Boolean).sort((a, b) => a.date.localeCompare(b.date));
-  if (!days.length) throw new Error('nenhum dia válido na lista "dias".');
-  const dup = [...new Set(days.filter((d, i) => i && d.date === days[i - 1].date).map(d => fmtBR(d.date)))];
-  if (dup.length) W.push(`Datas repetidas: ${dup.join(', ')}.`);
-  days.forEach((d, i) => { if (i && diffDays(days[i - 1].date, d.date) > 1) W.push(`Faltam dias entre ${fmtBR(days[i - 1].date)} e ${fmtBR(d.date)}.`); });
-  if (badTypes) W.push(`${badTypes} atividade(s) com "tipo" desconhecido viraram "Visita".`);
-  if (badPois) W.push(`${badPois} "local_mapa" desconhecido(s) foram ignorados (o pino usa o nome).`);
-  if (noTime) W.push(`${noTime} atividade(s) sem horário de início.`);
-  let hotels = null;
-  if (Array.isArray(t.hoteis)) {
-    const chosen = new Set();
-    hotels = t.hoteis.filter(h => h && str(h.nome)).map(h => {
-      const city = str(h.cidade), st = norm(str(h.status));
-      const pick = !!h.escolhido && !chosen.has(norm(city)); if (pick) chosen.add(norm(city));
-      return {id: uid(), city, name: str(h.nome), area: str(h.endereco), price: num(h.preco_noite_eur), notes: str(h.notas), chosen: pick, status: ['sugestao', 'reservado', 'descartado'].includes(st) ? st : 'sugestao', conf: str(h.codigo_reserva)};
-    });
-  }
-  const checklist = Array.isArray(t.checklist) ? t.checklist.filter(c => c && str(c.tarefa)).map(c => ({id: uid(), cat: str(c.categoria) || 'Geral', text: str(c.tarefa), due: ymd(c.prazo), link: fixUrl(str(c.link)), done: !!c.feito, must: !!c.obrigatorio, info: str(c.detalhes),
-    links: arr(c.links).filter(l => l && str(l.url)).map(l => [str(l.titulo) || siteName(l.url), fixUrl(str(l.url))])})) : null;
-  const S = asNew ? {...defaultSettings(), tab: state.settings.tab, eurUsd: state.settings.eurUsd} : state.settings;
-  const next = {...state, version: 1, title: str(t.titulo) || (asNew ? 'Roteiro importado' : state.title),
-    settings: {...S, travelers: Math.max(1, parseInt(t.viajantes) || S.travelers), rooms: Math.max(1, parseInt(t.quartos) || S.rooms)},
-    days, hotels: hotels || (asNew ? [] : state.hotels), checklist: checklist || (asNew ? basicChecklist(days[days.length - 1].date) : state.checklist),
-    notes: t.anotacoes != null ? str(t.anotacoes) : asNew ? '' : state.notes};
-  return {next: JSON.parse(JSON.stringify(next)), W, keptHotels: !hotels && !asNew, keptChecklist: !checklist && !asNew};
-}
-function importAnyText(txt, asNew = false) {
-  const obj = parseAiJson(txt);
-  if (Array.isArray(obj.days)) {
-    if (asNew) { addTrip(migrate(obj)); toast(`Backup importado como novo roteiro: <b>${esc(state.title)}</b>.`); return true; }
-    if (!confirm('Substituir o roteiro atual por este backup? Dá para desfazer em seguida.')) return false;
-    snapshot(); state = migrate(obj); save(); renderAll();
-    toast('Backup importado.', '<button data-t="undo">Desfazer</button>', undo);
-    return true;
-  }
-  if (!Array.isArray(obj.dias)) throw new Error('o JSON não tem a lista "dias".');
-  const {next, W, keptHotels, keptChecklist} = fromTemplate(obj, asNew);
-  const nItems = next.days.reduce((a, d) => a + d.items.length, 0);
-  const summary = `${next.days.length} dias (${fmtBR(next.days[0].date)} → ${fmtBR(next.days[next.days.length - 1].date)}), ${nItems} atividades, `
-    + `${next.hotels.length} hotéis${keptHotels ? ' (mantidos os atuais)' : ''}, ${next.checklist.length} tarefas${keptChecklist ? ' (mantidas as atuais)' : ''}`;
-  if (!confirm(`Importar o roteiro da IA?\n\n${summary}.${W.length ? '\n\nAvisos:\n• ' + W.join('\n• ') : ''}\n\n${asNew ? 'Ele será criado como um novo roteiro.' : 'Isto substitui o roteiro atual (dá para desfazer).'}`)) return false;
-  if (asNew) { addTrip(migrate(next)); toast(`Novo roteiro importado: ${esc(summary)}.`); return true; }
-  snapshot(); state = migrate(next); save(); renderAll();
-  toast(`Roteiro importado: ${esc(summary)}.`, '<button data-t="undo">Desfazer</button>', undo);
-  return true;
-}
-function copyText(text) {
-  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
-  const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-  (modal.open ? modal : document.body).appendChild(ta); ta.select();
-  const ok = document.execCommand('copy'); ta.remove();
-  return ok ? Promise.resolve() : Promise.reject(new Error('cópia bloqueada'));
-}
-function openAiModal() {
-  openModal(`
-    <h3>Modelo para IA</h3>
-    <p class="ai-step"><b>1.</b> Copie o modelo e cole no ChatGPT, Gemini, Claude ou outra IA. Antes de enviar, preencha a linha <i>“Preferências do viajante”</i>.</p>
-    <label class="chk"><input type="checkbox" name="review"> Mandar meu roteiro atual para a IA revisar (em vez de montar do zero)</label>
-    <div class="ai-row"><button type="button" data-m="copy" class="primary">Copiar modelo</button><button type="button" data-m="dl">Baixar .md</button><span class="ai-ok" id="aiOk"></span></div>
-    <p class="ai-step"><b>2.</b> Cole aqui a resposta da IA — pode ser o texto inteiro, o JSON é encontrado sozinho — ou escolha o arquivo salvo.</p>
-    <textarea name="answer" rows="8" spellcheck="false" placeholder='{ "formato": "${AI_FORMAT}", "dias": [ ... ] }'></textarea>
-    <label class="chk"><input type="checkbox" name="asNew"> Criar como um novo roteiro (manter “${esc(state.title)}” como está)</label>
-    <div class="modal-conflict" id="aiErr"></div>
-    <div class="modal-actions">
-      <button type="button" data-m="file">Escolher arquivo…</button>
-      <span class="sp"></span>
-      <button type="button" data-m="cancel">Fechar</button>
-      <button type="submit" class="primary">Importar</button>
-    </div>`,
-    fd => {
-      const err = $('#aiErr');
-      if (!String(fd.get('answer') || '').trim()) { err.textContent = 'Cole a resposta da IA ou escolha um arquivo.'; err.classList.add('on'); return false; }
-      try { return importAnyText(fd.get('answer'), !!fd.get('asNew')); } catch (e) { err.textContent = 'Não foi possível importar: ' + e.message; err.classList.add('on'); return false; }
-    },
-    act => {
-      const ok = $('#aiOk'), text = () => aiTemplate(mform.review.checked);
-      if (act === 'copy') copyText(text()).then(() => ok.textContent = 'Modelo copiado!', () => ok.textContent = 'Não consegui copiar — use “Baixar .md”.');
-      if (act === 'dl') { download('modelo-roteiro-ia.md', text(), 'text/markdown'); ok.textContent = 'Arquivo baixado.'; }
-      if (act === 'file') $('#importFile').click();
-      return false;
-    });
-}
-
 /* ======================= vários roteiros ======================= */
 function basicChecklist(end) {
   const C = (cat, text, due = '', x = {}) => ({id: uid(), cat, text, due, link: '', done: false, ...x});
@@ -4252,7 +4035,6 @@ function blankState({title, start, end, city, travelers, checklist}) {
     days: Array.from({length: n}, (_, i) => ({id: uid(), date: addDays(start, i), base: city, title: '', note: '', items: []})),
     hotels: [], checklist: checklist ? basicChecklist(addDays(start, n - 1)) : [], notes: ''};
 }
-const fileSlug = () => 'roteiro-' + (norm(state.title).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'viagem');
 function resetTripUi() {
   undoStack.length = 0; $('#undoBtn').disabled = true;
   mapHiddenDays.clear(); mapHiddenTypes.clear(); clInfoOpen.clear(); hotelEditing.clear(); setMapAddMode(null);
@@ -4277,7 +4059,7 @@ const tripData = id => id === tripIndex.current ? state : readTrip(id);
 function deleteTrip(id = tripIndex.current) {
   if (tripIndex.trips.length < 2) { alert('Este é o único roteiro. Crie outro antes de excluir este.'); return; }
   const t = tripIndex.trips.find(x => x.id === id); if (!t) return;
-  if (!confirm(`Excluir o roteiro “${t.title || 'Sem título'}”? Isso não pode ser desfeito — se quiser guardar, use “Exportar” antes.`)) return;
+  if (!confirm(`Excluir o roteiro “${t.title || 'Sem título'}”? Isso não pode ser desfeito.`)) return;
   localStorage.removeItem(tripKey(id));
   tripIndex.trips = tripIndex.trips.filter(x => x.id !== id);
   if (id === tripIndex.current) { tripIndex.current = ''; switchTrip(tripIndex.trips[0].id); }
@@ -4322,7 +4104,7 @@ function renderTripsPanel() {
       ${cities ? `<div class="tc-cities">${cities}</div>` : ''}
       <div class="tc-stats"><span><b>${sum.items}</b> atividade${sum.items === 1 ? '' : 's'}</span><span>checklist <b>${sum.clDone}/${sum.clN}</b></span>${when ? `<span>${when}</span>` : ''}</div>
       <div class="tc-bar" title="Checklist ${pct}%"><div style="width:${pct}%"></div></div>
-      <div class="tc-actions">${on ? '<button data-ta="close" class="primary">Continuar</button>' : '<button data-ta="open" class="primary">Abrir</button>'}<button data-ta="dates">Datas</button><button data-ta="dup">Duplicar</button><button data-ta="export">Exportar</button><button data-ta="del" class="danger">Excluir</button></div>
+      <div class="tc-actions">${on ? '<button data-ta="close" class="primary">Continuar</button>' : '<button data-ta="open" class="primary">Abrir</button>'}<button data-ta="dates">Datas</button><button data-ta="dup">Duplicar</button><button data-ta="del" class="danger">Excluir</button></div>
     </article>`;
   };
   const upcoming = list.filter(x => !x.sum.past), past = list.filter(x => x.sum.past);
@@ -4330,8 +4112,6 @@ function renderTripsPanel() {
     <div class="dr-head"><div class="medal-big">${icSvg('mapa')}</div><div><h2>MEUS ROTEIROS</h2><div class="f-script">${all.length} roteiro${all.length > 1 ? 's' : ''} salvo${all.length > 1 ? 's' : ''} neste navegador</div></div><button class="x" data-ta="close" title="Fechar (Esc)">×</button></div>
     <div class="dr-tools">
       <button class="ink-btn primary" data-ta="new">+ Novo roteiro</button>
-      <button class="ink-btn" data-ta="ai">Pedir para uma IA</button>
-      <button class="ink-btn" data-ta="import">Importar arquivo</button>
       ${all.length > 4 ? `<input class="dr-search" type="search" placeholder="Buscar por nome ou cidade…" value="${esc(tripsQuery)}">` : ''}
     </div>
     <div class="dr-list">
@@ -4345,7 +4125,6 @@ function openTripsPanel() {
   if (!dlg.open) dlg.showModal();
   renderTripsPanel();
 }
-let importAsNewNext = false;
 function setupTripsPanel() {
   const dlg = $('#tripsPanel');
   dlg.addEventListener('click', e => {
@@ -4358,10 +4137,7 @@ function setupTripsPanel() {
     if (act === 'dup') duplicateTrip(id);
     if (act === 'dates') openDatesModal(id);
     if (act === 'del') deleteTrip(id);
-    if (act === 'export') { const s = tripData(id); if (s) download('roteiro-' + (norm(s.title).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'viagem') + '.json', JSON.stringify(s, null, 2), 'application/json'); }
     if (act === 'new') openNewTripModal();
-    if (act === 'ai') { openAiModal(); mform.asNew.checked = true; }
-    if (act === 'import') { importAsNewNext = true; $('#importFile').click(); }
   });
   dlg.addEventListener('input', e => {
     if (!e.target.classList.contains('dr-search')) return;
@@ -4490,21 +4266,8 @@ function init() {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.target.closest('input,textarea')) { e.preventDefault(); undo(); }
   });
   document.addEventListener('click', e => { $$('details.menu[open]').forEach(m => { if (!m.contains(e.target)) m.removeAttribute('open'); }); });
-  $('#exportBtn').addEventListener('click', () => download(fileSlug() + '.json', JSON.stringify(state, null, 2), 'application/json'));
-  $('#importBtn').addEventListener('click', () => $('#importFile').click());
-  $('#aiBtn').addEventListener('click', openAiModal);
-  $('#importFile').addEventListener('change', async e => {
-    const file = e.target.files[0]; if (!file) return;
-    try {
-      const asNew = importAsNewNext || (modal.open && !!mform.asNew?.checked);
-      if (importAnyText(await file.text(), asNew) && modal.open) modal.close();
-    } catch (err) { alert('Não foi possível importar: ' + err.message); }
-    importAsNewNext = false;
-    e.target.value = '';
-  });
   $('#cityFilter').addEventListener('change', applyFilters);
   $('#search').addEventListener('input', applyFilters);
-  $('#icsBtn').addEventListener('click', exportIcs);
   $('#addDayBtn').addEventListener('click', e => handleDayAct('add-day', null, e));
   $('#shiftTrip').addEventListener('click', () => {
     if (!state.days.length) return;
