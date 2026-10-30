@@ -698,7 +698,6 @@ dialog{max-height:92vh;overflow:auto}
       <button id="aiBtn" title="Gerar o pedido para outra IA montar o roteiro e importar a resposta">Modelo p/ IA</button>
       <button id="exportBtn" title="Baixar backup em JSON">Exportar</button>
       <button id="importBtn" title="Carregar backup ou resposta da IA (JSON)">Importar</button>
-      <button id="printBtn">Imprimir</button>
       <button id="resetBtn" class="danger" title="Voltar ao roteiro sugerido">Restaurar</button>
       <input type="file" id="importFile" accept="application/json,.json,.txt,.md,text/plain,text/markdown" hidden>
     </div>
@@ -3815,7 +3814,6 @@ function init() {
     } catch (err) { alert('Não foi possível importar: ' + err.message); }
     e.target.value = '';
   });
-  $('#printBtn').addEventListener('click', () => window.print());
   $('#resetBtn').addEventListener('click', () => {
     if (confirm('Restaurar o roteiro sugerido original? Suas alterações serão substituídas (dá para desfazer em seguida).')) { snapshot(); const tab = state.settings.tab; state = defaultState(); state.settings.tab = tab; save(); renderAll(); }
   });
