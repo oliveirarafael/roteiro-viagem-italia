@@ -801,7 +801,6 @@ dialog{max-height:92vh;overflow:auto}
       <button id="aiBtn" title="Gerar o pedido para outra IA montar o roteiro e importar a resposta">Modelo p/ IA</button>
       <button id="exportBtn" title="Baixar backup em JSON">Exportar</button>
       <button id="importBtn" title="Carregar backup ou resposta da IA (JSON)">Importar</button>
-      <button id="resetBtn" class="danger" title="Voltar ao roteiro sugerido">Restaurar</button>
       <input type="file" id="importFile" accept="application/json,.json,.txt,.md,text/plain,text/markdown" hidden>
     </div>
   </div>
@@ -899,386 +898,19 @@ const CITY_TIPS = {
   milao: 'Fique perto da Milano Centrale: todos os bate-voltas (Como/Varenna, Tirano/Bernina, Bergamo) e o trem para Roma no dia da volta saem de lá. Duomo/Brera se preferir charme a praticidade.',
 };
 
-/* ======================= dados sugeridos ======================= */
-const I = (start, end, type, title, notes = '', cost = 0, status = '', link = '') => ({id: uid(), start, end, type, title, notes, cost, status, link});
-const L = {
-  leonardo: 'https://www.trenitalia.com/it/regionale/collegamenti-regionale/leonardo-express.html',
-  vaticano: 'https://prenotazioni.museivaticani.va/home',
-  coliseu: 'https://ticketing.colosseo.it/',
-  pantheon: 'https://portale.museiitaliani.it/',
-  borghese: 'https://galleriaborghese.beniculturali.it/',
-  trenitalia: 'https://www.trenitalia.com/',
-  italo: 'https://www.italotreno.com/',
-  uffizi: 'https://www.uffizi.it/biglietti',
-  accademia: 'https://www.galleriaaccademiafirenze.it/visita/',
-  duomoFi: 'https://tickets.duomo.firenze.it/',
-  pisa: 'https://www.opapisa.it/',
-  ducale: 'https://palazzoducale.visitmuve.it/',
-  sanmarco: 'https://www.basilicasanmarco.it/',
-  actv: 'https://actv.avmspa.it/en/content/venice-urban-services-0',
-  duomoMi: 'https://www.duomomilano.it/',
-  cenacolo: 'https://cenacolovinciano.org/en/info/',
-  trenord: 'https://www.trenord.it/',
-  lagos: 'https://www.navigazionelaghi.it/en/tickets-and-timetables-lake-como/',
-  bernina: 'https://www.rhb.ch/en/panoramic-trains/bernina-express',
-  malpensa: 'https://www.malpensaexpress.it/',
-};
 
-function defaultDays() {
-  return [
-    {date: '2027-02-06', base: 'Voo', title: 'Partida do Brasil', note: 'Itália está 4h à frente de Brasília em fevereiro. Tente dormir no voo para chegar com energia.', items: [
-      I('12:30', '', 'transfer', 'Chegar ao aeroporto (3h antes)', 'Check-in, despacho de bagagem e imigração de saída.'),
-      I('15:35', '', 'voo', 'Voo para Roma', 'Chegada D+1 às 06:40 (hora de Roma). Confirmar aeroporto de chegada (provavelmente Fiumicino – FCO).', 0, 'reservado'),
-    ]},
-    {date: '2027-02-07', base: 'Roma', title: 'Chegada + centro histórico', note: '1º domingo do mês: museus estatais grátis (Pantheon, Coliseu) — sem reserva, por ordem de chegada. Dia leve por causa do jet lag.', items: [
-      I('06:40', '07:45', 'voo', 'Chegada em Roma (FCO) + imigração', 'Imigração com EES: foto do rosto + 4 digitais na primeira entrada no Schengen. Pode demorar.'),
-      I('08:00', '08:32', 'trem', 'Leonardo Express: Fiumicino → Roma Termini', 'Sem paradas, a cada 15 min. Pague por aproximação (cartão/celular) direto na catraca.', 14, '', L.leonardo),
-      I('09:00', '', 'hotel', 'Deixar malas no hotel (Monti)', 'Pedir early check-in com antecedência.'),
-      I('10:00', '', 'comida', 'Café da manhã italiano em Monti', 'Cornetto + cappuccino no balcão (mais barato que sentado).', 8),
-      I('11:00', '12:00', 'visita', 'Pantheon (grátis hoje)', 'No 1º domingo não há reserva online: fila no local. Em dias normais: €7 com horário marcado.', 0, '', L.pantheon),
-      I('12:15', '', 'passeio', 'Piazza Navona + Campo de\u2019 Fiori', ''),
-      I('13:00', '', 'comida', 'Almoço: cacio e pepe / carbonara', 'Evite restaurantes com foto no cardápio e “garçom-isca” na porta.', 25),
-      I('15:00', '17:00', 'hotel', 'Check-in e descanso', 'Um cochilo curto ajuda contra o jet lag.'),
-      I('17:30', '', 'visita', 'Fontana di Trevi + Scalinata di Spagna', 'Área da bacia da Fontana: €2 (9h–22h) para não residentes. À noite é mais bonita e mais vazia.', 2),
-      I('20:00', '', 'comida', 'Jantar leve', '', 30),
-    ]},
-    {date: '2027-02-08', base: 'Roma', title: 'Vaticano', note: 'Museus Vaticanos: seg–sáb 8h–20h (última entrada 18h). Fechados domingo e em 11/02. Ombros e joelhos cobertos.', items: [
-      I('08:00', '12:00', 'visita', 'Museus Vaticanos + Capela Sistina', 'Ingresso oficial €20 + €5 de reserva online (“salta la fila”). Não reembolsável. Compre só no site oficial.', 25, 'reservar', L.vaticano),
-      I('12:15', '13:30', 'visita', 'Basílica de São Pedro', 'Entrada grátis (fila de segurança de 15–60 min). Cúpula opcional: €17 a pé (551 degraus) ou €22 com elevador + 320 degraus.'),
-      I('13:45', '', 'comida', 'Almoço em Prati (Pizzarium Bonci / mercado Trionfale)', 'Pizza al taglio.', 18),
-      I('15:30', '', 'passeio', 'Ponte e Castel Sant\u2019Angelo (exterior) + Via dei Coronari', 'Castel Sant\u2019Angelo fecha às segundas.'),
-      I('18:00', '', 'passeio', 'Trastevere ao anoitecer', 'Santa Maria in Trastevere, ruelas, bares.'),
-      I('20:00', '', 'comida', 'Jantar em Trastevere', '', 35),
-    ]},
-    {date: '2027-02-09', base: 'Roma', title: 'Roma Antiga', note: 'Coliseu no inverno: 8h30–16h30 (última entrada 15h30). Ingresso nominal; vendas abrem 30 dias antes (≈ 10/01/2027).', items: [
-      I('08:30', '11:30', 'visita', 'Coliseu + Fórum Romano + Palatino', 'Ingresso €18 (válido 24h, horário marcado para o Coliseu). Leve passaporte. Full Experience (arena/subterrâneo) €24.', 18, 'reservar', L.coliseu),
-      I('11:45', '', 'passeio', 'Piazza del Campidoglio + mirante do Fórum', 'Vista grátis do Fórum por trás do Capitólio.'),
-      I('13:00', '', 'comida', 'Almoço no Gueto Judaico (alcachofra à judia)', '', 25),
-      I('14:30', '', 'passeio', 'Largo di Torre Argentina + Altare della Patria (Vittoriano)', 'Elevador panorâmico do Vittoriano é pago (opcional).'),
-      I('17:00', '', 'livre', 'Tempo livre / compras Via del Corso', 'Hoje é Terça-feira Gorda — último dia do Carnaval de Veneza.'),
-      I('20:00', '', 'comida', 'Jantar romano (Monti)', '', 35),
-    ]},
-    {date: '2027-02-10', base: 'Roma', title: 'Galleria Borghese + Roma livre', note: 'Quarta-feira de Cinzas. A Borghese tem reserva obrigatória e horários de entrada limitados.', items: [
-      I('09:00', '11:00', 'visita', 'Galleria Borghese (Bernini e Caravaggio)', 'Ingresso €16 + €2 de reserva obrigatória. Fecha às segundas.', 18, 'reservar', L.borghese),
-      I('11:15', '', 'passeio', 'Villa Borghese + Terrazza del Pincio', 'Vista sobre a Piazza del Popolo.'),
-      I('13:00', '', 'comida', 'Almoço', '', 25),
-      I('15:00', '17:30', 'visita', 'Opcional: Catacumbas de São Calisto / Via Ápia Antiga', 'Catacumbas ≈ €10 com visita guiada. Alternativa: Castel Sant\u2019Angelo (€18).', 10),
-      I('20:00', '', 'comida', 'Jantar de despedida de Roma', '', 35),
-    ]},
-    {date: '2027-02-11', base: 'Florença', title: 'Roma → Florença + Uffizi', note: 'Uffizi: ter–dom 8h15–18h30. €29 comprando antes / €25 no dia / €16 entrando depois das 16h.', items: [
-      I('09:00', '', 'hotel', 'Check-out em Roma', ''),
-      I('09:50', '11:25', 'trem', 'Trem Roma Termini → Firenze S. M. Novella', 'Frecciarossa ou Italo, ~1h30. Tarifas promocionais a partir de ~€15 comprando cedo.', 25, 'reservar', L.italo),
-      I('11:45', '', 'hotel', 'Deixar malas no hotel', ''),
-      I('12:15', '', 'comida', 'Almoço no Mercato Centrale', '', 18),
-      I('13:45', '16:45', 'visita', 'Galleria degli Uffizi', 'Botticelli, Leonardo, Michelangelo. Ingresso nominal com horário.', 29, 'reservar', L.uffizi),
-      I('17:00', '', 'passeio', 'Piazza della Signoria + Ponte Vecchio ao entardecer', ''),
-      I('20:00', '', 'comida', 'Jantar: bistecca alla fiorentina', 'Costuma ser vendida por kg — dá para dividir.', 50),
-    ]},
-    {date: '2027-02-12', base: 'Florença', title: 'Duomo, Davi e Oltrarno', note: 'O Brunelleschi Pass vale 3 dias e inclui Cúpula, Campanile, Batistério, Museu e Santa Reparata. A subida à Cúpula tem horário fixo (463 degraus, sem elevador).', items: [
-      I('08:15', '09:45', 'visita', 'Galleria dell\u2019Accademia (Davi)', 'Ingresso €20; reserva fortemente recomendada. Fecha às segundas.', 20, 'reservar', L.accademia),
-      I('10:30', '11:30', 'visita', 'Cúpula de Brunelleschi', 'Brunelleschi Pass €30, horário fixo e nominal (levar documento). Mochilas grandes vão para o guarda-volumes.', 30, 'reservar', L.duomoFi),
-      I('11:45', '', 'visita', 'Batistério, Campanile e Museo dell\u2019Opera', 'Incluídos no Brunelleschi Pass.'),
-      I('13:30', '', 'comida', 'Almoço rápido: panino (All\u2019Antico Vinaio) ou lampredotto', '', 12),
-      I('15:00', '', 'passeio', 'Oltrarno: Palazzo Pitti / Jardim de Boboli (opcional)', 'Pitti + Boboli ≈ €25. Ou só passear por Santo Spirito e pelos ateliês.'),
-      I('17:15', '', 'passeio', 'Piazzale Michelangelo — pôr do sol', 'Pôr do sol por volta de 17h45 em fevereiro. Ônibus 12/13 ou subida a pé.'),
-      I('20:00', '', 'comida', 'Jantar em Santo Spirito', '', 35),
-    ]},
-    {date: '2027-02-13', base: 'Florença', title: 'Bate-volta Toscana: Pisa + Lucca', note: 'Alternativa: Siena + San Gimignano ou tour de vinhos no Chianti.', items: [
-      I('08:30', '09:30', 'trem', 'Trem regional Firenze S.M.N. → Pisa Centrale', '~1h. Bilhete regional: se for de papel, valide antes de embarcar.', 9, '', L.trenitalia),
-      I('09:50', '12:00', 'visita', 'Piazza dei Miracoli + subida na Torre de Pisa', 'Subida com horário marcado (~€20, conferir no site oficial). Catedral grátis com ingresso.', 20, 'reservar', L.pisa),
-      I('12:30', '13:00', 'trem', 'Trem Pisa → Lucca', '~30 min.', 4),
-      I('13:15', '', 'comida', 'Almoço em Lucca', '', 25),
-      I('14:30', '', 'passeio', 'Lucca: muralhas de bicicleta + Piazza dell\u2019Anfiteatro', 'Aluguel de bike ≈ €5/h.', 5),
-      I('17:30', '18:50', 'trem', 'Trem Lucca → Firenze', '~1h20.', 8),
-      I('20:00', '', 'comida', 'Jantar', '', 30),
-    ]},
-    {date: '2027-02-14', base: 'Veneza', title: 'Florença → Bolonha → Veneza', note: 'Dia dos Namorados europeu (San Valentino): reserve o jantar em Veneza com antecedência.', items: [
-      I('09:00', '', 'hotel', 'Check-out em Florença', ''),
-      I('09:30', '10:10', 'trem', 'Trem Firenze → Bologna Centrale', 'Alta velocidade, ~37 min.', 20, 'reservar', L.trenitalia),
-      I('10:20', '', 'transfer', 'Guarda-volumes na estação de Bolonha', ''),
-      I('10:45', '', 'passeio', 'Bolonha: Piazza Maggiore, Due Torri (por fora), pórticos (UNESCO), Archiginnasio', 'As torres estão fechadas para subida desde 2023.'),
-      I('13:00', '', 'comida', 'Almoço: tagliatelle al ragù + mortadela', 'Quadrilatero / Mercato di Mezzo.', 25),
-      I('16:00', '17:30', 'trem', 'Trem Bologna → Venezia Santa Lucia', '~1h30.', 25, 'reservar', L.italo),
-      I('17:40', '', 'barco', 'Ativar passe de vaporetto 72h e ir ao hotel', 'Passe 72h: €45 (cobre até o fim da tarde de 17/02). Bilhete avulso: €9,50.', 45, '', L.actv),
-      I('20:00', '', 'comida', 'Jantar de San Valentino', 'Reservar!', 55, 'reservar'),
-    ]},
-    {date: '2027-02-15', base: 'Veneza', title: 'San Marco e Rialto', note: 'Fevereiro pode ter acqua alta (maré alta) — veja o app “Hi!Tide Venice”. A taxa de acesso de Veneza não vale nas datas da viagem.', items: [
-      I('09:00', '10:00', 'visita', 'Basílica de São Marcos', 'Ingresso de poucos euros; reserva opcional. Ombros e joelhos cobertos, sem mochilas.', 6, '', L.sanmarco),
-      I('10:30', '12:30', 'visita', 'Palácio Ducal + Ponte dos Suspiros', '€30 online / €35 no local. Inclui Museo Correr e Biblioteca Marciana. Inverno: 9h–18h.', 30, 'reservar', L.ducale),
-      I('13:00', '', 'comida', 'Almoço: cicchetti num bacaro', 'Petiscos + “ombra” (taça de vinho).', 20),
-      I('14:30', '', 'visita', 'Campanile di San Marco (opcional)', 'Vista da lagoa.'),
-      I('15:30', '', 'passeio', 'Ponte di Rialto + Mercado de Rialto', 'O terraço do Fondaco dei Tedeschi fechou em maio/2025. O mercado de peixe não abre às segundas (hoje só frutas e verduras).'),
-      I('17:15', '', 'barco', 'Vaporetto linha 1 pelo Grande Canal ao entardecer', 'Incluído no passe — sente na frente/atrás ao ar livre.'),
-      I('20:00', '', 'comida', 'Jantar em Cannaregio', '', 35),
-    ]},
-    {date: '2027-02-16', base: 'Veneza', title: 'Ilhas: Murano e Burano', note: '', items: [
-      I('09:00', '09:20', 'barco', 'Vaporetto Fondamente Nove → Murano', 'Linhas 4.1/4.2 (incluídas no passe).'),
-      I('09:30', '', 'visita', 'Murano: demonstração de vidro soprado', ''),
-      I('12:00', '12:40', 'barco', 'Vaporetto 12 → Burano', ''),
-      I('12:45', '', 'comida', 'Almoço em Burano: risotto de gò', '', 30),
-      I('14:00', '', 'passeio', 'Burano: casinhas coloridas (opcional: Torcello)', ''),
-      I('16:30', '', 'passeio', 'Dorsoduro: Santa Maria della Salute + Zattere', ''),
-      I('18:30', '', 'passeio', 'Gôndola (opcional)', 'Tarifa oficial ~€90 de dia / ~€110 à noite por gôndola (até 5 pessoas, ~30 min). Valor dividido por 2.', 50),
-      I('20:30', '', 'comida', 'Jantar', '', 35),
-    ]},
-    {date: '2027-02-17', base: 'Milão', title: 'Veneza → Verona → Milão', note: '', items: [
-      I('08:30', '', 'hotel', 'Check-out + vaporetto até a estação', ''),
-      I('09:20', '10:30', 'trem', 'Trem Venezia S. Lucia → Verona Porta Nuova', '~1h10.', 18, 'reservar', L.trenitalia),
-      I('10:40', '', 'transfer', 'Guarda-volumes na estação de Verona', ''),
-      I('11:15', '', 'visita', 'Arena di Verona', 'Ingresso ~€12 (conferir).', 12),
-      I('12:15', '', 'passeio', 'Casa di Giulietta (pátio) + Piazza delle Erbe', ''),
-      I('13:15', '', 'comida', 'Almoço: risotto all\u2019Amarone', '', 25),
-      I('14:45', '', 'passeio', 'Ponte Pietra + mirante Castel San Pietro (funicular)', ''),
-      I('17:30', '18:45', 'trem', 'Trem Verona → Milano Centrale', '~1h15.', 20, 'reservar', L.italo),
-      I('19:15', '', 'hotel', 'Check-in em Milão', ''),
-      I('20:30', '', 'comida', 'Jantar', '', 30),
-    ]},
-    {date: '2027-02-18', base: 'Milão', title: 'Milão clássica + Última Ceia', note: 'A Última Ceia é o ingresso mais difícil da viagem: lotes trimestrais e extras toda quarta às 12h (Itália). Plano B: tour guiado com ingresso.', items: [
-      I('08:30', '10:30', 'visita', 'Duomo + terraços', 'Duomo + terraços: €22 de escada / €26 de elevador.', 22, 'reservar', L.duomoMi),
-      I('10:45', '', 'passeio', 'Galleria Vittorio Emanuele II + Teatro alla Scala', ''),
-      I('12:00', '', 'comida', 'Almoço: panzerotti do Luini', '', 12),
-      I('14:15', '14:30', 'visita', 'Cenacolo Vinciano — A Última Ceia', '€15; visita de 15 min. Ative o ingresso na bilheteria 30 min antes, com documento. Fecha às segundas.', 15, 'reservar', L.cenacolo),
-      I('15:15', '', 'visita', 'Castello Sforzesco + Parco Sempione', ''),
-      I('17:00', '', 'passeio', 'Bairro de Brera', ''),
-      I('19:00', '', 'comida', 'Aperitivo nos Navigli', '', 15),
-      I('20:30', '', 'comida', 'Jantar: risotto alla milanese / cotoletta', '', 35),
-    ]},
-    {date: '2027-02-19', base: 'Milão', title: 'Bate-volta Lago de Como', note: 'Inverno: balsas com horário reduzido (válido até meados de março) e várias villas fechadas — confira os horários de 2026/27. Alternativa: cidade de Como + funicular Brunate.', items: [
-      I('08:20', '09:25', 'trem', 'Trem Milano Centrale → Varenna-Esino', 'Trenord, linha de Tirano (de hora em hora). Bilhete no app Trenord.', 8, '', L.trenord),
-      I('09:30', '', 'passeio', 'Varenna: vilarejo + Passeggiata degli Innamorati', ''),
-      I('10:50', '11:05', 'barco', 'Balsa Varenna → Bellagio', 'Conferir horário de inverno.', 5, '', L.lagos),
-      I('11:15', '', 'passeio', 'Bellagio: centro histórico e orla', ''),
-      I('13:00', '', 'comida', 'Almoço com vista para o lago', '', 30),
-      I('15:40', '16:00', 'barco', 'Balsa Bellagio → Varenna', 'Conferir horário.', 5),
-      I('16:35', '17:40', 'trem', 'Trem Varenna → Milano Centrale', '', 8),
-      I('20:00', '', 'comida', 'Jantar', '', 30),
-    ]},
-    {date: '2027-02-20', base: 'Milão', title: 'Suíça: Bernina Express até St. Moritz', note: 'Sábado: no inverno há trens Bernina extras nos fins de semana (09:18 de ida e 16:14 de volta). Trem diário alternativo: 10:06 de ida / 15:30 de volta. Leve passaporte. Na Suíça a moeda é o CHF e o roaming é diferente do da UE.', items: [
-      I('06:20', '08:52', 'trem', 'Trem Trenord Milano Centrale → Tirano', '€12,50, direto (~2h30). Lado direito tem vista para o Lago de Como.', 12.5, '', L.trenord),
-      I('09:18', '11:45', 'trem', 'Bernina Express Tirano → St. Moritz', 'Tarifa CHF 33 + reserva obrigatória CHF 32 (≈ €70). Patrimônio UNESCO: viaduto em espiral de Brusio, Lago Bianco a 2.253 m. Neste sentido, viajantes recomendam o lado ESQUERDO.', 70, 'reservar', L.bernina),
-      I('11:45', '', 'passeio', 'St. Moritz: lago congelado e centro', 'Frio intenso: pode passar de -10°C.'),
-      I('12:45', '', 'comida', 'Almoço na Suíça', 'Bem mais caro que na Itália (≈ CHF 35–45).', 40),
-      I('14:15', '', 'passeio', 'Opcional: Pontresina ou Muottas Muragl', ''),
-      I('16:14', '18:39', 'trem', 'Bernina Express St. Moritz → Tirano', 'Neste sentido o lado DIREITO tem as melhores vistas; em fevereiro o fim do trajeto já é no escuro (pôr do sol ~17h45). Para economizar: trem regional (mesma linha, sem reserva) — só CHF 33.', 70, 'reservar', L.bernina),
-      I('19:08', '21:40', 'trem', 'Trem Tirano → Milano Centrale', 'Último trem por volta de 20:08.', 12.5, '', L.trenord),
-    ]},
-    {date: '2027-02-21', base: 'Milão', title: 'Bate-volta Bergamo Città Alta', note: 'Alternativa: Turim (1h de Frecciarossa) — Museu Egípcio e Mole Antonelliana.', items: [
-      I('09:30', '10:20', 'trem', 'Trem Milano Centrale → Bergamo', '~50 min.', 6, '', L.trenord),
-      I('10:40', '', 'transfer', 'Ônibus/funicular até a Città Alta', '', 2),
-      I('11:00', '', 'passeio', 'Piazza Vecchia, Santa Maria Maggiore, Cappella Colleoni, muralhas venezianas (UNESCO)', ''),
-      I('13:00', '', 'comida', 'Almoço: casoncelli + polenta', '', 25),
-      I('15:00', '', 'passeio', 'Funicular San Vigilio — mirante', '', 2),
-      I('17:00', '17:50', 'trem', 'Trem Bergamo → Milano', '', 6),
-      I('20:00', '', 'comida', 'Jantar', '', 30),
-    ]},
-    {date: '2027-02-22', base: 'Milão', title: 'Milão moderna + compras', note: 'Segunda: Cenacolo, Brera e muitos museus fecham. Bom dia para compras e passeio.', items: [
-      I('10:00', '', 'compras', 'Quadrilatero della Moda (Via Montenapoleone) ou Outlet Serravalle', 'Serravalle: ônibus a partir do centro (~1h). Peça o formulário tax free nas compras.'),
-      I('13:00', '', 'comida', 'Almoço', '', 25),
-      I('15:00', '', 'passeio', 'Porta Nuova: Bosco Verticale, Piazza Gae Aulenti, Biblioteca degli Alberi', ''),
-      I('17:00', '', 'compras', 'Eataly Smeraldo / Peck — comidas para levar', 'Atenção às regras da Receita/Anvisa para alimentos.', 30),
-      I('19:30', '', 'comida', 'Jantar de despedida', '', 50),
-      I('22:00', '', 'hotel', 'Arrumar e pesar as malas', 'Conferir franquia de bagagem da companhia aérea.'),
-    ]},
-    {date: '2027-02-23', base: 'Voo', ...returnDayRome()},
-  ].map(d => ({id: uid(), ...d}));
-}
-function returnDayRome() {
-  return {title: 'Milão → Roma + voo de volta', note: 'O voo de volta sai de Roma (Fiumicino – FCO) às 22:30. Pegue um trem de manhã: mesmo com atraso sobra folga. Alternativa mais tranquila: dormir a última noite em Roma (mudando a pernoite de 22/02 para Roma).', items: [
-    I('07:30', '', 'hotel', 'Café da manhã + check-out em Milão', ''),
-    I('09:10', '12:20', 'trem', 'Trem Milano Centrale → Roma Termini', 'Frecciarossa ou Italo, ~3h. Compre com antecedência (a partir de ~€30). Prefira trens até 10h para ter folga.', 45, 'reservar', L.italo),
-    I('12:30', '', 'transfer', 'Guarda-volumes em Roma Termini', 'KiPoint, perto da plataforma 24 (6h–23h): ~€6 por mala nas primeiras 4h.', 6),
-    I('13:00', '', 'comida', 'Almoço de despedida em Monti', '', 25),
-    I('14:30', '17:00', 'passeio', 'Últimas voltas: Fontana di Trevi e compras na Via del Corso', 'Opcional: Castel Sant’Angelo (€18, abre às terças).'),
-    I('17:30', '', 'transfer', 'Buscar as malas em Termini', ''),
-    I('18:05', '18:37', 'trem', 'Leonardo Express: Roma Termini → Fiumicino', '€14, sem paradas, a cada 15 min. Há relatos de trens cancelados: se acontecer, táxi oficial tem tarifa fixa de €55.', 14, '', L.leonardo),
-    I('19:00', '', 'transfer', 'Tax free + check-in', 'Valide o tax free ANTES de despachar a mala (3h antes do voo).'),
-    I('22:30', '', 'voo', 'Voo de volta ao Brasil', 'Saída de Roma Fiumicino (FCO).', 0, 'reservado'),
-  ]};
-}
-
-function defaultHotels() {
-  const H = (city, name, area, price, notes) => ({id: uid(), city, name, area, price, notes, chosen: false, status: 'sugestao', conf: ''});
-  return [
-    H('Roma', 'Hotel Lancelot', 'Via Capo d\u2019Africa 47 · perto do Coliseu', 170, 'Familiar, um dos melhores custo-benefício de Roma. Café da manhã excelente, terraço. (~€160–240)'),
-    H('Roma', 'Condominio Monti Boutique Hotel', 'Via dei Serpenti 109 · Monti', 150, 'Rooftop, 5 min do Coliseu, metrô Cavour a 1 parada de Termini. Nota ~8,9.'),
-    H('Roma', 'Nerva Boutique Hotel', 'Via Tor de\u2019 Conti 3 · Monti / Fóruns', 150, 'Moderno e bem localizado junto aos Fóruns Imperiais. (~€130–190)'),
-    H('Roma', 'Princeps Boutique Hotel', 'Perto de Termini / Santa Maria Maggiore', 160, '20 quartos, café incluso, bebidas e snacks o dia todo. Prático para o Leonardo Express.'),
-    H('Florença', 'Hotel Davanzati', 'Via Porta Rossa 5 · centro', 160, 'Palazzo do séc. XIV entre a Signoria e a Ponte Vecchio. Familiar, chá da tarde grátis.'),
-    H('Florença', 'Hotel Botticelli', 'Via Taddea 8 · San Lorenzo', 145, 'Quartos espaçosos, perto do Mercato Centrale e a 7 min da estação.'),
-    H('Florença', 'Hotel Garibaldi Blu', 'Piazza Santa Maria Novella 10', 150, 'Na praça, a poucos passos da estação — ótimo para os bate-voltas.'),
-    H('Florença', 'Hotel Palazzo Guadagni', 'Piazza Santo Spirito 9 · Oltrarno', 140, 'Loggia com vista do Duomo, clima local. Sem elevador.'),
-    H('Veneza', 'Hotel Al Ponte Antico', 'Cannaregio 5768 · Rialto', 200, 'Boutique familiar com terraço no Grande Canal, junto à Ponte di Rialto. Nota altíssima.'),
-    H('Veneza', 'Hotel Arcadia', 'Cannaregio 1333 · perto da estação', 140, 'Bom custo-benefício e poucas pontes desde a estação. (~€100–250)'),
-    H('Veneza', 'Hotel Flora', 'Calle XXII Marzo · San Marco', 200, 'Pequeno, com jardim interno, numa rua calma de San Marco.'),
-    H('Veneza', 'Alle Guglie Boutique Hotel', 'Cannaregio', 110, 'Opção mais econômica e com clima local. (~€80–200)'),
-    H('Milão', 'Hotel Berna', 'Via Napo Torriani 18 · Centrale', 155, '4 estrelas a 300 m da Centrale, nota 9,1, ótimo café da manhã. Ideal para os bate-voltas e o Malpensa Express.'),
-    H('Milão', 'iQ Hotel Milano', 'Perto da Milano Centrale', 160, 'Moderno, quartos amplos, academia/spa e rooftop bar.'),
-    H('Milão', 'Hotel Gran Duca di York', 'Via Moneta 1 · Duomo', 130, 'Boutique num palazzo do séc. XVIII, a passos do Duomo. Quartos pequenos.'),
-    H('Milão', 'Hotel Milano Scala', 'Via dell\u2019Orso 7 · Brera', 160, 'Ecológico, rooftop com vista para o Duomo, bairro charmoso.'),
-  ];
-}
-
-const LK = {
-  pid: ['DETRAN-SP: emitir a PID (use o DETRAN do seu estado)', 'https://servicos.sp.gov.br/fcarta/91833900-1B04-426B-8CFB-E6D6D96DD21E'],
-  cnhIt: ['Consulado do Brasil em Milão: dirigir na Itália com CNH', 'https://www.gov.br/mre/pt-br/consulado-milao/informacoes-uteis/carteira-nacional-de-habilitacao-cnh'],
-  aci: ['ACI: guia oficial para turistas ao volante (PDF)', 'https://aci.gov.it/app/uploads/2026/06/INGLESE-INFORMAZIONI-UTILI-PER-TURISTI-STRANIERI.pdf'],
-  inverno: ['Polizia di Stato: pneus de inverno e correntes', 'https://www.poliziadistato.it/articolo/385a5387e6e5f7a256783370'],
-  passos: ['Situação dos passos Bernina e Maloja', 'https://www.livigno.eu/de/passe-livigno'],
-  ztlRoma: ['Roma Mobilità: ZTL do centro e horários', 'https://romamobilita.it/muoversi-a-roma/ztl-in-centro/'],
-  ztlGuia: ['Guia de ZTL cidade por cidade', 'https://www.autovia.it/ztl-italia-guida-citta/'],
-  areaC: ['Comune di Milano: Area C', 'https://www.comune.milano.it/argomenti/mobilita/area-c'],
-  vinheta: ['Via (site oficial): e-vignette suíça', 'https://via.admin.ch/shop'],
-  autostrade: ['Autostrade per l’Italia', 'https://www.autostrade.it/'],
-  meios: ['Governo italiano: tabela de meios de subsistência', 'https://www.esteri.it/it/servizi-opportunita/ingressosoggiornoinitalia/mezzi_finanziari/tabella_mezzi_sussistenza/'],
-  entrada: ['Consulado da Itália: documentos pedidos na entrada', 'https://consportoalegre.esteri.it/pt/servizi-consolari-e-visti/servizi-per-il-cittadino-straniero/visti/visto-para-turismo-e-transito-ate-90-dias/'],
-  etias: ['ETIAS (site oficial da UE)', 'https://travel-europe.europa.eu/etias'],
-  ees: ['EES (site oficial da UE)', 'https://travel-europe.europa.eu/ees_en'],
-  cin: ['Ministério do Turismo: CIN obrigatório', 'https://www.ministeroturismo.gov.it/cin-termine-per-lacquisizione-spostato-al-1-gennaio-2025/'],
-  consMilao: ['Consulado do Brasil em Milão', 'https://www.gov.br/mre/pt-br/consulado-milao'],
-};
-const TICKET_RULES = [
-  [/museus vaticanos/, 60, 'Museus Vaticanos', 'as vendas abrem ~60 dias antes e esgotam rápido', 'Ingresso nominal (€20 + €5 de reserva): o nome precisa bater com o passaporte. Compre só no site oficial; revendedores cobram bem mais.'],
-  [/^coliseu/, 30, 'Coliseu + Fórum + Palatino', 'as vendas abrem 30 dias antes', '€18, nominal e com horário. A Full Experience (arena e subterrâneo) abre só 7 dias antes. Leve o passaporte.'],
-  [/galleria borghese/, 45, 'Galleria Borghese', 'sem data fixa de abertura: reserve com 1 a 2 meses', 'Reserva obrigatória: entradas a cada 2h, no máximo 360 pessoas. Retire o ingresso 30 min antes.'],
-  [/uffizi/, 60, 'Uffizi', 'o calendário abre por trimestre, ~2 meses antes', '€29 comprando antes (€25 no dia, com fila longa). Nominal, com horário.'],
-  [/accademia/, 60, 'Accademia (Davi)', 'reserve ~2 meses antes', 'Os horários da manhã esgotam primeiro.'],
-  [/brunelleschi/, 60, 'Cúpula de Brunelleschi', 'reserve assim que abrir: a subida tem horário fixo', 'Brunelleschi Pass €30, nominal. São 463 degraus, sem elevador.'],
-  [/torre de pisa/, 30, 'Torre de Pisa', 'subida com horário marcado: reserve ~1 mês antes', 'Bolsas ficam no guarda-volumes; menores de 8 anos não sobem.'],
-  [/basilica de sao marcos/, 90, 'Basílica de São Marcos (entrada sem fila)', 'a reserva abre 90 dias antes (opcional)', 'Sem reserva a fila pode ser longa. Ombros e joelhos cobertos; mochilas não entram.'],
-  [/palacio ducal/, 31, 'Palácio Ducal', 'o preço de €30 só vale comprando online com 30+ dias (depois, €35)', 'Inclui Museo Correr e Biblioteca Marciana.'],
-  [/^duomo \+ terra/, 30, 'Duomo de Milão + terraços', 'reserve ~1 mês antes', 'Escada €22 / elevador €26. Os terraços fecham com chuva forte ou gelo.'],
-];
-function ticketChecklist(days) {
-  return TICKET_RULES.flatMap(([re, before, name, rule, info]) => {
-    const d = days.find(x => x.items.some(i => re.test(norm(i.title)))); if (!d) return [];
-    const it = d.items.find(i => re.test(norm(i.title)));
-    return [{id: uid(), cat: 'Ingressos (datas de abertura)', text: `${name} (${weekday(d.date)} ${fmtBR(d.date)}): ${rule}`, due: addDays(d.date, -before), link: it.link || '', done: it.status === 'reservado', must: !!it.status, info}];
-  });
-}
-function defaultChecklist(days = defaultDays(), keepNewFlag = false) {
-  const C = (cat, text, due = '', link = '', x = {}) => ({id: uid(), cat, text, due, link, done: false, ...x});
-  const N = (...a) => ({...C(...a), _new: true});
-  const D = 'Documentos e entrada', H = 'Hospedagem', CAR = 'Carro (dirigir na Itália)';
-  const list = [
-    C(D, 'Passaporte válido até pelo menos 23/05/2027 (3 meses após a saída do Schengen) — ideal ter 6 meses e páginas em branco', '2026-11-30', LK.entrada[1], {must: true, info: 'Sem isso a companhia aérea não deixa embarcar. Se precisar renovar, o agendamento na Polícia Federal pode levar semanas.'}),
-    C(D, 'Seguro-viagem com cobertura mínima de €30.000 válido no Schengen e na Suíça (levar apólice impressa)', '2027-01-15', '', {must: true, info: 'Para brasileiro isento de visto não é formalmente exigido, mas a imigração pode pedir e o atendimento médico na Europa é caríssimo. Confira: despesas médicas, repatriação, Suíça incluída e cobertura para acidente dirigindo carro alugado.'}),
-    N(D, 'Comprovar meios financeiros: ~€400 por pessoa para 17 dias (tabela oficial italiana para 2+ viajantes) — cartão de crédito com limite e extrato recente no celular', '2027-02-01', LK.meios[1], {must: true, info: 'A polícia de fronteira pode pedir passagem de volta, hospedagem de todas as noites e prova de dinheiro. Tabela oficial para 2 ou mais pessoas, viagem de 11 a 20 dias: €25,82 fixos + €22,21 por dia, por pessoa.', links: [LK.meios, LK.entrada]}),
-    C(D, 'Imprimir/baixar passagens, reservas de hotel, seguro e ingressos (a imigração pode pedir)', '2027-02-01', '', {must: true}),
-    N(D, 'Cópias digitais de passaporte, CNH, PID, seguro e cartões numa pasta offline no celular + e-mail para você mesmo', '2027-02-01'),
-    C(D, 'Imigração com EES: foto + 4 digitais na primeira entrada — prever tempo de fila em Fiumicino', '', LK.ees[1]),
-    C(D, 'ETIAS: ainda sem data de início (a previsão de fim de 2026 foi retirada em jul/2026). Hoje não há nada para pedir nem pagar — site cobrando ETIAS é golpe. Acompanhar.', '2027-01-15', LK.etias[1], {info: 'Quando começar, custará €20, será pedido só no site/app oficial e terá período de transição. A UE vai avisar a data com meses de antecedência.'}),
-    N(D, 'Anotar contatos de emergência: 112 (Itália e Suíça), consulados do Brasil em Roma e Milão, seguro-viagem e banco', '2027-02-01', LK.consMilao[1]),
-    C(H, 'Reservar hotel em Roma (07→11/02, 4 noites) com cancelamento grátis', '2026-11-30', '', {must: true}),
-    C(H, 'Reservar hotel em Florença (11→14/02, 3 noites)', '2026-11-30', '', {must: true}),
-    C(H, 'Reservar hotel em Veneza (14→17/02, 3 noites) — San Valentino lota', '2026-11-30', '', {must: true}),
-    C(H, 'Reservar hotel em Milão (17→23/02, 6 noites)', '2026-11-30', '', {must: true}),
-    C(H, 'Pedir guarda de malas/early check-in em Roma (chegada ~8h30)', '2027-01-31'),
-    N(H, 'Se for dirigir: preferir hotéis com garagem (perguntar o preço por noite) e pedir que registrem a placa na ZTL', '2027-01-15', LK.ztlGuia[1], {info: 'Hotéis dentro da ZTL (Florença, Pisa, Roma...) podem comunicar a placa à prefeitura para liberar a entrada até a garagem. Sem isso, cada passagem pela câmera vira multa. Em Veneza não há carros: estacione em Piazzale Roma ou no Tronchetto.'}),
-    N(H, 'Apartamento (Airbnb/Booking): conferir no anúncio o CIN, código nacional obrigatório desde 2025 — anúncio sem CIN é irregular', '', LK.cin[1]),
-    C('Transporte', 'Confirmar o terminal de Fiumicino (FCO) da ida e da volta', '2026-11-15'),
-    C('Transporte', 'Comprar o trem Milão → Roma de 23/02, de manhã (folga para o voo das 22:30)', '2026-12-15', 'https://www.italotreno.com/'),
-    C('Transporte', 'Comprar os trens de alta velocidade assim que as tarifas promocionais abrirem (Trenitalia / Italo)', '2026-12-15', 'https://www.italotreno.com/'),
-    C('Transporte', 'Reservar assentos do Bernina Express (sáb 20/02) no site da RhB', '2027-01-15', 'https://www.rhb.ch/en/panoramic-trains/bernina-express'),
-    C('Transporte', 'Baixar apps: Trenitalia, Italo, Trenord, AVM Venezia, SBB Mobile e mapas offline do Google Maps', '2027-02-01'),
-    C('Transporte', 'Lembrar: bilhete regional de papel precisa ser validado antes de embarcar (multa)', ''),
-    C('Ingressos (datas de abertura)', 'Cenáculo (Última Ceia): acompanhar a abertura do lote de fev/2027 em cenacolovinciano.org — extras às quartas, 12h (Itália)', '2026-12-01', 'https://cenacolovinciano.org/en/', {must: true, info: CENACOLO_INFO}),
-    ...ticketChecklist(days).map(t => ({...t, _new: true})),
-    N(CAR, 'Decidir os trechos de carro: nas cidades grandes ele atrapalha (ZTL, garagem cara, Veneza sem carros). O ideal é alugar só para Toscana, lagos e Alpes e usar trem entre Roma, Florença, Veneza e Milão', '2026-11-30', '', {info: 'O trem rápido Roma → Florença leva 1h30 e deixa no centro; de carro são ~3h, mais o estacionamento fora da ZTL.'}),
-    N(CAR, 'PID — Permissão Internacional para Dirigir: pedir no DETRAN do seu estado (online, ~5 a 10 dias úteis)', '2026-12-15', LK.pid[1], {must: true, info: 'Na Itália a CNH brasileira só vale com a PID ou com tradução juramentada, e as locadoras pedem a PID. Ela vale até 3 anos ou até o vencimento da CNH. Na Suíça também é recomendada.', links: [LK.pid, LK.cnhIt, LK.aci]}),
-    N(CAR, 'Levar a CNH FÍSICA válida (a CNH digital não é aceita na Itália) — confirmar que não vence antes de 23/02/2027', '2026-12-15', LK.cnhIt[1], {must: true}),
-    N(CAR, 'Reservar o carro: cartão de CRÉDITO no nome do motorista principal (caução), seguro com franquia zero e câmbio automático reservado cedo', '2026-12-15', LK.aci[1], {must: true, info: 'Muitas locadoras exigem CNH há 1–2 anos e idade mínima (taxa extra abaixo de 25). Carro automático é mais caro e acaba primeiro. Na retirada, filme o carro inteiro e confira combustível, colete e triângulo.'}),
-    N(CAR, 'Inverno: confirmar no contrato pneus de inverno ou correntes a bordo — obrigatório de 15/11 a 15/04 nos trechos sinalizados (passos Maloja e Bernina: 15/10 a 30/04)', '2027-01-15', LK.inverno[1], {must: true, info: 'Multa de €85 a €318 e proibição de seguir viagem, mesmo sem neve. As locadoras costumam cobrar uma “winterisation fee”.', links: [LK.inverno, LK.passos]}),
-    N(CAR, 'ZTL: NÃO entrar de carro nos centros históricos (Roma, Florença, Pisa, Verona...) — câmeras multam e a multa chega meses depois pela locadora, com taxa', '', LK.ztlGuia[1], {must: true, info: 'Placa: círculo branco com borda vermelha, “Zona Traffico Limitato” e os horários. Roma: centro proibido seg–sex 6h30–18h e sáb 14h–18h (e sex/sáb 23h–3h). Estacione fora e entre a pé ou de transporte.', links: [LK.ztlGuia, LK.ztlRoma]}),
-    N(CAR, 'Milão — Área C (centro): €7,50 por dia, seg–sex 7h30–19h30; pagar e ativar até a meia-noite do dia seguinte (depois custa €22,50)', '', LK.areaC[1]),
-    N(CAR, 'Se o carro for à Suíça: avisar a locadora (taxa de fronteira, ~€7–16/dia) e ter a vinheta de CHF 40 para as autoestradas suíças', '2027-01-15', LK.vinheta[1], {info: 'A vinheta 2027 vale de 01/12/2026 a 31/01/2028 e fica vinculada à placa. Compre só no site oficial (há sites falsos); dá para consultar se o carro alugado já tem. Pelos passos Maloja e Bernina não há autoestrada. Sem vinheta: multa de CHF 200.'}),
-    N(CAR, 'Regras básicas: farol baixo aceso fora das cidades, colete refletivo e triângulo no carro, álcool até 0,5 g/l (zero para quem tem CNH há menos de 3 anos) e radares em toda parte', '', LK.aci[1]),
-    N(CAR, 'Pedágios: pagar com cartão nas cabines “Carte” ou em dinheiro nas brancas — nunca nas faixas amarelas “Telepass”', '', LK.autostrade[1]),
-    N(CAR, 'Baixar mapas offline e ativar no Google Maps/Waze os alertas de ZTL e de radar', '2027-02-01'),
-    C('Dinheiro', 'Cartão/conta global em dólar (ex.: Wise, Nomad) + 2º cartão de outra bandeira', '2027-01-15'),
-    C('Dinheiro', 'Na maquininha e no caixa eletrônico, sempre pagar em EUR — recusar a conversão para dólar (DCC sai mais caro)', ''),
-    C('Dinheiro', 'Avisar o banco e liberar compras internacionais', '2027-02-01'),
-    C('Dinheiro', 'Levar ~€150 em espécie (gorjetas, banheiros, cafés) — na Suíça o cartão resolve', '2027-02-01'),
-    C('Dinheiro', 'Reservar dinheiro para a taxa de turismo dos hotéis (paga no local, por pessoa/noite)', ''),
-    C('Saúde', 'Remédios de uso contínuo + receita (de preferência em inglês)', '2027-01-31'),
-    C('Saúde', 'Kit básico: analgésico, antialérgico, curativos, hidratante e protetor labial (frio seco)', '2027-02-01'),
-    C('Tecnologia', 'eSIM/chip internacional — confirmar se cobre a SUÍÇA (fora da UE)', '2027-01-31'),
-    C('Tecnologia', 'Adaptadores de tomada: tipos L/F (Itália) e tipo J (Suíça)', '2027-01-31'),
-    C('Tecnologia', 'Power bank (sempre na bagagem de mão)', ''),
-    C('Bagagem (inverno)', 'Casaco quente e impermeável, gorro, luvas e cachecol — St. Moritz pode ficar abaixo de -10°C', ''),
-    C('Bagagem (inverno)', 'Calçado confortável e impermeável (chuva / acqua alta em Veneza)', ''),
-    C('Bagagem (inverno)', 'Roupa que cubra ombros e joelhos (Vaticano e igrejas)', ''),
-    C('Bagagem (inverno)', 'Mala fácil de carregar: escadas, pontes de Veneza e trens', ''),
-    C('Embarque e volta', 'Check-in online do voo de ida', '2027-02-05'),
-    C('Embarque e volta', 'Chegar ao aeroporto até 12:30 (voo às 15:35)', '2027-02-06'),
-    C('Embarque e volta', 'Check-in online do voo de volta', '2027-02-22'),
-    C('Embarque e volta', 'Tax free: validar as notas na alfândega do aeroporto ANTES de despachar a mala', '2027-02-23'),
-    C('Embarque e volta', 'Cota de isenção da Receita Federal: US$ 1.000 por pessoa (via aérea)', '2027-02-23'),
-  ];
-  return keepNewFlag ? list : list.map(({_new, ...c}) => c);
-}
-const CENACOLO_INFO = 'Vendas em lotes trimestrais às 12h (hora da Itália): o lote de set–dez/2026 abriu em 23/06/2026 e o de 2027 ainda não foi anunciado. Toda quarta, ao meio-dia, saem ingressos extras para a semana seguinte. Esgota em minutos.';
-
-const defaultSettings = () => ({tab: 'mapa', view: 'cal', calIntro: true, returnFco: true, guideFix1: true, usdMain: true, clV2: true, hideDone: false, clFilter: 'all', travelers: 2, rooms: 1, eurUsd: 1.12, tourTax: 5, dailyExtra: 20, flightsUsd: 0});
-const defaultState = () => { const days = defaultDays(); return {version: 1, title: 'Itália + Suíça · Fevereiro 2027', settings: defaultSettings(), days, hotels: defaultHotels(), checklist: defaultChecklist(days), notes: ''}; };
+const defaultSettings = () => ({tab: 'mapa', view: 'cal', hideDone: false, clFilter: 'all', travelers: 2, rooms: 1, eurUsd: 1.12, tourTax: 5, dailyExtra: 20, flightsUsd: 0});
+const defaultState = () => ({version: 1, title: 'Minha viagem pela Itália', settings: defaultSettings(), days: [], hotels: [], checklist: [], notes: '', plan: {cities: []}});
 
 /* ======================= estado ======================= */
-const KEY = 'roteiro-italia-2027';
 function migrate(s) {
-  if (s.settings && !s.settings.calIntro) { s.settings.view = 'cal'; s.settings.calIntro = true; }
-  if (!(s.settings && s.settings.returnFco)) {
-    const d = s.days.find(x => (x.items || []).some(i => /malpensa express/i.test(i.title)));
-    if (d) Object.assign(d, returnDayRome());
-    (s.checklist || []).forEach(c => {
-      if (/partida da volta \(MXP\?\)/.test(c.text)) c.text = 'Confirmar o terminal de Fiumicino (FCO) da ida e da volta';
-      c.text = c.text.replace(' e late checkout em Milão', '');
-    });
-    if (s.checklist && !s.checklist.some(c => /Milão → Roma de 23\/02/.test(c.text))) s.checklist.push({id: uid(), cat: 'Transporte', text: 'Comprar o trem Milão → Roma de 23/02, de manhã (folga para o voo das 22:30)', due: '2026-12-15', link: 'https://www.italotreno.com/', done: false});
-    s.settings = {...(s.settings || {}), returnFco: true};
-  }
-  if (!(s.settings && s.settings.guideFix1)) {
-    s.days.forEach(d => (d.items || []).forEach(i => {
-      if (/Fondaco dei Tedeschi/.test(i.title)) { i.title = 'Ponte di Rialto + Mercado de Rialto'; i.notes = 'O terraço do Fondaco dei Tedeschi fechou em maio/2025. O mercado de peixe não abre às segundas (hoje só frutas e verduras).'; }
-      if (/^Basílica de São Pedro$/.test(i.title) && /opcional e paga/.test(i.notes)) i.notes = 'Entrada grátis (fila de segurança de 15–60 min). Cúpula opcional: €17 a pé (551 degraus) ou €22 com elevador + 320 degraus.';
-      if (/^Bernina Express Tirano → St\. Moritz/.test(i.title) && !/ESQUERDO/.test(i.notes)) i.notes += ' Neste sentido, viajantes recomendam o lado ESQUERDO.';
-      if (/^Bernina Express St\. Moritz → Tirano/.test(i.title) && !/DIREITO/.test(i.notes)) i.notes = 'Neste sentido o lado DIREITO tem as melhores vistas; em fevereiro o fim do trajeto já é no escuro (pôr do sol ~17h45). ' + i.notes;
-      if (/^Guarda-volumes em Roma Termini/.test(i.title)) { i.notes = 'KiPoint, perto da plataforma 24 (6h–23h): ~€6 por mala nas primeiras 4h.'; i.cost = 6; }
-      if (/^Leonardo Express: Roma Termini → Fiumicino/.test(i.title) && !/cancelad/.test(i.notes)) i.notes += ' Há relatos de trens cancelados: se acontecer, táxi oficial tem tarifa fixa de €55.';
-    }));
-    s.settings = {...(s.settings || {}), guideFix1: true};
-  }
-  if (!(s.settings && s.settings.usdMain)) {
-    const st = s.settings || {};
-    if (+st.flights > 0 && st.flightsUsd == null) st.flightsUsd = Math.round(st.flights * 1.12);
-    delete st.flights; delete st.eurBrl;
-    (s.checklist || []).forEach(c => { if (/conta global em euro/.test(c.text)) c.text = 'Cartão/conta global em dólar (ex.: Wise, Nomad) + 2º cartão de outra bandeira'; });
-    if (s.checklist && !s.checklist.some(c => /DCC/.test(c.text))) s.checklist.push({id: uid(), cat: 'Dinheiro', text: 'Na maquininha e no caixa eletrônico, sempre pagar em EUR — recusar a conversão para dólar (DCC sai mais caro)', due: '', link: '', done: false});
-    s.settings = {...st, eurUsd: 1.12, usdMain: true};
-  }
-  if (!(s.settings && s.settings.clV2) && Array.isArray(s.checklist) && Array.isArray(s.days)) {
-    const fresh = defaultChecklist(s.days, true);
-    const patch = (re, from) => s.checklist.forEach(c => { if (re.test(c.text)) { const f = fresh.find(x => from.test(x.text)); if (f) Object.assign(c, {must: f.must, info: f.info, links: f.links, link: c.link || f.link}); } });
-    patch(/^Passaporte válido/, /^Passaporte válido/);
-    patch(/^Seguro-viagem/, /^Seguro-viagem/);
-    patch(/^Imprimir\/baixar/, /^Imprimir\/baixar/);
-    patch(/^Reservar hotel em/, /^Reservar hotel em Roma/);
-    patch(/^Cenáculo/, /^Cenáculo/);
-    s.checklist.forEach(c => { if (/^ETIAS/.test(c.text)) Object.assign(c, fresh.find(x => /^ETIAS/.test(x.text)), {id: c.id, done: c.done, _new: undefined}); });
-    s.checklist = s.checklist.filter(c => c.done || !/^(Coliseu: vendas abrem|Vaticano, Borghese, Uffizi)/.test(c.text));
-    fresh.filter(f => f._new && !s.checklist.some(c => c.text === f.text)).forEach(({_new, ...f}) => {
-      const lastSame = s.checklist.map(c => c.cat).lastIndexOf(f.cat);
-      const anchor = lastSame >= 0 ? lastSame : s.checklist.map(c => c.cat).lastIndexOf('Ingressos (datas de abertura)');
-      s.checklist.splice(anchor >= 0 ? anchor + 1 : s.checklist.length, 0, f);
-    });
-    s.checklist.forEach(c => delete c._new);
-    s.settings = {...(s.settings || {}), clV2: true};
-  }
   s.settings = {...defaultSettings(), ...(s.settings || {})};
-  s.hotels ||= []; s.checklist ||= []; s.notes ??= ''; s.title ||= 'Minha viagem';
+  s.days ||= []; s.hotels ||= []; s.checklist ||= []; s.notes ??= ''; s.title ||= 'Minha viagem'; s.plan ||= {cities: []};
   s.days.forEach(d => { d.id ||= uid(); d.items ||= []; d.items.forEach(i => { i.id ||= uid(); }); });
   return s;
 }
-const INDEX_KEY = 'roteiros-index', FIRST_TRIP = 'italia-2027';
-const tripKey = id => id === FIRST_TRIP ? KEY : 'roteiro:' + id;
+const INDEX_KEY = 'roteiros-v2', FIRST_TRIP = 'inicial';
+const tripKey = id => 'roteiro-v2:' + id;
 function readTrip(id) {
   try { const s = JSON.parse(localStorage.getItem(tripKey(id))); if (s && Array.isArray(s.days)) return migrate(s); } catch (e) {}
   return null;
@@ -1373,7 +1005,6 @@ const conflictText = id => (CONFLICTS.get(id) || []).map(o => `${o.start}${o.end
 function renderHeader() {
   CONFLICTS = computeConflicts();
   $('#tripsBtn').innerHTML = `${icSvg('mapa')}<span class="lbl">Meus roteiros</span><span class="n">${tripIndex.trips.length}</span>`;
-  $('#resetBtn').hidden = tripIndex.current !== FIRST_TRIP;
   renderTripsPanel();
   const t = $('#tripTitle'); if (document.activeElement !== t) t.value = state.title;
   const days = state.days;
@@ -4354,6 +3985,12 @@ function aiTemplate(review) {
   const flights = days.flatMap(d => d.items.filter(i => i.type === 'voo').map(i => `  - ${weekday(d.date)} ${fmtBRY(d.date)}${i.start ? ' ' + i.start : ''}${i.end ? '–' + i.end : ''}: ${i.title}${i.notes ? ' (' + i.notes + ')' : ''}`));
   const cities = getStays().map(x => `${x.base} (${x.nights} noite${x.nights > 1 ? 's' : ''})`).join(' → ');
   const ex = {...T, dias: T.dias.slice(0, 2).map(d => ({...d, atividades: d.atividades.slice(0, 3)})), hoteis: T.hoteis.slice(0, 1), checklist: T.checklist.slice(0, 1)};
+  if (!ex.dias.some(d => d.atividades.length)) ex.dias = [{data: '2027-05-01', cidade_pernoite: 'Roma', titulo: 'Roma antiga', observacao: '', atividades: [
+    {inicio: '09:00', fim: '12:00', tipo: 'visita', titulo: 'Coliseu, Fórum Romano e Palatino', notas: 'Ingresso nominal com horário marcado.', custo_eur: 18, reserva: 'reservar', link: 'https://ticketing.colosseo.it/', local_mapa: 'coliseu'},
+    {inicio: '12:30', fim: '', tipo: 'comida', titulo: 'Almoço no bairro Monti', notas: '', custo_eur: 25, reserva: '', link: ''}]}];
+  if (!ex.hoteis.length) ex.hoteis = [{cidade: 'Roma', nome: 'Nome do hotel', endereco: 'Bairro', preco_noite_eur: 150, notas: 'Por que vale a pena.', escolhido: false, status: 'sugestao', codigo_reserva: ''}];
+  if (!ex.checklist.length) ex.checklist = [{categoria: 'Documentos e entrada', tarefa: 'Passaporte válido por pelo menos 3 meses após a volta', prazo: '', link: '', feito: false, obrigatorio: true, detalhes: 'Exigência para entrar no espaço Schengen.', links: []}];
+  const planTxt = plan().cities.filter(pc => CAT[pc.k]).map((pc, i) => `  ${i + 1}. ${CAT[pc.k].name} (${pc.n} noite${pc.n === 1 ? '' : 's'})${pc.p.length ? ': ' + pc.p.map(id => PLACE[id]?.name).filter(Boolean).join('; ') : ''}`).join('\n');
   const pois = Object.entries(CITY_MAPS).map(([k, c]) => `  - ${PLACES[k]?.name || k}: ${c.pois.map(p => `\`${p.k}\` (${p.name})`).join(', ')}`).join('\n');
   const known = Object.values(PLACES).filter(p => p.kind !== 'base').map(p => p.name).join(', ');
   return `# Roteiro de viagem — modelo para preencher
@@ -4362,11 +3999,11 @@ Você é um planejador de viagens experiente. ${review ? 'Revise o roteiro atual
 
 ## 1. Sobre a viagem
 - Título: ${s.title}
-- Período: ${first ? fmtBRY(first.date) : ''} a ${last ? fmtBRY(last.date) : ''} (${days.length} dias)
+- Período: ${first ? `${fmtBRY(first.date)} a ${fmtBRY(last.date)} (${days.length} dias)` : '[ESCREVA AQUI as datas de ida e volta]'}${planTxt ? `\n- Cidades e lugares que já escolhi, nesta ordem (respeite a sequência e as noites):\n${planTxt}` : ''}
 - Viajantes: ${+s.settings.travelers || 1} · quartos de hotel: ${+s.settings.rooms || 1}
 - Voos já definidos (não alterar):
 ${flights.join('\n') || '  - (nenhum)'}
-- Cidades de pernoite atuais: ${cities || '[ESCREVA AQUI: países e cidades que quer visitar, ou peça uma sugestão]'}
+- Cidades de pernoite atuais: ${cities || (planTxt ? '(ver a lista acima)' : '[ESCREVA AQUI: cidades que quer visitar, ou peça uma sugestão]')}
 - Moeda: o viajante usa dólar como moeda principal (câmbio ~US$ ${fx().toLocaleString('pt-BR', {minimumFractionDigits: 2})} por €), mas no JSON **todos os valores vão em euro**, que é o preço cobrado no local. O aplicativo converte.
 - Preferências do viajante: [ESCREVA AQUI: ritmo, interesses, orçamento, restrições, o que não pode faltar]
 
@@ -4742,9 +4379,6 @@ function init() {
     } catch (err) { alert('Não foi possível importar: ' + err.message); }
     importAsNewNext = false;
     e.target.value = '';
-  });
-  $('#resetBtn').addEventListener('click', () => {
-    if (confirm('Restaurar o roteiro sugerido original? Suas alterações serão substituídas (dá para desfazer em seguida).')) { snapshot(); const tab = state.settings.tab; state = defaultState(); state.settings.tab = tab; save(); renderAll(); }
   });
   $('#cityFilter').addEventListener('change', applyFilters);
   $('#search').addEventListener('input', applyFilters);

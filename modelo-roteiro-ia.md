@@ -3,14 +3,12 @@
 Você é um planejador de viagens experiente. Monte o roteiro completo desta viagem e responda **somente com um bloco ```json** no formato da seção 4. A resposta será importada automaticamente num aplicativo, então siga o formato à risca.
 
 ## 1. Sobre a viagem
-- Título: Itália + Suíça · Fevereiro 2027
-- Período: 06/02/2027 a 23/02/2027 (18 dias)
+- Título: Minha viagem pela Itália
+- Período: [ESCREVA AQUI as datas de ida e volta]
 - Viajantes: 2 · quartos de hotel: 1
 - Voos já definidos (não alterar):
-  - sáb 06/02/2027 15:35: Voo para Roma (Chegada D+1 às 06:40 (hora de Roma). Confirmar aeroporto de chegada (provavelmente Fiumicino – FCO).)
-  - dom 07/02/2027 06:40–07:45: Chegada em Roma (FCO) + imigração (Imigração com EES: foto do rosto + 4 digitais na primeira entrada no Schengen. Pode demorar.)
-  - ter 23/02/2027 22:30: Voo de volta ao Brasil (Saída de Roma Fiumicino (FCO).)
-- Cidades de pernoite atuais: Roma (4 noites) → Florença (3 noites) → Veneza (3 noites) → Milão (6 noites)
+  - (nenhum)
+- Cidades de pernoite atuais: [ESCREVA AQUI: cidades que quer visitar, ou peça uma sugestão]
 - Moeda: o viajante usa dólar como moeda principal (câmbio ~US$ 1,12 por €), mas no JSON **todos os valores vão em euro**, que é o preço cobrado no local. O aplicativo converte.
 - Preferências do viajante: [ESCREVA AQUI: ritmo, interesses, orçamento, restrições, o que não pode faltar]
 
@@ -45,71 +43,34 @@ Você é um planejador de viagens experiente. Monte o roteiro completo desta via
 ```json
 {
   "formato": "roteiro-viagem/1",
-  "titulo": "Itália + Suíça · Fevereiro 2027",
+  "titulo": "Minha viagem pela Itália",
   "viajantes": 2,
   "quartos": 1,
   "dias": [
     {
-      "data": "2027-02-06",
-      "cidade_pernoite": "Voo",
-      "titulo": "Partida do Brasil",
-      "observacao": "Itália está 4h à frente de Brasília em fevereiro. Tente dormir no voo para chegar com energia.",
+      "data": "2027-05-01",
+      "cidade_pernoite": "Roma",
+      "titulo": "Roma antiga",
+      "observacao": "",
       "atividades": [
+        {
+          "inicio": "09:00",
+          "fim": "12:00",
+          "tipo": "visita",
+          "titulo": "Coliseu, Fórum Romano e Palatino",
+          "notas": "Ingresso nominal com horário marcado.",
+          "custo_eur": 18,
+          "reserva": "reservar",
+          "link": "https://ticketing.colosseo.it/",
+          "local_mapa": "coliseu"
+        },
         {
           "inicio": "12:30",
           "fim": "",
-          "tipo": "transfer",
-          "titulo": "Chegar ao aeroporto (3h antes)",
-          "notas": "Check-in, despacho de bagagem e imigração de saída.",
-          "custo_eur": 0,
-          "reserva": "",
-          "link": ""
-        },
-        {
-          "inicio": "15:35",
-          "fim": "",
-          "tipo": "voo",
-          "titulo": "Voo para Roma",
-          "notas": "Chegada D+1 às 06:40 (hora de Roma). Confirmar aeroporto de chegada (provavelmente Fiumicino – FCO).",
-          "custo_eur": 0,
-          "reserva": "reservado",
-          "link": ""
-        }
-      ]
-    },
-    {
-      "data": "2027-02-07",
-      "cidade_pernoite": "Roma",
-      "titulo": "Chegada + centro histórico",
-      "observacao": "1º domingo do mês: museus estatais grátis (Pantheon, Coliseu) — sem reserva, por ordem de chegada. Dia leve por causa do jet lag.",
-      "atividades": [
-        {
-          "inicio": "06:40",
-          "fim": "07:45",
-          "tipo": "voo",
-          "titulo": "Chegada em Roma (FCO) + imigração",
-          "notas": "Imigração com EES: foto do rosto + 4 digitais na primeira entrada no Schengen. Pode demorar.",
-          "custo_eur": 0,
-          "reserva": "",
-          "link": ""
-        },
-        {
-          "inicio": "08:00",
-          "fim": "08:32",
-          "tipo": "trem",
-          "titulo": "Leonardo Express: Fiumicino → Roma Termini",
-          "notas": "Sem paradas, a cada 15 min. Pague por aproximação (cartão/celular) direto na catraca.",
-          "custo_eur": 14,
-          "reserva": "",
-          "link": "https://www.trenitalia.com/it/regionale/collegamenti-regionale/leonardo-express.html"
-        },
-        {
-          "inicio": "09:00",
-          "fim": "",
-          "tipo": "hotel",
-          "titulo": "Deixar malas no hotel (Monti)",
-          "notas": "Pedir early check-in com antecedência.",
-          "custo_eur": 0,
+          "tipo": "comida",
+          "titulo": "Almoço no bairro Monti",
+          "notas": "",
+          "custo_eur": 25,
           "reserva": "",
           "link": ""
         }
@@ -119,10 +80,10 @@ Você é um planejador de viagens experiente. Monte o roteiro completo desta via
   "hoteis": [
     {
       "cidade": "Roma",
-      "nome": "Hotel Lancelot",
-      "endereco": "Via Capo d’Africa 47 · perto do Coliseu",
-      "preco_noite_eur": 170,
-      "notas": "Familiar, um dos melhores custo-benefício de Roma. Café da manhã excelente, terraço. (~€160–240)",
+      "nome": "Nome do hotel",
+      "endereco": "Bairro",
+      "preco_noite_eur": 150,
+      "notas": "Por que vale a pena.",
       "escolhido": false,
       "status": "sugestao",
       "codigo_reserva": ""
@@ -131,12 +92,12 @@ Você é um planejador de viagens experiente. Monte o roteiro completo desta via
   "checklist": [
     {
       "categoria": "Documentos e entrada",
-      "tarefa": "Passaporte válido até pelo menos 23/05/2027 (3 meses após a saída do Schengen) — ideal ter 6 meses e páginas em branco",
-      "prazo": "2026-11-30",
-      "link": "https://consportoalegre.esteri.it/pt/servizi-consolari-e-visti/servizi-per-il-cittadino-straniero/visti/visto-para-turismo-e-transito-ate-90-dias/",
+      "tarefa": "Passaporte válido por pelo menos 3 meses após a volta",
+      "prazo": "",
+      "link": "",
       "feito": false,
       "obrigatorio": true,
-      "detalhes": "Sem isso a companhia aérea não deixa embarcar. Se precisar renovar, o agendamento na Polícia Federal pode levar semanas.",
+      "detalhes": "Exigência para entrar no espaço Schengen.",
       "links": []
     }
   ],
