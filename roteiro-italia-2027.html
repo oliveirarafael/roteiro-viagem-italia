@@ -4305,8 +4305,6 @@ function openNewTripModal() {
       <label>Primeiro dia<input type="date" name="start" required value="${start}"></label>
       <label>Último dia<input type="date" name="end" required value="${addDays(start, 9)}"></label>
     </div>
-    <label class="chk"><input type="checkbox" name="checklist" checked> Incluir checklist básico (documentos, dinheiro, saúde, embarque)</label>
-    <p class="map-hint" id="ntHint"></p>
     <div class="modal-conflict" id="ntErr"></div>
     <div class="modal-actions"><span class="sp"></span><button type="button" data-m="cancel">Cancelar</button><button type="submit" class="primary">Criar roteiro</button></div>`,
     fd => {
@@ -4315,15 +4313,10 @@ function openNewTripModal() {
       if (!start) return fail('Escolha o primeiro dia.');
       if (!end || end < start) return fail('O último dia precisa ser igual ou depois do primeiro.');
       if (diffDays(start, end) > 119) return fail('Máximo de 120 dias por roteiro.');
-      const s = blankState({title: title || 'Nova viagem', start, end, city: '', travelers: +state.settings.travelers || 2, checklist: !!fd.get('checklist')});
+      const s = blankState({title: title || 'Nova viagem', start, end, city: '', travelers: +state.settings.travelers || 2, checklist: false});
       addTrip(s);
-      toast(`Roteiro <b>${esc(s.title)}</b> criado com ${s.days.length} dias. Escolha as cidades e os lugares no mapa da Itália.`);
+      toast(`Roteiro <b>${esc(s.title)}</b> criado. Escolha as cidades e os lugares no mapa da Itália.`);
     });
-  const f = mform, hint = () => {
-    const n = f.start.value && f.end.value ? diffDays(f.start.value, f.end.value) + 1 : 0;
-    $('#ntHint').textContent = n > 0 ? `${n} dia${n > 1 ? 's' : ''}. Depois é só escolher as cidades e os lugares no mapa da Itália.` : '';
-  };
-  f.oninput = hint; hint();
 }
 
 /* ======================= abas e init ======================= */
