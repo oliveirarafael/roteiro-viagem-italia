@@ -4649,7 +4649,7 @@ function setupTripsPanel() {
     if (act === 'dup') duplicateTrip(id);
     if (act === 'del') deleteTrip(id);
     if (act === 'export') { const s = tripData(id); if (s) download('roteiro-' + (norm(s.title).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'viagem') + '.json', JSON.stringify(s, null, 2), 'application/json'); }
-    if (act === 'new') openNewTripModal('blank');
+    if (act === 'new') openNewTripModal();
     if (act === 'ai') { openAiModal(); mform.asNew.checked = true; }
     if (act === 'import') { importAsNewNext = true; $('#importFile').click(); }
   });
@@ -4659,51 +4659,32 @@ function setupTripsPanel() {
     const s = $('.dr-search', dlg); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
   });
 }
-function openNewTripModal(mode = 'blank') {
-  const today = todayStr(), start = addDays(today, 60);
+function openNewTripModal() {
+  const start = addDays(todayStr(), 60);
   openModal(`
     <h3>Novo roteiro</h3>
-    <label>Nome da viagem<input name="title" required value="${mode === 'dup' ? esc(state.title + ' (cópia)') : ''}" placeholder="Ex.: Portugal · Maio 2027" autofocus></label>
+    <label>Nome da viagem<input name="title" required placeholder="Ex.: Itália · Maio 2027" autofocus></label>
     <div class="grid2">
-      <label>Primeiro dia<input type="date" name="start" required value="${mode === 'dup' ? state.days[0]?.date || start : start}"></label>
-      <label>Último dia<input type="date" name="end" required value="${mode === 'dup' ? state.days[state.days.length - 1]?.date || addDays(start, 9) : addDays(start, 9)}"></label>
-      <label>Cidade inicial (opcional)<input name="city" placeholder="Ex.: Lisboa"></label>
-      <label>Viajantes<input type="number" name="travelers" min="1" value="${+state.settings.travelers || 2}"></label>
+      <label>Primeiro dia<input type="date" name="start" required value="${start}"></label>
+      <label>Último dia<input type="date" name="end" required value="${addDays(start, 9)}"></label>
     </div>
-    <label>Começar com<select name="mode">
-      <option value="blank" ${mode === 'blank' ? 'selected' : ''}>Do zero (dias vazios)</option>
-      <option value="dup" ${mode === 'dup' ? 'selected' : ''}>Cópia do roteiro atual (datas deslocadas para o 1º dia)</option>
-      <option value="sample">Exemplo Itália + Suíça (datas deslocadas para o 1º dia)</option>
-    </select></label>
     <label class="chk"><input type="checkbox" name="checklist" checked> Incluir checklist básico (documentos, dinheiro, saúde, embarque)</label>
     <p class="map-hint" id="ntHint"></p>
     <div class="modal-conflict" id="ntErr"></div>
     <div class="modal-actions"><span class="sp"></span><button type="button" data-m="cancel">Cancelar</button><button type="submit" class="primary">Criar roteiro</button></div>`,
     fd => {
-      const title = String(fd.get('title')).trim(), start = fd.get('start'), end = fd.get('end'), m = fd.get('mode');
-      const err = $('#ntErr');
-      if (!start) { err.textContent = 'Escolha o primeiro dia.'; err.classList.add('on'); return false; }
-      if (m === 'blank' && (!end || end < start)) { err.textContent = 'O último dia precisa ser igual ou depois do primeiro.'; err.classList.add('on'); return false; }
-      if (m === 'blank' && diffDays(start, end) > 119) { err.textContent = 'Máximo de 120 dias por roteiro.'; err.classList.add('on'); return false; }
-      const travelers = Math.max(1, parseInt(fd.get('travelers')) || 1);
-      let s;
-      if (m === 'blank') s = blankState({title: title || 'Nova viagem', start, end, city: String(fd.get('city') || '').trim(), travelers, checklist: !!fd.get('checklist')});
-      else {
-        s = m === 'dup' ? JSON.parse(JSON.stringify(state)) : defaultState();
-        const delta = s.days.length ? diffDays(s.days[0].date, start) : 0;
-        if (delta) { s.days.forEach(d => d.date = addDays(d.date, delta)); s.checklist.forEach(c => { if (c.due) c.due = addDays(c.due, delta); }); }
-        s.title = title || s.title; s.settings.travelers = travelers;
-      }
+      const title = String(fd.get('title')).trim(), start = fd.get('start'), end = fd.get('end'), err = $('#ntErr');
+      const fail = msg => { err.textContent = msg; err.classList.add('on'); return false; };
+      if (!start) return fail('Escolha o primeiro dia.');
+      if (!end || end < start) return fail('O último dia precisa ser igual ou depois do primeiro.');
+      if (diffDays(start, end) > 119) return fail('Máximo de 120 dias por roteiro.');
+      const s = blankState({title: title || 'Nova viagem', start, end, city: '', travelers: +state.settings.travelers || 2, checklist: !!fd.get('checklist')});
       addTrip(s);
-      if (m === 'blank') toast(`Roteiro <b>${esc(s.title)}</b> criado com ${s.days.length} dias vazios. Adicione atividades no Calendário ou peça para outra IA montar.`, '<button data-t="ai">Modelo p/ IA</button>', openAiModal);
-      else toast(`Roteiro <b>${esc(s.title)}</b> criado.`);
+      toast(`Roteiro <b>${esc(s.title)}</b> criado com ${s.days.length} dias. Escolha as cidades e os lugares no mapa da Itália.`);
     });
   const f = mform, hint = () => {
-    const blank = f.mode.value === 'blank';
-    f.city.disabled = f.checklist.disabled = !blank; f.end.disabled = !blank;
     const n = f.start.value && f.end.value ? diffDays(f.start.value, f.end.value) + 1 : 0;
-    $('#ntHint').textContent = blank ? (n > 0 ? `${n} dia${n > 1 ? 's' : ''}, todos com pernoite em “${f.city.value.trim() || 'a definir'}”. Depois é só mudar a cidade de cada dia no Calendário.` : '')
-      : 'O roteiro inteiro é copiado (atividades, hotéis e checklist) e as datas mudam para começar no 1º dia escolhido.';
+    $('#ntHint').textContent = n > 0 ? `${n} dia${n > 1 ? 's' : ''}. Depois é só escolher as cidades e os lugares no mapa da Itália.` : '';
   };
   f.oninput = hint; hint();
 }
