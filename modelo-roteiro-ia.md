@@ -20,7 +20,7 @@ Você é um planejador de viagens experiente. Monte o roteiro completo desta via
 - Pesquise na internet horários, dias de fechamento, preços e necessidade de reserva para as datas da viagem. Se não tiver certeza, escreva "(conferir)" nas notas.
 - Inclua os deslocamentos (trem, ônibus, barco, transfer) como atividades, com horário, preço e link de compra.
 - Sugira de 2 a 4 hotéis por cidade de pernoite, com no máximo 1 marcado como escolhido.
-- Monte um checklist de preparação (documentos, reservas e datas de abertura de vendas, dinheiro, saúde, bagagem).
+- Monte um checklist de preparação (documentos, reservas e datas de abertura de vendas, hospedagem, carro se houver, dinheiro, saúde, bagagem), com link oficial em cada item sempre que existir.
 
 ## 3. Regras do formato
 - Datas "AAAA-MM-DD"; horários "HH:MM" (24h). "fim" pode ser "" quando não fizer sentido.
@@ -38,7 +38,7 @@ Você é um planejador de viagens experiente. Monte o roteiro completo desta via
   - Milão: `centrale` (Milano Centrale), `duomo` (Duomo di Milano), `galleria` (Galleria Vittorio Emanuele II), `luini` (Luini), `cenacolo` (Cenacolo Vinciano), `sforzesco` (Castello Sforzesco), `brera` (Brera), `navigli` (Navigli), `quadrilatero` (Quadrilatero della Moda), `portanuova` (Porta Nuova), `eataly` (Eataly Smeraldo)
   Para outros lugares, omita o campo e escreva o nome do lugar no título. Também viram cartão-postal no mapa quando aparecem no título: Fiumicino, Malpensa, Via Ápia, Pisa, Lucca, Siena, Bolonha, Murano, Burano, Verona, Lago de Como, Bergamo, Tirano, St. Moritz, Lugano, Zermatt, Turim, Nápoles.
 - Hotéis: "cidade" igual à cidade_pernoite; "preco_noite_eur" por quarto; "status" "sugestao", "reservado" ou "descartado".
-- Checklist: "prazo" "AAAA-MM-DD" ou ""; "feito" true/false.
+- Checklist: "prazo" "AAAA-MM-DD" ou ""; "feito" true/false; "obrigatorio" true só para o que impede a viagem se faltar (documentos, reservas essenciais); "detalhes" explica o porquê e as regras; "links" lista sites oficiais com {"titulo", "url"}.
 - Não crie campos novos, não escreva comentários dentro do JSON e não deixe vírgula sobrando.
 
 ## 4. Formato — exemplo com o começo da viagem; devolva o roteiro COMPLETO
@@ -131,10 +131,13 @@ Você é um planejador de viagens experiente. Monte o roteiro completo desta via
   "checklist": [
     {
       "categoria": "Documentos e entrada",
-      "tarefa": "Passaporte válido até pelo menos 23/05/2027 (3 meses após a saída) — ideal ter 6 meses",
+      "tarefa": "Passaporte válido até pelo menos 23/05/2027 (3 meses após a saída do Schengen) — ideal ter 6 meses e páginas em branco",
       "prazo": "2026-11-30",
-      "link": "",
-      "feito": false
+      "link": "https://consportoalegre.esteri.it/pt/servizi-consolari-e-visti/servizi-per-il-cittadino-straniero/visti/visto-para-turismo-e-transito-ate-90-dias/",
+      "feito": false,
+      "obrigatorio": true,
+      "detalhes": "Sem isso a companhia aérea não deixa embarcar. Se precisar renovar, o agendamento na Polícia Federal pode levar semanas.",
+      "links": []
     }
   ],
   "anotacoes": ""
