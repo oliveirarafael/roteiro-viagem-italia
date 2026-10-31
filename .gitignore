@@ -1,25 +1,12 @@
 .cursor/
 
+# Relatórios exportados pelo modo Homologação
+homologacao-*
+
 # Dependências
 node_modules/
 
-# Saídas dos testes (Playwright): resultados, relatórios, traces e cache
-test-results/
-playwright-report/
-blob-report/
-playwright/.cache/
-playwright/.auth/
-*.trace.zip
-trace.zip
-
-# Imagens geradas quando um teste visual falha (as de referência, *-chromium-win32.png, devem subir)
-*-actual.png
-*-diff.png
-*-previous.png
-
-# Cobertura e logs
-coverage/
-.nyc_output/
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
