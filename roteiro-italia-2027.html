@@ -619,7 +619,11 @@ body.hm-on main *{cursor:crosshair!important}
 .own-card small svg{width:13px;height:13px;flex:none;margin-top:1px}
 .own-card p{margin:0;line-height:1.4}
 .own-card a{color:#0f766e;font-weight:700;font-size:12px}
-.own-btns{display:flex;gap:6px;margin-top:4px}
+.own-btns{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.own-card small i{color:#0f766e;font-style:normal}
+.own-times{list-style:none;margin:0;padding:0}
+.own-times li{display:flex;gap:5px;align-items:flex-start;font-size:12px;padding:1px 0}
+.own-times svg{width:13px;height:13px;flex:none;margin-top:2px;color:#0f766e}
 .dq-msg{font-size:14px;margin:0 0 10px}
 .dq-days{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
 .dq-day{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:6px 10px;border:1.5px solid #e4d3ae;border-radius:10px;background:#fff;cursor:pointer;color:var(--ink);font-size:12px;line-height:1.2}
@@ -6168,26 +6172,50 @@ async function ownSearch(form) {
   const cat = catOfSection(c), city = c.stay.base;
   const bb = c.cfg?.bbox, [la0, la1, lo0, lo1] = bb ? [bb[0] - .06, bb[1] + .06, bb[2] - .08, bb[3] + .08] : cat ? [cat.lat - .2, cat.lat + .2, cat.lon - .25, cat.lon + .25] : [35, 48, 6, 19];
   box.innerHTML = '<p class="muted own-wait">Buscando na internet…</p>';
-  // entre os resultados do OpenStreetMap: nome parecido com o digitado, atração/estabelecimento antes de rua, depois o mais importante
+  // pontos que já estão no mapa da cidade (hotel escolhido e atividades com lugar): entre endereços parecidos, fica o mais perto deles
+  const hotel = chosenHotel(city), hg = hotelGeo(hotel);
+  const ptOf = x => x.loc.kind === 'poi' ? [x.loc.poi.lat, x.loc.poi.lon] : x.loc.kind === 'custom' ? [x.loc.lat, x.loc.lon] : null;
+  const refs = [...(hg ? [hg] : []), ...c.located.map(ptOf).filter(Boolean)];
+  if (!refs.length && cat) refs.push([cat.lat, cat.lon]);
+  const nearRef = r => Math.min(...refs.map(p => haversine(p, [+r.lat, +r.lon])));
+  // nome parecido com o digitado, atração/estabelecimento antes de rua, depois o mais importante
   const words = norm(q).split(/[^a-z0-9]+/).filter(w => w.length > 2);
   const score = r => words.filter(w => norm(r.name).includes(w)).length + (['highway', 'place', 'boundary', 'landuse'].includes(r.category) ? -2 : 1) + 2 * (r.importance || 0);
-  const osm = qs => getJSON(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=pt-BR&${qs}`)
-    .then(rs => rs.sort((a, b) => score(b) - score(a))[0] || null).catch(() => null);
+  const osm = qs => getJSON(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&addressdetails=1&accept-language=pt-BR&${qs}`).then(rs => {
+    if (!rs.length) return null;
+    const top = Math.max(...rs.map(score));
+    return rs.filter(r => score(r) >= top - 1).sort((a, b) => nearRef(a) - nearRef(b))[0];
+  }).catch(() => null);
   // a Wikipédia só vale se o texto falar da cidade (evita um homônimo de outro lugar)
   const names = [city, cat?.name, ...(PLACES[c.key]?.al || [])].filter(Boolean).map(n => wordRe(norm(n)));
   const [geo0, wiki0] = await Promise.all([osm(`bounded=1&viewbox=${lo0},${la1},${lo1},${la0}&q=${encodeURIComponent(q)}`), wikiInfo(q, city).catch(() => null)]);
   const wiki = wiki0 && names.some(re => re.test(norm(wiki0.text))) ? wiki0 : null;
   let geo = geo0;
   if (!geo && cat) { const g = await osm(`q=${encodeURIComponent(`${q}, ${city}`)}`); if (g && haversine([+g.lat, +g.lon], [cat.lat, cat.lon]) < 30) geo = g; }
-  const addr = geo ? geo.display_name.split(',').slice(0, 3).join(',').trim() : '';
+  const A = geo?.address || {}, road = A.road || A.pedestrian || A.square || A.footway || '';
+  const addr = !geo ? '' : road ? [road + (A.house_number ? ' ' + A.house_number : ''), A.neighbourhood || A.quarter || (/^municipio/i.test(A.suburb || '') ? '' : A.suburb) || ''].filter(Boolean).join(' · ') : geo.display_name.split(',').slice(0, 3).join(',').trim();
   const id = 'own:' + uid();
-  OWN[id] = {id, name: q, d: (wiki?.text || '') + (addr ? `${wiki?.text ? ' ' : ''}Endereço: ${addr}.` : ''), h: 1.5, ic: 'livre', lat: geo ? +geo.lat : null, lon: geo ? +geo.lon : null, link: wiki?.url || ''};
+  OWN[id] = {id, name: q, d: (wiki?.text || '') + (addr ? `${wiki?.text ? ' ' : ''}Endereço: ${addr}.` : ''), h: 1.5, ic: 'livre', lat: geo ? +geo.lat : null, lon: geo ? +geo.lon : null, link: wiki?.url || '', addr};
   if (!form.isConnected) return;
+  // tempo até lá: do hotel e do último lugar do dia em que vai entrar
+  const pt = geo ? {lat: +geo.lat, lon: +geo.lon, name: q} : null, day = pickedDay(c);
+  const prev = pt && day ? c.located.filter(x => x.d.id === day.id && ptOf(x) && !isAuto(x.it) && x.it.type !== 'hotel').pop() : null;
+  const legRow = (from, label) => { const m = moveAdvice(from, pt, c.key); return `<li>${icSvg(m.ic)}<span>${label}: <b>${esc(m.label)} ~${fmtDur(m.min)}</b> · ${fmtKm(m.km)}</span></li>`; };
+  const times = pt ? [hg ? legRow({lat: hg[0], lon: hg[1], name: hotel.name}, `Do hotel ${esc(hotel.name)}`) : '', prev ? legRow({lat: ptOf(prev)[0], lon: ptOf(prev)[1], name: prev.it.title}, `Depois de ${esc(prev.it.title)} (${dayLbl(day)})`) : ''].join('') : '';
   box.innerHTML = `<div class="own-card">${wiki?.img ? `<img src="${esc(wiki.img)}" alt="">` : ''}<b>${esc(q)}</b>
-    <small>${icSvg('mapa')}${addr ? esc(addr) : `Não achei no mapa de ${esc(city)}: o pino fica pelo nome ou no centro`}</small>
+    <small>${icSvg('mapa')}<span>${addr ? `${esc(addr)} <i>· o pino fica neste endereço</i>` : `Não achei o endereço em ${esc(city)}.`}</span></small>
+    ${times ? `<ul class="own-times">${times}</ul>` : pt && !hg ? '<small class="muted">Escolha o hotel para ver o tempo de deslocamento a partir dele.</small>' : ''}
     ${wiki?.text ? `<p>${esc(wiki.text)}</p>` : '<p class="muted">Não achei informações na internet; dá para incluir só com o nome.</p>'}
     ${wiki?.url ? `<a href="${esc(wiki.url)}" target="_blank" rel="noopener">Wikipédia ↗</a>` : ''}<a href="https://www.google.com/search?q=${encodeURIComponent(`${q} ${city}`)}" target="_blank" rel="noopener">Pesquisar no Google ↗</a>
-    <div class="own-btns"><button type="button" class="ink-btn small primary" data-own-add="${id}" data-si="${si}">Incluir no roteiro</button><button type="button" class="ink-btn small" data-own-cancel>Cancelar</button></div></div>`;
+    <div class="own-btns">${pt ? `<button type="button" class="ink-btn small primary" data-own-add="${id}" data-si="${si}">Incluir no roteiro</button>`
+      : `<button type="button" class="ink-btn small primary" data-own-place="${id}" data-si="${si}">Marcar no mapa e incluir</button><button type="button" class="ink-btn small" data-own-add="${id}" data-si="${si}">Incluir sem local</button>`}<button type="button" class="ink-btn small" data-own-cancel>Cancelar</button></div></div>`;
+}
+/** Sem endereço encontrado: o próximo clique no mapa da cidade define o local da atividade. */
+let ownPlace = null;
+function setOwnPlace(v) {
+  ownPlace = v;
+  $$('#tab-mapa svg.citymap').forEach(s => s.classList.toggle('placing', !!v && +s.dataset.si === v.si));
+  if (v) toast(`Clique no mapa de ${esc(buildMapModel().cities[v.si]?.stay.base || '')} onde fica <b>${esc(OWN[v.id]?.name || '')}</b> (Esc cancela).`);
 }
 function sugCardHTML(c) {
   const cat = catOfSection(c), list = sectionSuggestions(c); if (!cat || !list.length) return `<div class="sug-card">${ownFormHTML(c)}</div>`;
@@ -6714,6 +6742,12 @@ function addActivityAt(svg, clientX, clientY) {
   setMapAddMode(null);
   openItemModal(null, dayId, suggestStart(dayById(dayId)), {title: near ? near.name : '', type, mapPos: {lat: +lat.toFixed(6), lon: +lon.toFixed(6)}});
 }
+/** Só dá para arrastar o pino de um lugar sem endereço conhecido (sem coordenadas da pesquisa, do guia ou do catálogo de hotéis). */
+function pinMovable(pin) {
+  if (pin.dataset.kind === 'hotel') { const h = state.hotels.find(x => x.id === pin.dataset.id); return !!h && !ALL_HOTELS.some(o => o.k === h.cat || mnorm(h.name).includes(o.kw)); }
+  const it = findItem(pin.dataset.id)?.item;
+  return !!it && !it.geo && !PLACE[it.cat] && !it.poi && !isAuto(it);
+}
 function resetMapPos(kind, id) {
   const obj = kind === 'hotel' ? state.hotels.find(x => x.id === id) : findItem(id)?.item;
   if (!obj || !obj.mapPos) return;
@@ -6776,7 +6810,7 @@ function setupMapEvents() {
     if (!same) syncToast(id, 'upd');
   });
   el.addEventListener('change', e => { if (e.target.classList.contains('add-day')) mapAddDay[+e.target.dataset.si] = e.target.value; });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && mapAdd) setMapAddMode(null); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && mapAdd) setMapAddMode(null); if (e.key === 'Escape' && ownPlace) setOwnPlace(null); });
   el.addEventListener('click', e => {
     const cpt = e.target.closest('[data-cptab]');
     if (cpt) {
@@ -6792,6 +6826,17 @@ function setupMapEvents() {
       closeMapPop(); applyMapFilters();
       return;
     }
+    if (ownPlace) {
+      const svg = e.target.closest('svg.citymap');
+      if (svg && +svg.dataset.si === ownPlace.si) {
+        const reg = MAPREG[ownPlace.si], p = svgPoint(svg, e.clientX, e.clientY), [lat, lon] = reg.proj.inv(p.x, p.y), {id, si} = ownPlace;
+        Object.assign(OWN[id], {lat: +lat.toFixed(6), lon: +lon.toFixed(6)});
+        setOwnPlace(null); includeSuggestion(id, si);
+        return;
+      }
+    }
+    const ownPl = e.target.closest('[data-own-place]');
+    if (ownPl) { setOwnPlace({id: ownPl.dataset.ownPlace, si: +ownPl.dataset.si}); $(`#tab-mapa svg.citymap[data-si="${ownPl.dataset.si}"]`)?.scrollIntoView({behavior: 'smooth', block: 'center'}); return; }
     const own = e.target.closest('[data-own-add]');
     if (own) { includeSuggestion(own.dataset.ownAdd, +own.dataset.si); return; }
     if (e.target.closest('[data-own-cancel]')) { const f = e.target.closest('.own-res'); f.innerHTML = ''; f.previousElementSibling.reset(); return; }
@@ -6874,6 +6919,7 @@ function setupMapEvents() {
   el.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
     const pin = e.target.closest('.pin');
+    if (pin && !pinMovable(pin)) { mapDrag = {kind: 'pin', pin, fixed: true, cx: e.clientX, cy: e.clientY, moved: false}; e.preventDefault(); return; }
     if (pin) {
       const svg = pin.ownerSVGElement, p0 = svgPoint(svg, e.clientX, e.clientY);
       mapDrag = {kind: 'pin', pin, svg, p0, x0: +pin.dataset.x, y0: +pin.dataset.y, cx: e.clientX, cy: e.clientY, moved: false};
@@ -6883,7 +6929,7 @@ function setupMapEvents() {
     if (chip) { mapDrag = {kind: 'chip', chip, cx: e.clientX, cy: e.clientY, moved: false}; e.preventDefault(); }
   });
   window.addEventListener('pointermove', e => {
-    if (!mapDrag) return;
+    if (!mapDrag || mapDrag.fixed) return;
     if (!mapDrag.moved && Math.hypot(e.clientX - mapDrag.cx, e.clientY - mapDrag.cy) < 4) return;
     if (!mapDrag.moved) {
       mapDrag.moved = true; closeMapPop();
