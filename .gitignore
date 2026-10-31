@@ -3,6 +3,9 @@
 # Relatórios exportados pelo modo Homologação
 homologacao-*
 
+# Planilhas de roteiro exportadas
+roteiro-italia-*
+
 # Dependências
 node_modules/
 
