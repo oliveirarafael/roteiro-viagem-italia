@@ -1,0 +1,14 @@
+#!/bin/sh
+# Regressão: o commit só passa se a suíte inteira passar.
+# Emergência (não recomendado): git commit --no-verify
+
+if ! git diff --cached --name-only | grep -qE '\.(html|js|json|png)$'; then
+  exit 0
+fi
+
+echo "Rodando os testes de regressão (npm test)..."
+if ! npm test --silent; then
+  echo ""
+  echo "Testes falharam: commit bloqueado. Corrija a regressão ou atualize o teste se a mudança foi de propósito."
+  exit 1
+fi
