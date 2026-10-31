@@ -4183,16 +4183,13 @@ function runGenerate() {
   else toast(msg, '<button data-t="route">Ver dia a dia</button>', () => commit(() => state.settings.mapMode = 'route'));
 }
 function openNightsModal(t, n) {
-  const end = addDays(planStart(), n);
   openModal(`
     <h3>As noites não batem com as datas</h3>
     <p style="margin:0;font-size:14px">A sua sequência soma <b>${n} noite${n === 1 ? '' : 's'}</b>, mas a viagem tem <b>${t} noite${t === 1 ? '' : 's'}</b> (${fmtBRY(planStart())} a ${fmtBRY(plan().end)}).</p>
-    <p class="muted" style="margin:0;font-size:13px">Ajustando, as ${t} noites são distribuídas entre as cidades seguindo o tempo recomendado para cada uma.</p>
+    <p class="muted" style="margin:0;font-size:13px">As datas de chegada e de volta são fixas. Ajuste as noites das cidades na sequência, ou deixe que as ${t} noites sejam distribuídas automaticamente seguindo o tempo recomendado para cada uma.</p>
     <div class="modal-actions"><button type="button" data-m="cancel">Cancelar</button><span class="sp"></span>
-      <button type="button" data-m="asis">Gerar com ${n} noites (termina em ${fmtBRY(end)})</button>
       <button type="submit" class="primary">Ajustar para ${t} noites e gerar</button></div>`,
-    () => { commit(() => fitNights(plan().cities, t)); runGenerate(); },
-    act => { if (act === 'asis') { setTimeout(runGenerate); return true; } return true; });
+    () => { commit(() => fitNights(plan().cities, t)); runGenerate(); });
 }
 
 /* ---------- eventos ---------- */
