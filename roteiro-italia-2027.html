@@ -2970,19 +2970,12 @@ function citySectionHTML(c) {
     const key = [it.id, o.id].sort().join('|'); if (seen.has(key)) return; seen.add(key);
     pairs.push({d, a: it, b: o});
   })));
-  const selDay = mapAddDay[c.si] && c.days.some(d => d.id === mapAddDay[c.si]) ? mapAddDay[c.si] : c.days[0]?.id;
-  const addOn = mapAdd && mapAdd.si === c.si;
   const check = c.check || {moved: 0, total: 0};
   return `<section class="city-section" id="city-${c.si}" style="--c:${c.color}">${head}
     <div class="city-grid">
       <div class="paper city-paper">${mapSvg}</div>
       <aside class="city-side">
-        <div class="card"><h4>Adicionar atividade</h4>
-          <select class="add-day" data-si="${c.si}" aria-label="Dia da nova atividade">${c.days.map(d => `<option value="${d.id}" ${d.id === selDay ? 'selected' : ''}>${weekday(d.date)} ${fmtBR(d.date)} · ${esc(d.title)}</option>`).join('')}</select>
-          <button class="primary add-mode-btn ${addOn ? 'on' : ''}" data-add-mode="${c.si}">${addOn ? 'Cancelar (Esc)' : '+ Clicar no mapa para adicionar'}</button>
-          <p class="muted" style="font-size:12px;margin:6px 0 0">Ou dê dois cliques em qualquer ponto do mapa. Para editar ou excluir, clique no marcador.</p>
-        </div>
-        ${sugCardHTML(c, false)}
+        ${sugCardHTML(c, true)}
         <div class="card check-card"><h4>Verificação</h4>
           <div class="check-row ${pairs.length ? 'warn' : 'ok'}">${pairs.length ? `<b>${pairs.length} conflito${pairs.length > 1 ? 's' : ''} de horário</b>${pairs.map(({d, a, b}) => `<div class="check-item"><span>${weekday(d.date)} ${fmtBR(d.date)}:</span> <a href="#" data-open-item="${a.id}">${esc(a.start)} ${esc(a.title)}</a> × <a href="#" data-open-item="${b.id}">${esc(b.start)} ${esc(b.title)}</a></div>`).join('')}` : '<b>Horários OK</b> — nenhuma atividade se sobrepõe.'}</div>
           <div class="check-row ok"><b>Mapa sem sobreposição</b> — ${check.total} marcadores${check.moved ? `; ${check.moved} foram afastados do ponto exato para não cobrir outro (a linha pontilhada liga ao lugar real)` : ''}.</div>
@@ -4268,8 +4261,6 @@ function setupMapEvents() {
   el.addEventListener('dblclick', e => {
     const pin = e.target.closest('.pin');
     if (pin) { resetMapPos(pin.dataset.kind, pin.dataset.id); return; }
-    const svg = e.target.closest('svg.citymap');
-    if (svg && !e.target.closest('.edge-tag, .sug-pt')) addActivityAt(svg, e.clientX, e.clientY);
   });
   el.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
