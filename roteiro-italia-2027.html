@@ -346,6 +346,21 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .ps-tag{font-family:system-ui,'Segoe UI',sans-serif;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--c);border:1.5px solid var(--c);border-radius:999px;padding:0 6px;vertical-align:middle}
 .pl-seq-foot{display:flex;justify-content:center;margin-top:12px}
 .gen-st{font-size:12px;font-weight:700;color:#7a6a52}
+.pl-tip{font-size:12.5px;color:#9a3412;background:#fff1e6;border:1px dashed #f0b27a;border-radius:10px;padding:7px 10px;margin:0 0 10px}
+.ps-warn{font-size:12px;color:#9a3412;margin:6px 0 0;padding-left:40px}
+.pl-presets{margin:4px 0 10px;border:1.5px dashed #c9a46a;border-radius:12px;padding:6px 10px;background:#fffdf7}
+.pl-presets summary{cursor:pointer;font-weight:800;font-size:13px;color:#0f766e}
+.pl-preset{border-top:1px dashed #eadbb8;padding:8px 0;display:flex;flex-direction:column;gap:4px}
+.pl-preset .pp-h{display:flex;justify-content:space-between;gap:6px;font-size:13px}
+.pl-preset .pp-h small{color:#7a6a52;white-space:nowrap}
+.pl-preset>small{font-size:12px;color:#6b5a44}
+.pp-c{display:flex;flex-wrap:wrap;gap:4px}
+.pp-c span{background:var(--c);color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
+.pl-preset button{align-self:flex-start}
+.pp-fit{font-size:10.5px;font-weight:800;border-radius:999px;padding:0 6px;margin-left:4px}
+.pp-fit.ok{color:#15803d;background:#e7f6ec}
+.pp-fit.mid{color:#a16207;background:#fef3c7}
+.pp-fit.bad{color:#b91c1c;background:#fde8e8}
 .sug-pt{cursor:pointer}
 .stars{color:#d69e2e;font-size:1.05em;letter-spacing:-.5px;white-space:nowrap;font-weight:400;font-family:system-ui,'Segoe UI',sans-serif}
 .stars i{font-style:normal;color:#d9cdb3}
@@ -3080,6 +3095,51 @@ const IT_CITIES = [
     P('Orrido di Nesso', 'foto', 45.9135, 9.157, 0, 0.5, 'Cachoeira num desfiladeiro com ponte medieval.'),
     P('Abadia de Piona', 'igreja', 46.118, 9.33, 0, 1, 'Abadia românica isolada numa península; monges cistercienses.'),
   ], {via: 'Trem regional de Milão para Varenna (1h05) ou Como (40 min).'}),
+  CC('lugano', 'Lugano', 'Suíça', 46.0037, 8.9511, 1, 'A Suíça que fala italiano: lago, montanhas e palmeiras, a 1h20 de Milão. Moeda: franco suíço (CHF).', [
+    P('Lungolago e Parco Ciani', 'passeio', 46.006, 8.958, 1, 1, 'Calçadão à beira do lago e parque com vista para o Monte Brè.'),
+    P('Monte Brè (funicular)', 'foto', 46.014, 8.984, 1, 2, 'Funicular até o mirante sobre o lago e os Alpes.'),
+    P('Monte San Salvatore', 'foto', 45.985, 8.947, 1, 2, 'O “Pão de Açúcar de Lugano”, com vista 360°.'),
+    P('Via Nassa e centro histórico', 'compras', 46.004, 8.95, 0, 1, 'Rua de arcadas com lojas e cafés.'),
+    P('Morcote', 'passeio', 45.924, 8.916, 0, 2, 'Vilarejo à beira do lago, considerado um dos mais bonitos da Suíça.'),
+    P('Gandria e o Sentiero dell’Olivo', 'passeio', 45.998, 9.0, 0, 2, 'Trilha entre oliveiras até um vilarejo de pescadores.'),
+  ], {via: 'Trem EuroCity/TILO de Milão (1h20) ou de Como (~30 min).'}),
+  CC('stmoritz', 'St. Moritz', 'Suíça', 46.4908, 9.8355, 1, 'Estância alpina chique; chega-se pelo Bernina Express, a rota de trem panorâmica mais famosa saindo da Itália. Moeda: CHF.', [
+    P('Bernina Express (Tirano → St. Moritz)', 'trem', 46.258, 10.125, 1, 2.5, 'Trem panorâmico Unesco: viaduto em espiral de Brusio, geleiras e Lago Bianco a 2.253 m. Reserva de assento obrigatória.', 1),
+    P('Lago e centro de St. Moritz', 'passeio', 46.497, 9.843, 1, 1.5, 'Lago (congelado no inverno) e o vilarejo das grifes.'),
+    P('Glacier Express (St. Moritz → Zermatt)', 'trem', 46.498, 9.839, 1, 8, 'O “expresso mais lento do mundo”: 7h45 cruzando os Alpes. Reserva obrigatória.', 1),
+    P('Muottas Muragl', 'foto', 46.523, 9.903, 0, 2, 'Funicular até o mirante sobre os lagos da Engadina.'),
+    P('Diavolezza e geleira Morteratsch', 'foto', 46.412, 9.964, 0, 3, 'Teleférico até 2.978 m com vista para as geleiras.'),
+    P('Pontresina', 'passeio', 46.495, 9.902, 0, 1, 'Vilarejo tranquilo, base para trilhas e para a geleira.'),
+  ], {via: 'Trem de Milão até Tirano (2h30) + Bernina Express (2h20). Reserve o Bernina com antecedência.'}),
+  CC('lucerna', 'Lucerna', 'Suíça', 47.0502, 8.3093, 2, 'Cidade medieval à beira do lago, com montanhas clássicas (Pilatus, Rigi) a um passeio de distância. Moeda: CHF.', [
+    P('Ponte da Capela (Kapellbrücke)', 'ponte', 47.0516, 8.3075, 1, 0.5, 'Ponte de madeira coberta do séc. XIV, símbolo da Suíça.'),
+    P('Monte Pilatus', 'foto', 46.979, 8.255, 1, 5, 'Sobe pelo trem de cremalheira mais íngreme do mundo (maio–nov) ou teleférico.'),
+    P('Monte Rigi', 'foto', 47.056, 8.485, 1, 5, 'A “rainha das montanhas”, com barco + trem de cremalheira.'),
+    P('Monumento do Leão', 'visita', 47.0585, 8.3105, 1, 0.5, 'Leão esculpido na rocha em homenagem à Guarda Suíça.'),
+    P('Passeio de barco no lago', 'barco', 47.051, 8.315, 0, 1.5, 'Barcos a vapor históricos pelo Lago dos Quatro Cantões.'),
+    P('Muralha Musegg', 'torre', 47.0545, 8.305, 0, 1, 'Torres medievais com vista dos telhados (abril–nov).'),
+    P('Museu Suíço dos Transportes', 'visita', 47.053, 8.336, 0, 2.5, 'O museu mais visitado da Suíça.'),
+    P('Monte Titlis (Engelberg)', 'foto', 46.772, 8.437, 0, 6, 'Neve o ano todo e teleférico giratório.'),
+  ], {via: 'Trem de Milão pelo túnel do Gotthard (~3h30).'}),
+  CC('interlaken', 'Interlaken', 'Suíça', 46.6863, 7.8632, 2, 'Entre dois lagos, porta de entrada para a Jungfrau e o vale de Lauterbrunnen. Moeda: CHF.', [
+    P('Jungfraujoch (Top of Europe)', 'foto', 46.5475, 7.9853, 1, 6, 'A estação de trem mais alta da Europa (3.454 m); caro e concorrido.', 1),
+    P('Lauterbrunnen', 'passeio', 46.5935, 7.9091, 1, 2, 'Vale com 72 cascatas, inclusive a Staubbach.'),
+    P('Grindelwald First', 'foto', 46.659, 8.054, 1, 3, 'Teleférico, passarela Cliff Walk e o lago Bachalpsee.'),
+    P('Harder Kulm', 'foto', 46.697, 7.851, 1, 1.5, 'Funicular até o mirante sobre os dois lagos.'),
+    P('Schilthorn (Piz Gloria)', 'foto', 46.558, 7.835, 0, 4, 'Restaurante giratório do filme do 007.'),
+    P('Cascatas Trümmelbach', 'visita', 46.565, 7.91, 0, 1, 'Cascatas glaciais dentro da montanha.'),
+    P('Lago de Brienz e Iseltwald', 'barco', 46.711, 7.964, 0, 2, 'Água turquesa e o píer famoso da série coreana.'),
+    P('Mürren e Wengen', 'passeio', 46.559, 7.892, 0, 3, 'Vilarejos sem carros pendurados sobre o vale.'),
+  ], {via: 'Trem de Milão via Brig e Spiez (~3h) ou de Lucerna (Luzern–Interlaken Express, ~1h50).'}),
+  CC('zermatt', 'Zermatt', 'Suíça', 46.0207, 7.7491, 2, 'Vilarejo sem carros aos pés do Matterhorn. Moeda: CHF.', [
+    P('Gornergrat (trem)', 'foto', 45.983, 7.785, 1, 3, 'Trem de cremalheira até 3.089 m, com vista do Matterhorn e de 29 picos acima de 4.000 m.'),
+    P('Matterhorn Glacier Paradise', 'foto', 45.938, 7.73, 1, 3, 'O teleférico mais alto da Europa (3.883 m) e palácio de gelo.'),
+    P('Centro de Zermatt', 'passeio', 46.021, 7.748, 1, 1, 'Rua principal sem carros, com chalés e lojas.'),
+    P('Lago Riffelsee', 'foto', 45.99, 7.772, 0, 1.5, 'O reflexo do Matterhorn no lago (verão).'),
+    P('Trilha dos 5 Lagos', 'passeio', 46.02, 7.79, 0, 3, 'Cinco lagos com vista do Matterhorn (verão).'),
+    P('Hinterdorf', 'passeio', 46.023, 7.748, 0, 0.5, 'Celeiros de madeira do séc. XVI.'),
+    P('Garganta do Gorner', 'passeio', 46.015, 7.746, 0, 1, 'Passarelas sobre um cânion glacial.'),
+  ], {via: 'Trem de Milão até Visp/Brig (~2h) + trem para Zermatt (1h10).'}),
   CC('bergamo', 'Bergamo', 'Lombardia', 45.6983, 9.6773, 1, 'Cidade alta medieval cercada de muralhas venezianas (Unesco).', [
     P('Città Alta e Piazza Vecchia', 'passeio', 45.7035, 9.6623, 1, 1.5, 'Praça medieval que Le Corbusier chamou de a mais bela da Europa.'),
     P('Cappella Colleoni e Santa Maria Maggiore', 'igreja', 45.7031, 9.6626, 1, 0.75, 'Fachada renascentista e interior barroco exuberante.'),
@@ -3498,7 +3558,9 @@ const IT_CITIES = [
 const slugify = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 // ★★★ = os mais visitados de cada cidade; demais imperdíveis = ★★; pouco conhecidos = ★
 const TOP_PLACES = {
-  milao: ['Duomo', 'A Última Ceia', 'Galleria Vittorio'], 'lago-como': ['Bellagio', 'Varenna'], bergamo: ['Città Alta'], 'lago-garda': ['Sirmione'],
+  milao: ['Duomo', 'A Última Ceia', 'Galleria Vittorio'], 'lago-como': ['Bellagio', 'Varenna'],
+  lugano: ['Lungolago', 'Monte Brè'], stmoritz: ['Bernina Express', 'Lago e centro'], lucerna: ['Ponte da Capela', 'Monte Pilatus'],
+  interlaken: ['Jungfraujoch', 'Lauterbrunnen'], zermatt: ['Gornergrat', 'Matterhorn Glacier'], bergamo: ['Città Alta'], 'lago-garda': ['Sirmione'],
   verona: ['Arena', 'Casa di Giulietta'], padua: ['Capela Scrovegni', 'Basílica de Santo'], veneza: ['Praça e Basílica', 'Palácio Ducal', 'Ponte di Rialto', 'Grande Canal', 'Burano'],
   dolomitas: ['Seceda', 'Tre Cime', 'Lago di Braies'], trieste: ['Piazza Unità', 'Castelo de Miramare'], turim: ['Mole Antonelliana', 'Museu Egípcio'],
   genova: ['Centro histórico', 'Aquário'], portofino: ['Portofino e Castello'], 'cinque-terre': ['Vernazza', 'Manarola', 'Riomaggiore'],
@@ -3560,7 +3622,15 @@ const LEGS = {
   'assis|perugia': ['trem', 25, 'regional'], 'assis|orvieto': ['trem', 100, 'regional com troca'], 'san-gimignano|siena': ['onibus', 75, 'ônibus'], 'siena|val-dorcia': ['onibus', 80, 'ônibus (carro: 50 min)'],
   'lucca|pisa': ['trem', 30, 'regional'], 'cinque-terre|pisa': ['trem', 75, 'regional'], 'cinque-terre|lucca': ['trem', 110, 'regional via Viareggio'], 'cinque-terre|genova': ['trem', 80, 'regional'],
   'genova|portofino': ['trem', 50, 'trem até Santa Margherita + ônibus'], 'genova|turim': ['trem', 105, 'Intercity/regional'], 'cinque-terre|portofino': ['trem', 75, 'trem Santa Margherita → Monterosso'],
-  'modena|parma': ['trem', 30, 'regional'], 'napoles|veneza': ['trem', 300, 'Frecciarossa/Italo, direto'], 'napoles|turim': ['trem', 335, 'Frecciarossa, direto'],
+  'modena|parma': ['trem', 30, 'regional'],
+  'lugano|milao': ['trem', 80, 'EuroCity ou TILO, direto'], 'milao|stmoritz': ['trem', 300, 'trem até Tirano (2h30) + Bernina Express até St. Moritz (2h20)'],
+  'lucerna|milao': ['trem', 210, 'EuroCity pelo túnel do Gotthard'], 'interlaken|milao': ['trem', 185, 'EuroCity até Brig/Spiez + regional'],
+  'milao|zermatt': ['trem', 200, 'EuroCity até Visp/Brig + trem de Zermatt'], 'lago-como|stmoritz': ['trem', 230, 'trem de Varenna até Tirano (1h20) + Bernina Express'],
+  'lago-como|lugano': ['trem', 75, 'balsa/trem até Como + trem para Lugano'], 'lucerna|lugano': ['trem', 120, 'trem pelo túnel do Gotthard'],
+  'interlaken|lucerna': ['trem', 110, 'Luzern–Interlaken Express (panorâmico)'], 'interlaken|zermatt': ['trem', 135, 'via Spiez e Visp'],
+  'lucerna|zermatt': ['trem', 200, 'via Berna e Visp'], 'stmoritz|zermatt': ['trem', 465, 'Glacier Express (panorâmico, reserva obrigatória)'],
+  'lugano|stmoritz': ['onibus', 180, 'Bernina Express Bus até Tirano + trem (verão)'], 'lucerna|stmoritz': ['trem', 240, 'via Zurique e Chur'],
+  'lago-como|lucerna': ['trem', 200, 'trem via Como e Lugano pelo Gotthard'], 'veneza|zermatt': ['trem', 340, 'via Milão e Brig'], 'napoles|veneza': ['trem', 300, 'Frecciarossa/Italo, direto'], 'napoles|turim': ['trem', 335, 'Frecciarossa, direto'],
   'bari|bolonha': ['trem', 315, 'Frecciarossa pela costa adriática'], 'bari|milao': ['trem', 410, 'Frecciarossa, direto'], 'lecce|milao': ['trem', 510, 'Frecciarossa ou trem noturno'],
   'catania|milao': ['voo', 105, 'voo (+ ~2h de aeroportos)'], 'milao|palermo': ['voo', 105, 'voo (+ ~2h de aeroportos)'], 'cagliari|milao': ['voo', 85, 'voo (+ ~2h de aeroportos)'],
   'catania|napoles': ['voo', 60, 'voo (ou trem ~7h com travessia de balsa)'], 'bergamo|lago-como': ['carro', 60, 'carro (de trem ~1h45 via Milão)'], 'bergamo|verona': ['trem', 75, 'regional/Frecce'], 'lago-como|lago-garda': ['carro', 150, 'carro (de trem ~2h30 via Milão)'],
@@ -3687,6 +3757,7 @@ function planSideHTML() {
   return `<div class="card pl-browse">
     <h3>Cidades da Itália</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 8px">Clique numa cidade (aqui ou no mapa) para ver como chegar e incluir na sua sequência.</p>
+    ${presetsHTML()}
     <input class="pl-search" type="search" placeholder="Buscar cidade, região ou lugar…" value="${esc(planQuery)}">
     ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const occ = occOf(c.k); return `<button class="pl-chip ${occ.length ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${occ.length ? `<span>${occ.map(i => i + 1).join('·')}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
   </div>`;
@@ -3714,6 +3785,7 @@ function planSeqHTML() {
       <div class="ps-head"><span class="ps-num">${i + 1}</span><div class="ps-title"><b data-pl="sel" data-city="${c.k}" data-i="${i}">${esc(c.name)}${tag ? ` <span class="ps-tag">${tag}</span>` : ''}</b><small>${esc(c.reg)}</small></div>
         <div class="ps-nights" title="Noites nesta cidade"><button data-pl="n-" data-i="${i}">−</button><span>${pc.n} noite${pc.n === 1 ? '' : 's'}</span><button data-pl="n+" data-i="${i}">+</button></div>
         <div class="ps-move"><button data-pl="up" data-i="${i}" title="Mover para antes" ${i ? '' : 'disabled'}>↑</button><button data-pl="down" data-i="${i}" title="Mover para depois" ${i < pcs.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="del" data-i="${i}" title="Remover" class="danger">×</button></div></div>
+      ${(w => w ? `<p class="ps-warn">${esc(w)}</p>` : '')(stopWarn(pc, i, occ))}
       ${items.length ? `<ol class="ps-places">${items.map((p, j) => `${j ? `<li class="ps-walk"><span>${icSvg(walkInfo(items[j - 1], p, c).ic)}</span>${walkInfo(items[j - 1], p, c).txt}</li>` : ''}<li class="ps-place"><span class="pn">${j + 1}</span><span class="pt">${esc(p.name)} ${starsHTML(p.lv)}${p.r ? ' <b class="res">reserva</b>' : ''}<small>~${fmtDur(p.h * 60)}</small></span>
           <span class="ps-pm"><button data-pl="pup" data-i="${i}" data-j="${j}" ${j ? '' : 'disabled'}>↑</button><button data-pl="pdown" data-i="${i}" data-j="${j}" ${j < items.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="pdel" data-i="${i}" data-j="${j}" class="danger">×</button></span></li>`).join('')}</ol>`
         : `<p class="muted ps-none">Nenhum lugar ainda. Depois de gerar, escolha os lugares no <b>Mapa do roteiro</b>.</p>`}
@@ -3722,9 +3794,68 @@ function planSeqHTML() {
   const first = CAT[pcs[0].k], last = CAT[pcs[pcs.length - 1].k];
   const back = pcs.length > 1 && first && last && first.k !== last.k ? `<button class="ink-btn pl-back-to" data-pl="return" data-city="${first.k}">↩ Voltar para ${esc(first.name)} no fim</button>` : '';
   return `<section class="pl-seq"><div class="pl-seq-head"><h3>Sua sequência</h3><span class="pl-tot">${pcs.length} parada${pcs.length > 1 ? 's' : ''} · ${nights} noite${nights === 1 ? '' : 's'} · ${places} lugar${places === 1 ? '' : 'es'} · ~${fmtDur(totalMin)} de deslocamento</span>
-    <span class="sp"></span>${genStatusHTML()}<button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">${plan().genKey ? 'Atualizar roteiro' : 'Gerar roteiro'}</button></div>${parts}${back ? `<div class="pl-seq-foot">${back}</div>` : ''}</section>`;
+    ${nightsStatusHTML()}<span class="sp"></span>${genStatusHTML()}<button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">${plan().genKey ? 'Atualizar roteiro' : 'Gerar roteiro'}</button></div>${(() => { const based = pcs.filter(pc => pc.n > 0).length, avg = nights / Math.max(1, based); return based > 2 && avg < 2 ? `<p class="pl-tip">Muitas trocas de hotel: média de ${avg.toFixed(1).replace('.', ',')} noite por cidade. Os guias recomendam pelo menos 2 noites em cada base e 3 nas cidades grandes.</p>` : ''; })()}${parts}${back ? `<div class="pl-seq-foot">${back}</div>` : ''}</section>`;
 }
 const planKey = () => JSON.stringify(plan().cities.map(pc => [pc.k, pc.n, pc.p]));
+const tripNights = () => {
+  const end = plan().end || (plan().genKey ? null : state.days.at(-1)?.date);
+  return end ? diffDays(planStart(), end) : null;
+};
+const planNights = () => plan().cities.reduce((a, pc) => a + (+pc.n || 0), 0);
+function fitNights(pcs, target) {
+  if (!target || !pcs.length) return;
+  const sum = pcs.reduce((a, pc) => a + Math.max(0, pc.n), 0) || pcs.length;
+  const ns = pcs.map(pc => pc.n === 0 ? 0 : Math.max(1, Math.round(Math.max(1, pc.n) * target / sum)));
+  const sug = i => CAT[pcs[i].k]?.n || 2;
+  let diff = target - ns.reduce((a, b) => a + b, 0), guard = 500;
+  while (diff !== 0 && guard--) {
+    const idx = ns.map((n, i) => i).filter(i => diff > 0 ? ns[i] > 0 || pcs.length === 1 : ns[i] > (ns.some(n => n > 1) ? 1 : 0))
+      .sort((a, b) => diff > 0 ? (sug(b) - ns[b]) - (sug(a) - ns[a]) || ns[b] - ns[a] : (ns[b] - sug(b)) - (ns[a] - sug(a)) || ns[b] - ns[a])[0];
+    if (idx == null) break;
+    ns[idx] += diff > 0 ? 1 : -1; diff += diff > 0 ? -1 : 1;
+  }
+  pcs.forEach((pc, i) => pc.n = ns[i]);
+}
+function nightsStatusHTML() {
+  const t = tripNights(), n = planNights();
+  if (t == null) return '';
+  if (n === t) return `<span class="gen-st ok">✓ ${n} de ${t} noites da viagem</span>`;
+  return `<span class="gen-st warn">${n < t ? `faltam ${t - n} noite${t - n > 1 ? 's' : ''}` : `${n - t} noite${n - t > 1 ? 's' : ''} a mais`} (${n} de ${t})</span><button class="ink-btn small" data-pl="fit" title="Distribuir as ${t} noites entre as cidades, seguindo as sugestões">Ajustar noites</button>`;
+}
+const PRESETS = [
+  {name: 'Clássico: Roma, Florença e Veneza', d: 'O roteiro mais feito na primeira viagem: trem rápido entre as três, sem voltar caminho.', c: [['roma', 3], ['florenca', 2], ['veneza', 2]]},
+  {name: 'Clássico com Toscana', d: 'Mais tempo em cada cidade e um dia para Siena, Pisa ou Lucca a partir de Florença.', c: [['roma', 4], ['florenca', 3], ['veneza', 3]]},
+  {name: 'Roma, Florença e Costa Amalfitana', d: 'Troca Veneza pelo mar: Positano, Amalfi e Ravello.', c: [['roma', 3], ['florenca', 3], ['costa-amalfi', 3]]},
+  {name: 'Duas semanas: norte a sul', d: 'Os quatro clássicos sem pressa (3/4/3/3 noites).', c: [['veneza', 3], ['florenca', 4], ['roma', 3], ['costa-amalfi', 3]]},
+  {name: 'Itália + Suíça pelo Bernina Express', d: 'Do Lago de Como pega-se o trem para Tirano e o Bernina Express até St. Moritz.', c: [['roma', 3], ['florenca', 3], ['veneza', 2], ['lago-como', 2], ['stmoritz', 1], ['milao', 1]]},
+  {name: 'Itália + Alpes suíços', d: 'Depois dos clássicos, Lucerna, Interlaken (Jungfrau) e Zermatt (Matterhorn) de trem.', c: [['roma', 3], ['florenca', 2], ['veneza', 2], ['milao', 1], ['lucerna', 2], ['interlaken', 2], ['zermatt', 2]]},
+  {name: 'Lagos e Alpes', d: 'Milão, Lago de Como, Lugano e o Bernina Express.', c: [['milao', 2], ['lago-como', 3], ['lugano', 1], ['stmoritz', 1]]},
+  {name: 'Sul: Nápoles, Amalfi e Capri', d: 'Pompeia, pizza napolitana e a costa.', c: [['roma', 3], ['napoles', 2], ['costa-amalfi', 3], ['capri', 1]]},
+  {name: 'Volta pela Sicília', d: 'Palermo, Cefalù, Taormina/Etna, Siracusa e o Vale dos Templos (carro ajuda).', c: [['palermo', 3], ['cefalu', 1], ['taormina', 2], ['siracusa', 2], ['agrigento', 1]]},
+  {name: 'Apúlia e Matera', d: 'Trulli, cidades brancas, Lecce barroca e os Sassi.', c: [['bari', 2], ['alberobello', 2], ['lecce', 2], ['matera', 2]]},
+  {name: 'Norte: Milão, lagos e Veneza', d: 'Lago de Como, Lago di Garda, Verona e Veneza.', c: [['milao', 2], ['lago-como', 2], ['lago-garda', 2], ['verona', 1], ['veneza', 3]]},
+];
+function presetsHTML() {
+  const t = tripNights();
+  return `<details class="pl-presets" ${plan().cities.length ? '' : 'open'}><summary>Roteiros sugeridos${t ? ` para ${t} noites` : ''}</summary>
+    <p class="muted" style="font-size:12px;margin:4px 0 6px">Baseados nos roteiros mais recomendados por guias de viagem. ${t ? 'As noites são ajustadas para caber nas datas da sua viagem.' : ''}</p>
+    ${PRESETS.map((pr, i) => ({pr, i, tot: pr.c.reduce((a, [, n]) => a + n, 0)})).sort((a, b) => t ? Math.abs(a.tot - t) - Math.abs(b.tot - t) : 0).map(({pr, i, tot}) => {
+      const fit = !t ? '' : tot > t + 2 ? '<span class="pp-fit bad">fica corrido</span>' : tot < t - 3 ? '<span class="pp-fit mid">sobra tempo</span>' : '<span class="pp-fit ok">cabe bem</span>';
+      return `<div class="pl-preset">
+      <div class="pp-h"><b>${esc(pr.name)}</b><small>${tot} noites ${fit}</small></div>
+      <div class="pp-c">${pr.c.map(([k, n]) => `<span style="--c:${cityColor(CAT[k].name)}">${esc(CAT[k].name)} ${n}</span>`).join('')}</div>
+      <small>${esc(pr.d)}</small>
+      <button class="ink-btn small" data-pl="preset" data-i="${i}">Usar este roteiro</button></div>`; }).join('')}
+  </details>`;
+}
+function stopWarn(pc, i, occ) {
+  const c = CAT[pc.k]; if (!c) return '';
+  if (pc.n === 0) return 'Sem pernoite: só passagem no caminho.';
+  if (occ.length > 1 && i !== occ[0]) return '';
+  if (pc.n < c.n && pc.n <= 1) return `1 noite é pouco para ${c.name}: o comum é ${c.n} noite${c.n > 1 ? 's' : ''} (chega e já vai embora).`;
+  if (pc.n > c.n + 2) return `Bastante tempo: dá para fazer bate-voltas a partir de ${c.name}.`;
+  return '';
+}
 const planStart = () => plan().start || state.days[0]?.date || addDays(todayStr(), 60);
 function genStatusHTML() {
   const g = plan().genKey;
@@ -3736,7 +3867,7 @@ function planHTML() {
 }
 
 /* ---------- sugestões no mapa do roteiro ---------- */
-const placeType = ic => ({comida: 'comida', compras: 'compras', passeio: 'passeio', foto: 'passeio', sol: 'passeio', barco: 'passeio', gondola: 'passeio'}[ic] || 'visita');
+const placeType = ic => ({comida: 'comida', compras: 'compras', passeio: 'passeio', foto: 'passeio', sol: 'passeio', barco: 'passeio', gondola: 'passeio', trem: 'trem'}[ic] || 'visita');
 const catOfSection = c => CAT[c.key] || IT_CITIES.find(x => norm(x.name) === norm(c.stay.base)) || null;
 function sectionSuggestions(c) {
   const cat = catOfSection(c); if (!cat) return [];
@@ -3915,6 +4046,28 @@ function generateFromPlan(start) {
   return days;
 }
 
+function runGenerate() {
+  const start = planStart(), update = !!plan().genKey;
+  if (update && state.days.some(d => d.items.length) && !confirm('Atualizar o roteiro com a sequência atual? Os dias e as atividades serão recriados a partir do plano (dá para desfazer).')) return;
+  const days = generateFromPlan(start);
+  commit(() => { state.days = days; plan().start = start; plan().genKey = planKey(); state.settings.mapMode = 'plan'; });
+  const msg = `Roteiro ${update ? 'atualizado' : 'gerado'}: ${days.length} dias, de ${fmtBRY(days[0].date)} a ${fmtBRY(days[days.length - 1].date)}.`;
+  if (tabOn('roteiro')) toast(msg, '<button data-t="cal">Ver calendário</button>', () => setTab('roteiro'));
+  else toast(msg, '<button data-t="route">Ver dia a dia</button>', () => commit(() => state.settings.mapMode = 'route'));
+}
+function openNightsModal(t, n) {
+  const end = addDays(planStart(), n);
+  openModal(`
+    <h3>As noites não batem com as datas</h3>
+    <p style="margin:0;font-size:14px">A sua sequência soma <b>${n} noite${n === 1 ? '' : 's'}</b>, mas a viagem tem <b>${t} noite${t === 1 ? '' : 's'}</b> (${fmtBRY(planStart())} a ${fmtBRY(plan().end)}).</p>
+    <p class="muted" style="margin:0;font-size:13px">Ajustando, as ${t} noites são distribuídas entre as cidades seguindo o tempo recomendado para cada uma.</p>
+    <div class="modal-actions"><button type="button" data-m="cancel">Cancelar</button><span class="sp"></span>
+      <button type="button" data-m="asis">Gerar com ${n} noites (termina em ${fmtBRY(end)})</button>
+      <button type="submit" class="primary">Ajustar para ${t} noites e gerar</button></div>`,
+    () => { commit(() => fitNights(plan().cities, t)); runGenerate(); },
+    act => { if (act === 'asis') { setTimeout(runGenerate); return true; } return true; });
+}
+
 /* ---------- eventos ---------- */
 function setupPlanner() {
   const el = $('#tab-mapa');
@@ -3950,14 +4103,19 @@ function setupPlanner() {
       planSel = null; planOcc = null; renderMap();
       toast('Roteiro limpo.', '<button data-t="undo">Desfazer</button>', undo);
     }
+    if (act === 'fit') commit(() => fitNights(pcs, tripNights()));
+    if (act === 'preset') {
+      const pr = PRESETS[i];
+      if (pcs.length && !confirm(`Trocar a sequência atual pelo roteiro “${pr.name}”? Dá para desfazer.`)) return;
+      commit(() => { state.plan.cities = pr.c.map(([k, n]) => ({k, n, p: []})); fitNights(state.plan.cities, tripNights()); });
+      planSel = null; planOcc = null; renderMap();
+      toast(`Roteiro “${esc(pr.name)}” aplicado${tripNights() ? ` e ajustado para ${tripNights()} noites` : ''}.`, '<button data-t="undo">Desfazer</button>', undo);
+    }
     if (act === 'gen') {
-      const start = planStart(), update = !!plan().genKey;
-      if (update && state.days.some(d => d.items.length) && !confirm('Atualizar o roteiro com a sequência atual? Os dias e as atividades serão recriados a partir do plano (dá para desfazer).')) return;
-      const days = generateFromPlan(start);
-      commit(() => { state.days = days; plan().start = start; plan().genKey = planKey(); state.settings.mapMode = 'plan'; });
-      const msg = `Roteiro ${update ? 'atualizado' : 'gerado'}: ${days.length} dias, de ${fmtBRY(days[0].date)} a ${fmtBRY(days[days.length - 1].date)}.`;
-      if (tabOn('roteiro')) toast(msg, '<button data-t="cal">Ver calendário</button>', () => setTab('roteiro'));
-      else toast(msg, '<button data-t="route">Ver dia a dia</button>', () => commit(() => state.settings.mapMode = 'route'));
+      if (!plan().end && state.days.length && !plan().genKey) plan().end = state.days.at(-1).date;
+      const t = tripNights(), n = planNights();
+      if (t != null && t !== n) { openNightsModal(t, n); return; }
+      runGenerate();
     }
   });
   el.addEventListener('input', e => {
@@ -4188,7 +4346,7 @@ function blankState({title, start, end, city, travelers, checklist}) {
   const n = Math.min(120, Math.max(1, diffDays(start, end) + 1));
   return {version: 1, title, settings: {...defaultSettings(), travelers},
     days: Array.from({length: n}, (_, i) => ({id: uid(), date: addDays(start, i), base: city, title: '', note: '', items: []})),
-    hotels: [], checklist: checklist ? basicChecklist(addDays(start, n - 1)) : [], notes: ''};
+    hotels: [], checklist: checklist ? basicChecklist(addDays(start, n - 1)) : [], notes: '', plan: {cities: [], start, end: addDays(start, n - 1)}};
 }
 function resetTripUi() {
   undoStack.length = 0; $('#undoBtn').disabled = true;
@@ -4310,7 +4468,7 @@ function withDates(s, start, end) {
     while (last.date < end) { last = {id: uid(), date: addDays(last.date, 1), base: isNoHotel(last.base) ? '' : last.base, title: '', note: '', items: []}; out.days.push(last); }
     out.days = out.days.filter(d => d.date <= end);
   }
-  out.plan ||= {cities: []}; out.plan.start = start;
+  out.plan ||= {cities: []}; out.plan.start = start; out.plan.end = end;
   return out;
 }
 function datesPreview(s, start, end) {
