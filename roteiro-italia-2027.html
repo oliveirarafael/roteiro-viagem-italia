@@ -2212,7 +2212,7 @@ const PLACES = {
   apia:      {name: 'Via Ápia', full: 'Via Ápia e Catacumbas', lat: 41.8586, lon: 12.5108, lm: 'apia', kind: 'trip', al: ['catacumbas', 'calisto', 'apia']},
   pisa:      {name: 'Pisa', lat: 43.7230, lon: 10.3966, lm: 'pisa', kind: 'trip', al: ['pisa']},
   lucca:     {name: 'Lucca', lat: 43.8430, lon: 10.5027, lm: 'lucca', kind: 'trip', al: ['lucca']},
-  siena:     {name: 'Siena', lat: 43.3188, lon: 11.3308, lm: 'bologna', kind: 'trip', al: ['siena', 'san gimignano', 'chianti']},
+  siena:     {name: 'Siena', lat: 43.3188, lon: 11.3308, lm: 'bologna', kind: 'trip', al: ['siena', 'chianti']},
   bolonha:   {name: 'Bolonha', lat: 44.4949, lon: 11.3426, lm: 'bologna', kind: 'trip', al: ['bologna', 'bolonha']},
   murano:    {name: 'Murano', lat: 45.4583, lon: 12.3533, lm: 'vidro', kind: 'trip', water: true, al: ['murano']},
   burano:    {name: 'Burano', lat: 45.4853, lon: 12.4170, lm: 'casinhas', kind: 'trip', water: true, al: ['burano', 'torcello']},
@@ -2535,7 +2535,18 @@ const LAKES = [
 const RIVERS = [[[44.85,7.10],[45.07,7.69],[45.10,8.40],[45.05,9.00],[45.15,9.70],[45.00,10.30],[44.95,11.00],[44.95,11.80],[44.97,12.40]], [[43.00,12.20],[42.60,12.40],[42.20,12.55],[41.90,12.47],[41.75,12.25]], [[43.76,11.60],[43.77,11.25],[43.70,10.60],[43.68,10.28]]];
 const ALPS = [[44.25,7.25],[44.65,7.05],[45.05,7.10],[45.45,7.15],[45.78,7.05],[45.97,7.75],[46.20,8.25],[46.38,8.85],[46.42,9.45],[46.48,10.00],[46.62,10.65],[46.72,11.25],[46.82,11.85],[46.62,12.45],[46.50,13.05],[46.78,8.40],[46.75,9.25],[46.65,7.50]];
 const APENNINES = [[44.32,9.85],[44.18,10.55],[44.02,11.30],[43.62,12.15],[43.05,12.95],[42.55,13.35],[42.05,13.85],[41.65,14.25]];
-const OV = {W: 980, H: 990, p: (lat, lon) => [(lon - 6.6) * 0.743 * 165, (47 - lat) * 165]};
+// enquadramento do mapa geral: roteiros que passam pelo norte/centro partem do quadro 41–47°N, 6,6–14,6°E;
+// roteiros só no sul/ilhas enquadram a própria região. Em ambos os casos o quadro cresce para caber todas as paradas
+function ovProj(m) {
+  const pts = [...new Set(m.seq.map(x => x.k))].filter(k => PLACES[k]).map(k => [PLACES[k].lat, PLACES[k].lon]);
+  const north = !pts.length || pts.some(([lat]) => lat >= 42.5);
+  let [la0, la1, lo0, lo1] = north ? [41, 47, 6.6, 14.6] : [90, -90, 180, -180];
+  pts.forEach(([lat, lon]) => { la0 = Math.min(la0, lat - .7); la1 = Math.max(la1, lat + .55); lo0 = Math.min(lo0, lon - .8); lo1 = Math.max(lo1, lon + .8); });
+  if (la1 - la0 < 4) { const c = (la0 + la1) / 2; la0 = c - 2; la1 = c + 2; }
+  const W = 980, c = .743, sc = Math.min(north ? 165 : 240, W / ((lo1 - lo0) * c), 1300 / (la1 - la0));
+  const l0 = (lo0 + lo1) / 2 - W / (2 * c * sc);
+  return {W, H: Math.round((la1 - la0) * sc), sc, la0, la1, lo0: l0, lo1: l0 + W / (c * sc), p: (lat, lon) => [(lon - l0) * c * sc, (la1 - lat) * sc]};
+}
 const OV_OFF = {
   roma: [-8, -64, 't'], fiumicino: [-64, 22, 'b'], apia: [64, -6, 'r'], florenca: [56, -12, 'b'], pisa: [-66, 36, 'b'], lucca: [-62, -46, 't'],
   siena: [48, 34, 'b'], bolonha: [60, -28, 'b'], veneza: [72, 12, 'b'], murano: [10, -64, 't'], burano: [84, -66, 't'], verona: [40, 42, 'b'],
@@ -2549,7 +2560,9 @@ function locateItem(it, c, ctx) {
   if (it.poi && c.cfg) { const poi = c.cfg.pois.find(p => p.k === it.poi); if (poi) return {kind: 'poi', poi}; }
   const t = mnorm(it.title.includes('→') ? it.title.split('→').pop() : it.title);
   const places = findPlaces(t);
-  const trip = places.find(k => k !== c.key);
+  // lugar do catálogo só vira passeio a outra cidade se estiver mesmo lá (ex.: “Glacier Express (St. Moritz → Zermatt)” fica em St. Moritz)
+  const near = k => !it.cat || !it.geo || haversine([it.geo.lat, it.geo.lon], [PLACES[k].lat, PLACES[k].lon]) < 25;
+  const trip = places.find(k => k !== c.key && near(k));
   if (trip) return {kind: 'trip', place: trip};
   if (c.cfg) { const poi = c.cfg.pois.find(p => p.re.some(re => re.test(t))); if (poi) return {kind: 'poi', poi}; }
   if (it.geo && c.cfg) { const [a0, a1, o0, o1] = c.cfg.bbox; if (it.geo.lat >= a0 && it.geo.lat <= a1 && it.geo.lon >= o0 && it.geo.lon <= o1) return {kind: 'custom', lat: it.geo.lat, lon: it.geo.lon, auto: true}; }
@@ -2564,7 +2577,7 @@ function buildMapModel() {
   const dayStay = new Map();
   stays.forEach((s, si) => s.days.forEach(d => dayStay.set(d.id, si)));
   const cities = stays.map((s, si) => {
-    const key = findPlaces(mnorm(s.base))[0] || null;
+    const key = Object.keys(PLACES).find(k => mnorm(PLACES[k].name) === mnorm(s.base)) || findPlaces(mnorm(s.base))[0] || null;
     return {stay: s, si, key, cfg: key ? CITY_MAPS[key] : null, days: [...s.days], color: cityColor(s.base), located: []};
   });
   const byKey = {};
@@ -2670,7 +2683,7 @@ function revealItem(id) {
 /* ---------- mapa geral ---------- */
 const LEG_STYLE = {trem: ['#8a4b2a', 3.4, '11 7'], barco: ['#1f78ad', 3.2, '2 7'], voo: ['#56657a', 2.6, '7 8'], onibus: ['#4d7c0f', 3, '8 6']};
 function overviewSVG(m) {
-  const {W, H, p} = OV;
+  const {W, H, p, sc, la0, lo1} = ovProj(m);
   const poly = pts => smoothPath(pts.map(([a, b]) => p(a, b)), true);
   const line = pts => smoothPath(pts.map(([a, b]) => p(a, b)), false);
   const txt = (s, [x, y], o = {}) => `<text x="${rn(x)}" y="${rn(y)}" text-anchor="middle" ${o.rot ? `transform="rotate(${o.rot} ${rn(x)} ${rn(y)})"` : ''} font-size="${o.size || 16}" fill="${o.fill || INK}" class="${o.cls || 'f-bold'}" ${o.ls ? `letter-spacing="${o.ls}"` : ''} opacity="${o.op ?? 1}">${s}</text>`;
@@ -2680,7 +2693,9 @@ function overviewSVG(m) {
   [[41.6, 8.1], [42.6, 8.0], [43.55, 8.6], [42.3, 10.2], [41.35, 11.4], [41.25, 10.0], [44.15, 9.1], [43.05, 14.25], [44.3, 13.4], [45.05, 13.05], [42.55, 14.4], [41.7, 7.2]].forEach(([a, b], i) => { const [x, y] = p(a, b); s += `<use href="#wave" x="${rn(x)}" y="${rn(y)}" width="${34 + (i % 3) * 6}" height="11"/>`; });
   s += `<g filter="url(#rough)">`;
   s += `<path d="${poly(EUROPE)}" fill="#ebe0c6" stroke="#b09466" stroke-width="2"/>`;
-  ISLANDS.forEach(isl => s += `<path d="${poly(isl)}" fill="#ebe0c6" stroke="#b09466" stroke-width="2"/>`);
+  if (lo1 > 15) s += `<path d="${poly(BALKANS)}" fill="#ebe0c6" stroke="#b09466" stroke-width="2"/>`;
+  // ISLANDS[0] é a Córsega (França); as demais são italianas
+  ISLANDS.forEach((isl, i) => s += i ? `<path d="${poly(isl)}" fill="#f7e5bc" stroke="#7a5230" stroke-width="3"/>` : `<path d="${poly(isl)}" fill="#ebe0c6" stroke="#b09466" stroke-width="2"/>`);
   s += `<path d="${poly(SWISS)}" fill="#f6d8cf" stroke="#c0504d" stroke-width="2.5" stroke-dasharray="7 4"/>`;
   s += `<path d="${poly(ITALY)}" fill="#f7e5bc" stroke="#7a5230" stroke-width="3"/>`;
   RIVERS.forEach(r => s += `<path d="${line(r)}" fill="none" stroke="#7fb5d1" stroke-width="3" stroke-linecap="round"/>`);
@@ -2698,9 +2713,10 @@ function overviewSVG(m) {
   s += txt('ÁUSTRIA', p(47.0, 12.9), {size: 16, fill: '#8a7350', ls: 3, op: .75});
   s += txt('ESLOVÊNIA', p(46.1, 14.15), {size: 13, fill: '#8a7350', ls: 2, op: .75});
   s += txt('CÓRSEGA', p(42.15, 9.05), {size: 12, fill: '#8a7350', ls: 2, rot: -70, op: .7});
+  if (la0 < 39.5 && lo1 > 17.5) s += txt('MAR JÔNICO', p(38.6, 17.4), {size: 20, fill: '#2f6d8f', ls: 4, op: .8});
   const [cx0, cy0] = p(43.0, 14.25);
   s += `<use href="#compass" x="${rn(cx0 - 34)}" y="${rn(cy0 - 34)}" width="68" height="68"/>` + txt('N', [cx0, cy0 - 38], {size: 15});
-  const km = 100 / 111.32 * 165, [sx0, sy0] = [W - km - 36, H - 30];
+  const km = 100 / 111.32 * sc, [sx0, sy0] = [W - km - 36, H - 30];
   s += `<g><rect x="${rn(sx0 - 10)}" y="${rn(sy0 - 24)}" width="${rn(km + 20)}" height="36" rx="8" fill="#fffaf0" opacity=".85" ${sk(1.5)}/><path d="M${rn(sx0)} ${sy0}H${rn(sx0 + km)}" stroke="${INK}" stroke-width="5"/><path d="M${rn(sx0 + km / 2)} ${sy0}H${rn(sx0 + km)}" stroke="#fffaf0" stroke-width="3"/>${txt('100 km', [sx0 + km / 2, sy0 - 8], {size: 13, cls: 'f-hand'})}</g>`;
 
   const pos = k => k === 'brasil' ? [-40, H + 50] : p(PLACES[k].lat, PLACES[k].lon);
@@ -2730,33 +2746,45 @@ function overviewSVG(m) {
     const P = PLACES[k], [x, y] = p(P.lat, P.lon), isBase = k in baseIdx;
     const [dx, dy, lp] = OV_OFF[k] || [0, -52, 't'];
     const r = isBase ? 42 : 30;
-    return {k, x, y, ix: x + dx, iy: y + dy, r, lp, isBase};
-  });
-  // afasta medalhões que se encostam (as bases se movem menos que os passeios)
-  for (let it = 0; it < 60; it++) {
-    let movedAny = false;
-    for (let i = 0; i < marks.length; i++) for (let j = i + 1; j < marks.length; j++) {
-      const a = marks[i], b = marks[j];
-      let vx = b.ix - a.ix, vy = b.iy - a.iy, dist = Math.hypot(vx, vy);
-      const need = a.r + b.r + 8;
-      if (dist >= need) continue;
-      if (dist < .01) { vx = 1; vy = 0; dist = 1; }
-      const push = need - dist, wa = a.isBase && !b.isBase ? .15 : b.isBase && !a.isBase ? .85 : .5;
-      a.ix -= vx / dist * push * wa; a.iy -= vy / dist * push * wa;
-      b.ix += vx / dist * push * (1 - wa); b.iy += vy / dist * push * (1 - wa);
-      movedAny = true;
-    }
-    marks.forEach(mk => { mk.ix = Math.min(Math.max(mk.ix, mk.r + 6), W - mk.r - 6); mk.iy = Math.min(Math.max(mk.iy, mk.r + 6), H - mk.r - 70); });
-    if (!movedAny) break;
-  }
-  marks.forEach(({k, x, y, ix, iy, r, lp, isBase}) => {
-    const P = PLACES[k];
     const c = isBase ? m.cities[baseIdx[k]] : m.cities[[...(m.visits[k]?.si || [0])][0]];
-    const color = c ? c.color : '#7a5230';
-    const sz = r * 1.45;
     const dates = isBase ? `${fmtBR(c.stay.checkin)}–${fmtBR(c.stay.checkout)}` : [...(m.visits[k]?.dates || [])].sort().map(fmtBR).join(', ');
     const back = isBase ? c.days.filter(d => !c.stay.days.includes(d) && c.located.some(x => x.d === d)).map(d => fmtBR(d.date)) : [];
-    const sub = isBase ? `${c.stay.nights} noites · ${dates}${back.length ? ' · volta ' + back.join(', ') : ''}` : dates;
+    const sub = isBase ? `${c.stay.nights} noite${c.stay.nights === 1 ? '' : 's'} · ${dates}${back.length ? ' · volta ' + back.join(', ') : ''}` : dates;
+    const lw = Math.max(P.name.length * (isBase ? 13.5 : 10), sub.length * (isBase ? 8.6 : 7.2));
+    return {k, x, y, ix: x + dx, iy: y + dy, r, lp, isBase, c, sub, lw};
+  });
+  // caixa do medalhão + nome: é ela que não pode encostar em outra
+  const box = mk => {
+    if (mk.lp === 'r') return {x0: mk.ix - mk.r, x1: mk.ix + mk.r + 8 + mk.lw, y0: mk.iy - mk.r, y1: mk.iy + mk.r};
+    const hw = Math.max(mk.r, mk.lw / 2);
+    return {x0: mk.ix - hw, x1: mk.ix + hw, y0: mk.iy - mk.r - (mk.lp === 't' ? 46 : 0), y1: mk.iy + mk.r + (mk.lp === 't' ? 0 : 46)};
+  };
+  const keepIn = mk => {
+    let b = box(mk);
+    if (mk.lp === 't' && b.y0 < 4) { mk.lp = 'b'; b = box(mk); }
+    mk.ix += Math.max(0, 4 - b.x0) - Math.max(0, b.x1 - (W - 4));
+    mk.iy += Math.max(0, 4 - b.y0) - Math.max(0, b.y1 - (H - 70));
+  };
+  marks.forEach(keepIn);
+  // afasta os que se encostam (as bases se movem menos que os passeios)
+  for (let it = 0; it < 150; it++) {
+    let movedAny = false;
+    for (let i = 0; i < marks.length; i++) for (let j = i + 1; j < marks.length; j++) {
+      const a = marks[i], b = marks[j], A = box(a), B = box(b);
+      const ox = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0) + 6, oy = Math.min(A.y1, B.y1) - Math.max(A.y0, B.y0) + 6;
+      if (ox <= 6 || oy <= 6) continue;
+      const wa = a.isBase && !b.isBase ? .15 : b.isBase && !a.isBase ? .85 : .5;
+      if (ox < oy) { const sg = A.x0 + A.x1 < B.x0 + B.x1 ? -1 : 1; a.ix += sg * ox * wa; b.ix -= sg * ox * (1 - wa); }
+      else { const sg = A.y0 + A.y1 < B.y0 + B.y1 ? -1 : 1; a.iy += sg * oy * wa; b.iy -= sg * oy * (1 - wa); }
+      movedAny = true;
+    }
+    marks.forEach(keepIn);
+    if (!movedAny) break;
+  }
+  marks.forEach(({k, x, y, ix, iy, r, lp, isBase, c, sub}) => {
+    const P = PLACES[k];
+    const color = c ? c.color : '#7a5230';
+    const sz = r * 1.45;
     let lx = ix, ly = lp === 't' ? iy - r - (sub ? 26 : 10) : iy + r + 22, anchor = 'middle';
     if (lp === 'r') { lx = ix + r + 8; ly = iy - 2; anchor = 'start'; }
     const goto = isBase ? `city-${baseIdx[k]}` : `pc-${c ? c.si : 0}-${k}`;
@@ -2780,7 +2808,7 @@ function overviewSVG(m) {
 function locatorSVG(m) {
   const k = 26, c = 0.743, p = (lat, lon) => [(lon - 6.4) * c * k, (47.3 - lat) * k], W = rn((18.7 - 6.4) * c * k), H = rn((47.3 - 36.4) * k);
   const poly = pts => smoothPath(pts.map(([a, b]) => p(a, b)), true);
-  const [x0, y0] = p(47, 6.6), [x1, y1] = p(41, 14.6);
+  const ov = ovProj(m), [x0, y0] = p(Math.min(ov.la1, 47.25), Math.max(ov.lo0, 6.45)), [x1, y1] = p(Math.max(ov.la0, 36.45), Math.min(ov.lo1, 18.65));
   let dots = '';
   m.cities.forEach(cc => { const P = PLACES[cc.key]; if (!P) return; const [x, y] = p(P.lat, P.lon); dots += `<circle cx="${rn(x)}" cy="${rn(y)}" r="4" fill="${cc.color}" stroke="#fff" stroke-width="1.5"/>`; });
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><rect width="${W}" height="${H}" rx="8" fill="#cfe7f1"/><path d="${poly(EUROPE)}" fill="#ebe0c6"/>${ISLANDS.map(i => `<path d="${poly(i)}" fill="#ebe0c6" stroke="#b09466"/>`).join('')}<path d="${poly(SWISS)}" fill="#f6d8cf"/><path d="${poly(ITALY)}" fill="#f7e5bc" stroke="#7a5230" stroke-width="1.5"/><rect x="${rn(x0)}" y="${rn(y0)}" width="${rn(x1 - x0)}" height="${rn(y1 - y0)}" fill="none" stroke="#d93a2b" stroke-width="2" stroke-dasharray="5 3"/>${dots}</svg>`;
@@ -3077,7 +3105,7 @@ function renderMap() {
         <div class="card"><h3>Onde estamos</h3>${locatorSVG(m)}</div>
         <div class="card"><h3>Paradas</h3><ol class="stop-list">${m.cities.map(c => {
           const tr = Object.entries(m.visits).filter(([k, v]) => v.si.has(c.si) && PLACES[k]).map(([k, v]) => `${PLACES[k].name} (${[...v.dates].sort().map(fmtBR).join(', ')})`);
-          return `<li data-goto="city-${c.si}" style="--c:${c.color}"><span class="stop-num">${c.si + 1}</span><div><b>${esc(c.stay.base)}</b> · ${c.stay.nights} noites<br><small>${fmtBR(c.stay.checkin)} → ${fmtBR(c.stay.checkout)}</small>${tr.length ? `<div class="stop-trips">Passeios: ${esc(tr.join(' · '))}</div>` : ''}</div></li>`;
+          return `<li data-goto="city-${c.si}" style="--c:${c.color}"><span class="stop-num">${c.si + 1}</span><div><b>${esc(c.stay.base)}</b> · ${c.stay.nights} noite${c.stay.nights === 1 ? '' : 's'}<br><small>${fmtBR(c.stay.checkin)} → ${fmtBR(c.stay.checkout)}</small>${tr.length ? `<div class="stop-trips">Passeios: ${esc(tr.join(' · '))}</div>` : ''}</div></li>`;
         }).join('')}</ol></div>
         <div class="card"><h3>Legenda</h3>
           ${Object.entries({trem: 'Trem', barco: 'Barco / vaporetto', voo: 'Avião'}).map(([k, l]) => `<div class="legend-row"><svg width="54" height="14"><path d="M2 7H52" stroke="${LEG_STYLE[k][0]}" stroke-width="${LEG_STYLE[k][1]}" stroke-dasharray="${LEG_STYLE[k][2]}" stroke-linecap="round"/></svg>${l}</div>`).join('')}
@@ -3615,6 +3643,14 @@ const starsHTML = lv => `<span class="stars lv${lv}" title="${LV[lv]}">${'★'.r
 const CAT = Object.fromEntries(IT_CITIES.map(c => [c.k, c]));
 const PLACE = Object.fromEntries(IT_CITIES.flatMap(c => c.places.map(p => [p.id, p])));
 const IT_REGIONS = [...new Set(IT_CITIES.map(c => c.reg))];
+// toda cidade do planejador precisa existir no mapa geral do roteiro
+const CITY_LM = {lucerna: 'lago', 'lago-garda': 'lago', padua: 'cupola', dolomitas: 'alpes', interlaken: 'alpes', trieste: 'castelo', genova: 'casinhas', portofino: 'casinhas', 'cinque-terre': 'casinhas', modena: 'cupola', parma: 'cupola', ravenna: 'cupola', 'san-gimignano': 'castelo', 'val-dorcia': 'pin', perugia: 'castelo', assis: 'cupola', orvieto: 'cupola', pompeia: 'templo', sorrento: 'casinhas', capri: 'casinhas', 'costa-amalfi': 'casinhas', matera: 'castelo', bari: 'casinhas', alberobello: 'casinhas', lecce: 'cupola', tropea: 'casinhas', palermo: 'cupola', cefalu: 'casinhas', agrigento: 'templo', taormina: 'templo', catania: 'cupola', siracusa: 'templo', cagliari: 'castelo', alghero: 'castelo', napoles: 'castelo'};
+IT_CITIES.forEach(c => {
+  const k = Object.keys(PLACES).find(pk => mnorm(PLACES[pk].name) === mnorm(c.name));
+  if (k) { if (PLACES[k].lm === 'pin' && CITY_LM[c.k]) PLACES[k].lm = CITY_LM[c.k]; return; }
+  const al = [mnorm(c.name), ...(/ e /.test(c.name) ? [mnorm(c.name.split(' e ')[0])] : [])];
+  PLACES[c.k] = {name: c.name, lat: c.lat, lon: c.lon, lm: CITY_LM[c.k] || (c.reg === 'Suíça' ? 'alpes' : 'pin'), kind: 'base', swiss: c.reg === 'Suíça' || undefined, water: c.k === 'capri' || undefined, al, re: al.map(wordRe)};
+});
 
 // [modo, minutos, observação] — trens: menor tempo direto (Trenitalia/Italo, set/2026); demais: tempos típicos
 const LEGS = {
@@ -3756,50 +3792,7 @@ function planEndsHTML() {
 
 /* ---------- mapa da Itália ---------- */
 const BALKANS = [[45.2, 16], [45.17, 14.69], [44.95, 14.85], [44.55, 15.05], [44.1, 15.25], [43.75, 15.75], [43.5, 16.3], [43.25, 16.95], [43.0, 17.45], [42.65, 18.05], [42.4, 18.55], [42.1, 19.1], [41.85, 19.38], [41.4, 19.45], [40.95, 19.42], [40.45, 19.4], [40.05, 19.85], [39.7, 20.05], [39.3, 20.3], [38.8, 20.65], [38.2, 21.2], [37.9, 21.15], [37.6, 21.65], [36.8, 21.7], [36.3, 22.5], [36.3, 23.5], [45.2, 23.5]];
-const PLAN_MAP = (() => { const k = 64, c = 0.743, lo0 = 6.4, la1 = 47.3; return {W: Math.round((18.7 - lo0) * c * k), H: Math.round((la1 - 36.4) * k), p: (lat, lon) => [(lon - lo0) * c * k, (la1 - lat) * k], inv: (x, y) => [la1 - y / k, lo0 + x / (c * k)]}; })();
-const inPoly = (lat, lon, poly) => {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const [ai, oi] = poly[i], [aj, oj] = poly[j];
-    if ((ai > lat) !== (aj > lat) && lon < (oj - oi) * (lat - ai) / (aj - ai) + oi) inside = !inside;
-  }
-  return inside;
-};
-const isSea = (x, y) => { const [lat, lon] = PLAN_MAP.inv(x, y); return ![EUROPE, BALKANS, ITALY, SWISS, ...ISLANDS].some(P => inPoly(lat, lon, P)); };
-const seaCache = new Map();
-// ponto de mar perto da cidade para o avião de chegada/saída: de preferência a sudoeste (vindo do Brasil), longe das outras cidades
-function seaSpot(k, avoid = null) {
-  const key = k + '|' + (avoid ? avoid.map(Math.round).join(',') : '');
-  if (seaCache.has(key)) return seaCache.get(key);
-  const {W, H, p} = PLAN_MAP, C = CAT[k], [cx, cy] = p(C.lat, C.lon), pref = Math.atan2(.55, -1);
-  const seaLabels = [[40.3, 11.6], [43.2, 15.2], [38.4, 18.0], [43.65, 8.6]].flatMap(([a, b]) => { const [x, y] = p(a, b); return [[x - 32, y - 5], [x, y - 5], [x + 32, y - 5]]; });
-  const dots = [...IT_CITIES.map(c => p(c.lat, c.lon)), ...seaLabels], ring = [[0, 0], [17, 0], [-17, 0], [0, 17], [0, -17], [12, 12], [-12, 12], [12, -12], [-12, -12]];
-  let best = null;
-  for (let r = 55; r <= 340; r += 10) for (let a = 0; a < 360; a += 10) {
-    const t = a * Math.PI / 180, x = cx + r * Math.cos(t), y = cy + r * Math.sin(t);
-    if (x < 26 || y < 26 || x > W - 26 || y > H - 26 || !ring.every(([dx, dy]) => isSea(x + dx, y + dy))) continue;
-    let cost = r * 1.5 + 45 * (1 - Math.cos(t - pref));
-    dots.forEach(([px, py]) => { const d = Math.hypot(x - px, y - py); if (d < 34) cost += (34 - d) * 4; });
-    if (avoid) { const d = Math.hypot(x - avoid[0], y - avoid[1]); if (d < 80) cost += (80 - d) * 5; }
-    if (!best || cost < best.cost) best = {x, y, cost};
-  }
-  seaCache.set(key, best);
-  return best;
-}
-function flightSVG(k, kind, avoid) {
-  const C = CAT[k], s = C && seaSpot(k, avoid); if (!s) return {svg: '', at: null};
-  const [cx, cy] = PLAN_MAP.p(C.lat, C.lon), arr = kind === 'entry';
-  const [ax, ay, bx, by] = arr ? [s.x, s.y, cx, cy] : [cx, cy, s.x, s.y];
-  const len = Math.hypot(bx - ax, by - ay), ux = (bx - ax) / len, uy = (by - ay) / len;
-  const [sa, sb] = arr ? [20, 16] : [16, 24];
-  const x0 = ax + ux * sa, y0 = ay + uy * sa, x1 = bx - ux * sb, y1 = by - uy * sb, bend = Math.min(26, len * .18) * (arr ? 1 : -1);
-  const qx = (x0 + x1) / 2 - uy * bend, qy = (y0 + y1) / 2 + ux * bend;
-  const head = Math.atan2(arr ? cy - s.y : s.y - cy, arr ? cx - s.x : s.x - cx) * 180 / Math.PI + 45;
-  return {at: [s.x, s.y], svg: `<g class="pl-flight" pointer-events="none"><title>${arr ? 'Chegada' : 'Saída'} de avião: ${esc(C.name)}</title>
-    <path d="M${rn(x0)} ${rn(y0)}Q${rn(qx)} ${rn(qy)} ${rn(x1)} ${rn(y1)}" fill="none" stroke="#0f766e" stroke-width="2.6" stroke-dasharray="6 5" stroke-linecap="round" marker-end="url(#pl-arrow)"/>
-    <g transform="translate(${rn(s.x)},${rn(s.y)}) rotate(${rn(head)}) scale(1.55) translate(-12,-12)"><path d="${IC.voo.match(/d="([^"]+)"/)[1]}" fill="#0f766e" stroke="#fffaf0" stroke-width="1.3" stroke-linejoin="round"/></g>
-    <text x="${rn(s.x)}" y="${rn(s.y + 30)}" text-anchor="middle" font-size="11.5" class="f-bold" fill="#0f766e" paint-order="stroke" stroke="#fffaf0" stroke-width="3.5" stroke-linejoin="round">${arr ? 'chegada' : 'saída'}</text></g>`};
-}
+const PLAN_MAP = (() => { const k = 64, c = 0.743, lo0 = 6.4, la1 = 47.3; return {W: Math.round((18.7 - lo0) * c * k), H: Math.round((la1 - 36.4) * k), p: (lat, lon) => [(lon - lo0) * c * k, (la1 - lat) * k]}; })();
 const ZOOM_MAX = 2.5;
 const planZoom = {z: 1, cx: PLAN_MAP.W / 2, cy: PLAN_MAP.H / 2};
 function planViewBox() {
@@ -3851,15 +3844,12 @@ function planMapSVG() {
     s += `<path d="M${rn(x1)} ${rn(y1)}Q${rn(cx)} ${rn(cy)} ${rn(x2)} ${rn(y2)}" fill="none" stroke="${col}" stroke-width="3.2" stroke-dasharray="${L.mode === 'voo' ? '7 7' : L.mode === 'barco' ? '2 6' : '10 6'}" stroke-linecap="round" class="route-anim"/>`;
     if (len > 46) { const bx = (x1 + 2 * cx + x2) / 4, by = (y1 + 2 * cy + y2) / 4; s += `<g class="pl-leg" transform="translate(${rn(bx)},${rn(by)})"><title>${MODE[L.mode][0]} ${a.name} → ${b.name}: ${fmtDur(L.min)}</title><circle r="11" fill="#fffaf0" stroke="${col}" stroke-width="2.2"/><use href="#ic-${MODE[L.mode][1]}" x="-7.5" y="-7.5" width="15" height="15" color="${col}"/></g>`; }
   }
-  s += `<defs><marker id="pl-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0f766e"/></marker></defs>`;
-  const fIn = plan().entry ? flightSVG(plan().entry, 'entry') : {svg: '', at: null}, fOut = plan().exit ? flightSVG(plan().exit, 'exit', fIn.at) : {svg: '', at: null};
-  s += fIn.svg + fOut.svg;
   // cidades
-  const labels = [], boxes = [fIn.at, fOut.at].filter(Boolean).map(([x, y]) => ({x0: x - 24, x1: x + 24, y0: y - 20, y1: y + 36}));
+  const labels = [], boxes = [];
   const fits = r => !boxes.some(o => r.x0 < o.x1 && r.x1 > o.x0 && r.y0 < o.y1 && r.y1 > o.y0);
   const ordered = [...IT_CITIES].sort((a, b) => (inPlan.has(a.k) - inPlan.has(b.k)) || (a.k === planSel) - (b.k === planSel));
   let dots = '';
-  const step = planStep(), {entry, exit} = plan();
+  const step = planStep();
   const plane = (bx, by, fill) => `<g transform="translate(${bx},${by})" pointer-events="none"><circle r="7.5" fill="${fill}" stroke="#fffaf0" stroke-width="1.5"/><use href="#ic-voo" x="-5.5" y="-5.5" width="11" height="11" color="#fff"/></g>`;
   ordered.forEach(c => {
     const [x, y] = p(c.lat, c.lon), nums = inPlan.get(c.k), on = !!nums, sel = c.k === planSel;
