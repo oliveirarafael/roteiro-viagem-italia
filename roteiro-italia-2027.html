@@ -382,6 +382,23 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .hc-links a:hover{background:#fde68a}
 .hc-links a svg{width:13px;height:13px}
 .hc-hint{color:#9a8a70;font-size:11px}
+.hc-mine{background:#eef8f5;border-radius:8px;padding:6px 8px;font-size:12px;display:flex;flex-direction:column;gap:3px}
+.hc-mine b{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#0f766e}
+.hc-mine p{margin:0;white-space:pre-line;color:#3b2a1e}
+.hc-mine a{display:inline-flex;gap:4px;align-items:center;color:#0f766e;font-weight:700;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-mine a svg{width:12px;height:12px;flex:none}
+.links-ed{display:flex;flex-direction:column;gap:5px}
+.le-list:empty{display:none}
+.le-row{display:flex;align-items:center;gap:6px;font-size:12.5px;background:#fff;border:1px solid #e6dcc6;border-radius:8px;padding:3px 6px}
+.le-row svg{width:13px;height:13px;color:#0f766e;flex:none}
+.le-row a{flex:1;min-width:0;color:#0f766e;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.le-row .le-del{border:none;background:none;color:#b91c1c;font-size:16px;padding:0 4px;cursor:pointer}
+.le-add{display:flex;gap:5px;flex-wrap:wrap}
+.le-add input{flex:1 1 120px;min-width:0;font-size:12.5px;padding:4px 7px;border:1px solid #d9c49a;border-radius:7px}
+.le-add .le-btn{flex:none;font-size:12px;padding:3px 9px}
+.lbl-like{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:-6px}
+.pop-lbl{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--muted);font-weight:700}
+.pop-lbl textarea{border:1px solid #d9c49a;border-radius:7px;padding:4px 6px;font-size:12.5px;resize:vertical;font-weight:400;color:var(--ink)}
 @media (hover:none){.hover-card{display:none}}
 .sug-pt:hover circle:nth-of-type(2){stroke-dasharray:none;stroke-width:3;fill:#fde68a}
 .sug-card select{width:100%;margin-bottom:6px}
@@ -1523,7 +1540,8 @@ function openItemModal(id, dayId, presetStart = '', preset = {}) {
       <label>Fim<input type="time" name="end" value="${esc(it.end)}"></label>
     </div>
     <label>Título<input name="title" required value="${esc(it.title)}" autofocus></label>
-    <label>Notas<textarea name="notes" rows="4">${esc(it.notes)}</textarea></label>
+    <label>Observações<textarea name="notes" rows="4" placeholder="Dicas, horários, o que você leu sobre o lugar…">${esc(it.notes)}</textarea></label>
+    <div class="lbl-like">Links e referências</div>${linksEditorHTML(it.links)}
     <div class="grid2">
       <label>Custo por pessoa (US$)<input type="number" step="0.01" min="0" name="costUsd" value="${round2(toUSD(it.cost))}"></label>
       <label>Custo por pessoa (€)<input type="number" step="0.01" min="0" name="cost" value="${+it.cost || 0}"></label>
@@ -1547,7 +1565,7 @@ function openItemModal(id, dayId, presetStart = '', preset = {}) {
       <button type="submit" class="primary">Salvar</button>
     </div>`,
     fd => {
-      const vals = {start: fd.get('start'), end: fd.get('end'), type: fd.get('type'), title: fd.get('title').trim(), notes: fd.get('notes').trim(), cost: parseFloat(fd.get('cost')) || 0, status: fd.get('status'), link: fixUrl(fd.get('link'))};
+      const vals = {start: fd.get('start'), end: fd.get('end'), type: fd.get('type'), title: fd.get('title').trim(), notes: fd.get('notes').trim(), cost: parseFloat(fd.get('cost')) || 0, status: fd.get('status'), link: fixUrl(fd.get('link')), links: getLinks()};
       const target = dayById(fd.get('day')), loc = fd.get('mapLoc') || 'auto';
       const place = obj => {
         if (loc === 'keep') return;
@@ -1573,6 +1591,7 @@ function openItemModal(id, dayId, presetStart = '', preset = {}) {
       if (act === 'delete') { if (!confirm('Excluir esta atividade?')) return false; commit(() => f.day.items.splice(f.day.items.indexOf(f.item), 1)); syncToast(null, 'del', f.item.title); }
       if (act === 'dup') commit(() => f.day.items.splice(f.day.items.indexOf(f.item) + 1, 0, {...f.item, id: uid()}));
     });
+  const getLinks = mountLinksEditor(mform);
   const showConflict = () => {
     const box = $('#mConflict'); if (!box) return;
     const list = slotConflicts(dayById(mform.day.value), mform.start.value, mform.end.value, f && f.item.id);
@@ -3962,6 +3981,8 @@ function hoverCardHTML(h) {
       ${meta ? `<div class="hc-meta">${meta}</div>` : ''}
       ${desc ? `<p class="hc-desc">${esc(desc)}</p>` : ''}
       <p class="hc-wiki"></p>
+      ${item && item.notes && p && !item.notes.startsWith(p.d) ? `<div class="hc-mine"><b>Suas observações</b><p>${esc(item.notes)}</p></div>` : ''}
+      ${item?.links?.length ? `<div class="hc-mine"><b>Seus links</b>${item.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${icSvg('link')}${esc(l.title || siteName(l.url))}</a>`).join('')}</div>` : ''}
       <div class="hc-links"><a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${icSvg('foto')}Fotos</a><a href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Vídeos</a><a href="${mapsUrl(name + ', ' + city + ', Itália')}" target="_blank" rel="noopener">${icSvg('mapa')}Mapa</a><a class="hc-wl" target="_blank" rel="noopener" hidden>Wikipédia</a></div>
       <small class="hc-hint">${h.hint}</small>
     </div>`;
@@ -4017,12 +4038,16 @@ function setupHoverCards() {
 /* ---------- gerar calendário ---------- */
 function generateFromPlan(start) {
   const days = [], pcs = plan().cities.filter(pc => CAT[pc.k]);
+  const kept = new Map(); state.days.forEach(d => d.items.forEach(it => { if (it.cat && !kept.has(it.cat)) kept.set(it.cat, it); }));
   let date = start;
   const newDay = (base, title) => { const d = {id: uid(), date, base, title, note: '', items: []}; days.push(d); date = addDays(date, 1); return d; };
   const typeOf = placeType;
   pcs.forEach((pc, i) => {
     const c = CAT[pc.k], prev = i && pcs[i - 1].k !== pc.k ? CAT[pcs[i - 1].k] : null, L = prev ? legInfo(prev, c) : null;
-    const items = pc.p.map(id => PLACE[id]).filter(Boolean).map(p => ({id: uid(), start: '', end: '', type: typeOf(p.ic), title: p.name, notes: p.d + (p.r ? ' Reserva antecipada recomendada.' : ''), cost: 0, status: p.r ? 'reservar' : '', link: '', geo: {lat: p.lat, lon: p.lon}, cat: p.id, _h: p.h}));
+    const items = pc.p.map(id => PLACE[id]).filter(Boolean).map(p => {
+      const o = kept.get(p.id);
+      return {id: uid(), start: o?.start || '', end: o?.end || '', type: typeOf(p.ic), title: p.name, notes: o ? o.notes : p.d + (p.r ? ' Reserva antecipada recomendada.' : ''), cost: o?.cost || 0, status: o ? o.status : p.r ? 'reservar' : '', link: o?.link || '', links: o?.links || [], geo: {lat: p.lat, lon: p.lon}, cat: p.id, _h: p.h};
+    });
     const legItem = L ? {id: uid(), start: '', end: '', type: L.mode === 'carro' ? 'transfer' : L.mode, title: `${MODE[L.mode][0]} ${prev.name} → ${c.name}`, notes: `~${fmtDur(L.min)} · ${L.note}${L.est ? ' (estimativa)' : ''}`, cost: 0, status: L.mode === 'trem' && !L.est ? 'reservar' : '', link: ''} : null;
     const n = Math.max(0, +pc.n || 0);
     const target = n ? Array.from({length: n}, (_, j) => newDay(c.name, j === 0 ? (prev ? `${prev.name} → ${c.name}` : `Chegada em ${c.name}`) : c.name)) : [days[days.length - 1] || newDay(c.name, c.name)];
@@ -4123,6 +4148,22 @@ function setupPlanner() {
 let mapDrag = null;
 function svgPoint(svg, x, y) { const pt = svg.createSVGPoint(); pt.x = x; pt.y = y; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
 function closeMapPop() { $('#mapPop')?.remove(); }
+function linksEditorHTML(links = []) {
+  return `<div class="links-ed" data-links="${esc(JSON.stringify(links))}"><div class="le-list"></div>
+    <div class="le-add"><input class="le-url" placeholder="Colar link (site, vídeo, reportagem…)"><input class="le-title" placeholder="Descrição (opcional)"><button type="button" class="le-btn">+ Link</button></div></div>`;
+}
+function mountLinksEditor(root) {
+  const ed = $('.links-ed', root); if (!ed) return () => [];
+  let links = []; try { links = JSON.parse(ed.dataset.links || '[]'); } catch (e) {}
+  const list = $('.le-list', ed), url = $('.le-url', ed), title = $('.le-title', ed);
+  const draw = () => { list.innerHTML = links.map((l, i) => `<div class="le-row">${icSvg('link')}<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title || siteName(l.url))}</a><button type="button" class="le-del" data-i="${i}" title="Remover">×</button></div>`).join(''); };
+  const add = () => { const u = fixUrl(url.value); if (!u) return; links.push({url: u, title: title.value.trim()}); url.value = title.value = ''; draw(); url.focus(); };
+  $('.le-btn', ed).onclick = add;
+  url.onkeydown = title.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); add(); } };
+  list.onclick = e => { const b = e.target.closest('.le-del'); if (b) { links.splice(+b.dataset.i, 1); draw(); } };
+  draw();
+  return () => { if (url.value.trim()) add(); return links; };
+}
 function openMapPop(pinEl) {
   closeMapPop();
   const paper = pinEl.closest('.paper'), kind = pinEl.dataset.kind;
@@ -4141,7 +4182,8 @@ function openMapPop(pinEl) {
           <select name="type" aria-label="Tipo">${Object.entries(TYPES).map(([k, v]) => `<option value="${k}" ${k === it.type ? 'selected' : ''}>${v.label}</option>`).join('')}</select></div>
         <div class="pop-row"><label>Início <input type="time" name="start" value="${esc(it.start)}"></label><label>Fim <input type="time" name="end" value="${esc(it.end)}"></label></div>
         <div class="pop-conflict ${conf.length ? 'on' : ''}">${conf.length ? `<b>Horário sobreposto com:</b> ${esc(conflictText(it.id))}` : ''}</div>
-        ${it.notes ? `<div class="pop-notes">${esc(it.notes)}</div>` : ''}
+        <label class="pop-lbl">Observações<textarea name="notes" rows="3" placeholder="Dicas, horários, o que você leu sobre o lugar…">${esc(it.notes)}</textarea></label>
+        <div class="pop-lbl">Links</div>${linksEditorHTML(it.links)}
         <div class="pop-actions"><button type="submit" class="primary">Salvar</button><button type="button" data-pop="edit">Mais detalhes</button><button type="button" data-pop="delete" class="danger">Excluir</button>${it.mapPos ? '<button type="button" data-pop="reset">Posição automática</button>' : ''}</div>
       </form>
       <div class="pop-guide">${guideHTML(guideTarget(it, f.day))}</div>`;
@@ -4156,7 +4198,9 @@ function openMapPop(pinEl) {
   pop.style.left = Math.max(6, Math.min(left, pr.width - pop.offsetWidth - 6)) + 'px';
   pop.style.top = top + 'px';
   const form = $('.pop-form', pop);
-  if (form) form.oninput = () => {
+  if (form) form._links = mountLinksEditor(form);
+  if (form) form.oninput = e => {
+    if (!['day', 'start', 'end'].includes(e.target.name)) return;
     const list = slotConflicts(dayById(form.day.value), form.start.value, form.end.value, pinEl.dataset.id), box = $('.pop-conflict', form);
     box.innerHTML = list.length ? `<b>Horário sobreposto com:</b> ${list.map(o => `${esc(o.start)}${o.end ? '–' + esc(o.end) : ''} ${esc(o.title)}`).join('; ')}` : '';
     box.classList.toggle('on', list.length > 0);
@@ -4201,7 +4245,7 @@ function setupMapEvents() {
     e.preventDefault();
     const id = form.closest('.map-pop').dataset.id, f = findItem(id); if (!f) return;
     const E = form.elements, target = dayById(E.day.value);
-    const vals = {title: E.title.value.trim() || f.item.title, type: E.type.value, start: E.start.value, end: E.end.value};
+    const vals = {title: E.title.value.trim() || f.item.title, type: E.type.value, start: E.start.value, end: E.end.value, notes: E.notes.value.trim(), links: form._links ? form._links() : (f.item.links || [])};
     const same = target === f.day && vals.start === f.item.start;
     commit(() => {
       Object.assign(f.item, vals);
