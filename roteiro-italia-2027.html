@@ -348,16 +348,32 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .gen-st{font-size:12px;font-weight:700;color:#7a6a52}
 .pl-tip{font-size:12.5px;color:#9a3412;background:#fff1e6;border:1px dashed #f0b27a;border-radius:10px;padding:7px 10px;margin:0 0 10px}
 .ps-warn{font-size:12px;color:#9a3412;margin:6px 0 0;padding-left:40px}
-.pl-ends{display:flex;flex-direction:column;gap:6px;margin:0 0 10px;border:2px solid #0f766e;border-radius:12px;padding:8px 10px;background:#f0fbf8}
-.pl-ends.done{border-width:1.5px;border-style:dashed;background:#fffdf7}
-.pl-ends>b{font-size:13.5px;color:#0f766e}
-.pl-ends label{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700}
-.pl-ends label span{display:flex;align-items:center;gap:4px;width:68px;flex:none}
-.pl-ends label svg{width:14px;height:14px;color:#0f766e}
-.pl-ends select{flex:1;min-width:0;border:1.5px solid var(--ink);border-radius:8px;padding:4px 6px;background:#fff;font-size:12.5px}
-.pl-ends>button{align-self:flex-start}
-.pl-ends small{font-size:11.5px;color:#6b5a44}
+.pl-ends{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px;border:2px solid #0f766e;border-radius:12px;padding:8px 10px;background:#f0fbf8}
+.pl-ends.done{border-width:1.5px;border-style:dashed;background:#fffdf7;gap:2px}
+.pe-step{display:flex;align-items:center;gap:8px;font-size:13px}
+.pe-step>div{flex:1;min-width:0;display:flex;flex-direction:column}
+.pe-step small{font-size:11.5px;color:#6b5a44;font-weight:400}
+.pe-n{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;border:2px solid #b8a27c;color:#7a6a52;background:#fff}
+.pe-step.on .pe-n{background:#0f766e;border-color:#0f766e;color:#fff}
+.pe-step.on b{color:#0f766e}
+.pe-step.ok .pe-n{background:#e7f6ec;border-color:#15803d;color:#15803d}
+.pe-step.off{opacity:.55}
+.pe-city{display:flex;align-items:center;gap:4px;font-weight:700}
+.pe-city svg{width:13px;height:13px;color:#0f766e;flex:none}
+.pl-ends>button{align-self:flex-start;margin-left:30px}
 .pl-ends .pe-warn{margin:0;font-size:12px;color:#c2410c;font-weight:700}
+.plan-paper.picking .pl-city{cursor:crosshair}
+.pl-map-wrap{position:relative}
+.pl-map-wrap.zoomed .plan-svg{cursor:grab;touch-action:none;user-select:none}
+.pl-map-wrap.zoomed .plan-svg:active{cursor:grabbing}
+.pl-zoom{position:absolute;left:10px;bottom:10px;display:flex;flex-direction:column;border:2px solid var(--ink);border-radius:10px;overflow:hidden;box-shadow:2px 2px 0 var(--ink);background:#fffaf0}
+.pl-zoom button{width:34px;height:32px;border:none;background:#fffaf0;font-size:20px;font-weight:800;line-height:1;cursor:pointer;color:var(--ink);padding:0}
+.pl-zoom button+button{border-top:1.5px solid #d9c49a}
+.pl-zoom button:hover:not(:disabled){background:#f0fbf8;color:#0f766e}
+.pl-zoom button:disabled{opacity:.35;cursor:default}
+.pl-pick-banner{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 8px;background:#0f766e;color:#fff;font-size:13.5px;font-weight:600;padding:6px 14px;border-radius:999px;box-shadow:2px 2px 0 var(--ink);border:2px solid var(--ink);animation:pick-pulse 1.8s ease-in-out infinite}
+.pl-pick-banner svg{width:16px;height:16px;flex:none}
+@keyframes pick-pulse{50%{transform:scale(1.02)}}
 .ps-tag.ps-end{display:inline-flex;align-items:center;gap:3px;color:#0f766e;border-color:#0f766e}
 .ps-tag.ps-end svg{width:11px;height:11px}
 .sug-pt{cursor:pointer}
@@ -3707,33 +3723,114 @@ function applyEnds() {
     pcs.push(i > 0 ? pcs.splice(i, 1)[0] : {k: exit, n: i === 0 ? 1 : CAT[exit].n, p: []});
   }
 }
-function endSelectHTML(kind) {
-  const v = plan()[kind] || '';
-  const opt = c => `<option value="${c.k}" ${c.k === v ? 'selected' : ''}>${esc(c.name)}${GATEWAYS[c.k] ? ` · aeroporto ${GATEWAYS[c.k]}` : ''}</option>`;
-  return `<select data-end="${kind}"><option value="">${kind === 'entry' ? 'Cidade onde você chega…' : 'Cidade de onde você volta…'}</option>
-    <optgroup label="Aeroportos internacionais">${Object.keys(GATEWAYS).filter(k => CAT[k]).map(k => opt(CAT[k])).join('')}</optgroup>
-    <optgroup label="Outras cidades">${IT_CITIES.filter(c => !GATEWAYS[c.k]).map(opt).join('')}</optgroup></select>`;
+let pickEnd = null;
+const planStep = () => !plan().entry ? 'entry' : !plan().exit ? 'exit' : pickEnd;
+function pickCity(kind, k) {
+  commit(() => {
+    const P = plan(), old = P[kind], pcs = P.cities;
+    if (old && old !== k) {
+      const i = kind === 'entry' ? 0 : pcs.length - 1;
+      if (pcs[i]?.k === old && !pcs[i].p.length && (kind === 'entry' || i > 0)) pcs.splice(i, 1);
+    }
+    P[kind] = k; applyEnds(); pickEnd = null; planOcc = null; planSel = null;
+  });
+  toast(`${kind === 'entry' ? 'Chegada' : 'Saída'}: <b>${esc(CAT[k].name)}</b>.${planStep() === 'exit' ? ' Agora clique no mapa na cidade de onde você volta.' : planStep() ? '' : ' As outras cidades estão liberadas.'}`);
 }
 function planEndsHTML() {
-  const {entry, exit} = plan();
-  return `<div class="pl-ends ${entry && exit ? 'done' : ''}">
-    <b>Por onde você entra e sai?</b>
-    <label><span>${icSvg('voo')}Entrada</span>${endSelectHTML('entry')}</label>
-    <label><span>${icSvg('voo')}Saída</span>${endSelectHTML('exit')}</label>
-    ${entry && !exit ? `<button class="ink-btn small" data-pl="same-exit">Voltar por ${esc(CAT[entry].name)} também</button>` : ''}
-    ${endsOff() ? `<p class="pe-warn">A sequência não ${entry && plan().cities[0].k !== entry ? `começa em ${esc(CAT[entry].name)}` : `termina em ${esc(CAT[exit].name)}`}. <button class="ink-btn small" data-pl="ends-fix">Ajustar</button></p>` : ''}
-    <small>${entry || exit ? 'A entrada fica sempre como 1ª parada e a saída como a última; as outras cidades entram no meio.' : 'Comece por aqui: a cidade de chegada vira a 1ª parada e a de saída, a última.'}</small>
+  const {entry, exit} = plan(), step = planStep();
+  const row = (kind, n, label, hint) => {
+    const k = plan()[kind], on = step === kind;
+    return `<div class="pe-step ${on ? 'on' : k ? 'ok' : ''}"><span class="pe-n">${k && !on ? '✓' : n}</span><div><b>${label}</b>
+      ${on ? `<small>${hint}</small>` : k ? `<span class="pe-city">${icSvg('voo')}${esc(CAT[k].name)}${GATEWAYS[k] ? ` <small>aeroporto ${GATEWAYS[k]}</small>` : ''}</span>` : '<small>depois da chegada</small>'}</div>
+      ${k && !on && !(step && step !== kind) ? `<button class="ink-btn small" data-pl="pick" data-end="${kind}">trocar</button>` : ''}</div>`;
+  };
+  return `<div class="pl-ends ${step ? '' : 'done'}">
+    ${row('entry', 1, 'Chegada', 'Clique no mapa na cidade onde você chega. As cidades com ✈ têm aeroporto internacional.')}
+    ${row('exit', 2, 'Saída', 'Clique no mapa na cidade de onde você volta para casa.')}
+    ${step === 'exit' && entry ? `<button class="ink-btn small" data-pl="same-exit">Voltar por ${esc(CAT[entry].name)} também</button>` : ''}
+    ${pickEnd ? '<button class="ink-btn small" data-pl="pick-cancel">Cancelar troca</button>' : ''}
+    <div class="pe-step ${step ? 'off' : 'ok'}"><span class="pe-n">3</span><div><b>Demais cidades</b><small>${step ? 'Liberadas depois de escolher a chegada e a saída.' : 'Clique numa cidade (aqui ou no mapa) para ver como chegar e incluir; ela entra entre a chegada e a saída.'}</small></div></div>
+    ${!step && endsOff() ? `<p class="pe-warn">A sequência não ${plan().cities[0].k !== entry ? `começa em ${esc(CAT[entry].name)}` : `termina em ${esc(CAT[exit].name)}`}. <button class="ink-btn small" data-pl="ends-fix">Ajustar</button></p>` : ''}
   </div>`;
 }
 
 /* ---------- mapa da Itália ---------- */
 const BALKANS = [[45.2, 16], [45.17, 14.69], [44.95, 14.85], [44.55, 15.05], [44.1, 15.25], [43.75, 15.75], [43.5, 16.3], [43.25, 16.95], [43.0, 17.45], [42.65, 18.05], [42.4, 18.55], [42.1, 19.1], [41.85, 19.38], [41.4, 19.45], [40.95, 19.42], [40.45, 19.4], [40.05, 19.85], [39.7, 20.05], [39.3, 20.3], [38.8, 20.65], [38.2, 21.2], [37.9, 21.15], [37.6, 21.65], [36.8, 21.7], [36.3, 22.5], [36.3, 23.5], [45.2, 23.5]];
-const PLAN_MAP = (() => { const k = 64, c = 0.743, lo0 = 6.4, la1 = 47.3; return {W: Math.round((18.7 - lo0) * c * k), H: Math.round((la1 - 36.4) * k), p: (lat, lon) => [(lon - lo0) * c * k, (la1 - lat) * k]}; })();
+const PLAN_MAP = (() => { const k = 64, c = 0.743, lo0 = 6.4, la1 = 47.3; return {W: Math.round((18.7 - lo0) * c * k), H: Math.round((la1 - 36.4) * k), p: (lat, lon) => [(lon - lo0) * c * k, (la1 - lat) * k], inv: (x, y) => [la1 - y / k, lo0 + x / (c * k)]}; })();
+const inPoly = (lat, lon, poly) => {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [ai, oi] = poly[i], [aj, oj] = poly[j];
+    if ((ai > lat) !== (aj > lat) && lon < (oj - oi) * (lat - ai) / (aj - ai) + oi) inside = !inside;
+  }
+  return inside;
+};
+const isSea = (x, y) => { const [lat, lon] = PLAN_MAP.inv(x, y); return ![EUROPE, BALKANS, ITALY, SWISS, ...ISLANDS].some(P => inPoly(lat, lon, P)); };
+const seaCache = new Map();
+// ponto de mar perto da cidade para o avião de chegada/saída: de preferência a sudoeste (vindo do Brasil), longe das outras cidades
+function seaSpot(k, avoid = null) {
+  const key = k + '|' + (avoid ? avoid.map(Math.round).join(',') : '');
+  if (seaCache.has(key)) return seaCache.get(key);
+  const {W, H, p} = PLAN_MAP, C = CAT[k], [cx, cy] = p(C.lat, C.lon), pref = Math.atan2(.55, -1);
+  const seaLabels = [[40.3, 11.6], [43.2, 15.2], [38.4, 18.0], [43.65, 8.6]].flatMap(([a, b]) => { const [x, y] = p(a, b); return [[x - 32, y - 5], [x, y - 5], [x + 32, y - 5]]; });
+  const dots = [...IT_CITIES.map(c => p(c.lat, c.lon)), ...seaLabels], ring = [[0, 0], [17, 0], [-17, 0], [0, 17], [0, -17], [12, 12], [-12, 12], [12, -12], [-12, -12]];
+  let best = null;
+  for (let r = 55; r <= 340; r += 10) for (let a = 0; a < 360; a += 10) {
+    const t = a * Math.PI / 180, x = cx + r * Math.cos(t), y = cy + r * Math.sin(t);
+    if (x < 26 || y < 26 || x > W - 26 || y > H - 26 || !ring.every(([dx, dy]) => isSea(x + dx, y + dy))) continue;
+    let cost = r * 1.5 + 45 * (1 - Math.cos(t - pref));
+    dots.forEach(([px, py]) => { const d = Math.hypot(x - px, y - py); if (d < 34) cost += (34 - d) * 4; });
+    if (avoid) { const d = Math.hypot(x - avoid[0], y - avoid[1]); if (d < 80) cost += (80 - d) * 5; }
+    if (!best || cost < best.cost) best = {x, y, cost};
+  }
+  seaCache.set(key, best);
+  return best;
+}
+function flightSVG(k, kind, avoid) {
+  const C = CAT[k], s = C && seaSpot(k, avoid); if (!s) return {svg: '', at: null};
+  const [cx, cy] = PLAN_MAP.p(C.lat, C.lon), arr = kind === 'entry';
+  const [ax, ay, bx, by] = arr ? [s.x, s.y, cx, cy] : [cx, cy, s.x, s.y];
+  const len = Math.hypot(bx - ax, by - ay), ux = (bx - ax) / len, uy = (by - ay) / len;
+  const [sa, sb] = arr ? [20, 16] : [16, 24];
+  const x0 = ax + ux * sa, y0 = ay + uy * sa, x1 = bx - ux * sb, y1 = by - uy * sb, bend = Math.min(26, len * .18) * (arr ? 1 : -1);
+  const qx = (x0 + x1) / 2 - uy * bend, qy = (y0 + y1) / 2 + ux * bend;
+  const head = Math.atan2(arr ? cy - s.y : s.y - cy, arr ? cx - s.x : s.x - cx) * 180 / Math.PI + 45;
+  return {at: [s.x, s.y], svg: `<g class="pl-flight" pointer-events="none"><title>${arr ? 'Chegada' : 'Saída'} de avião: ${esc(C.name)}</title>
+    <path d="M${rn(x0)} ${rn(y0)}Q${rn(qx)} ${rn(qy)} ${rn(x1)} ${rn(y1)}" fill="none" stroke="#0f766e" stroke-width="2.6" stroke-dasharray="6 5" stroke-linecap="round" marker-end="url(#pl-arrow)"/>
+    <g transform="translate(${rn(s.x)},${rn(s.y)}) rotate(${rn(head)}) scale(1.55) translate(-12,-12)"><path d="${IC.voo.match(/d="([^"]+)"/)[1]}" fill="#0f766e" stroke="#fffaf0" stroke-width="1.3" stroke-linejoin="round"/></g>
+    <text x="${rn(s.x)}" y="${rn(s.y + 30)}" text-anchor="middle" font-size="11.5" class="f-bold" fill="#0f766e" paint-order="stroke" stroke="#fffaf0" stroke-width="3.5" stroke-linejoin="round">${arr ? 'chegada' : 'saída'}</text></g>`};
+}
+const ZOOM_MAX = 2.5;
+const planZoom = {z: 1, cx: PLAN_MAP.W / 2, cy: PLAN_MAP.H / 2};
+function planViewBox() {
+  const {W, H} = PLAN_MAP, w = W / planZoom.z, h = H / planZoom.z;
+  const x = Math.min(Math.max(planZoom.cx - w / 2, 0), W - w), y = Math.min(Math.max(planZoom.cy - h / 2, 0), H - h);
+  return [x, y, w, h];
+}
+function setPlanZoom(z, fx, fy) {
+  const [x0, y0, w0, h0] = planViewBox();
+  fx ??= x0 + w0 / 2; fy ??= y0 + h0 / 2;
+  const nz = Math.min(ZOOM_MAX, Math.max(1, Math.round(z * 100) / 100)), k = planZoom.z / nz;
+  planZoom.cx = fx - (fx - x0) * k + w0 * k / 2; planZoom.cy = fy - (fy - y0) * k + h0 * k / 2; planZoom.z = nz;
+  applyPlanZoom();
+}
+function applyPlanZoom() {
+  const vb = planViewBox();
+  planZoom.cx = vb[0] + vb[2] / 2; planZoom.cy = vb[1] + vb[3] / 2;
+  $('#tab-mapa .plan-svg')?.setAttribute('viewBox', vb.map(rn).join(' '));
+  const wrap = $('#tab-mapa .pl-map-wrap'); if (!wrap) return;
+  wrap.classList.toggle('zoomed', planZoom.z > 1);
+  $('[data-zoom="in"]', wrap).disabled = planZoom.z >= ZOOM_MAX;
+  $('[data-zoom="out"]', wrap).disabled = $('[data-zoom="reset"]', wrap).disabled = planZoom.z <= 1;
+}
+function planZoomHTML() {
+  return `<div class="pl-zoom"><button type="button" data-zoom="in" title="Aproximar (também com Ctrl + roda do mouse)" ${planZoom.z >= ZOOM_MAX ? 'disabled' : ''}>+</button><button type="button" data-zoom="out" title="Afastar" ${planZoom.z <= 1 ? 'disabled' : ''}>−</button><button type="button" data-zoom="reset" title="Ver a Itália inteira" ${planZoom.z <= 1 ? 'disabled' : ''}>⤢</button></div>`;
+}
 function planMapSVG() {
   const {W, H, p} = PLAN_MAP, poly = pts => smoothPath(pts.map(([a, b]) => p(a, b)), true), line = pts => smoothPath(pts.map(([a, b]) => p(a, b)), false);
   const seq = plan().cities.map(pc => CAT[pc.k]).filter(Boolean), inPlan = new Map();
   seq.forEach((c, i) => { if (!inPlan.has(c.k)) inPlan.set(c.k, []); inPlan.get(c.k).push(i + 1); });
-  let s = `<svg viewBox="0 0 ${W} ${H}" class="plan-svg" role="img" aria-label="Mapa interativo da Itália">`;
+  let s = `<svg viewBox="${planViewBox().map(rn).join(' ')}" class="plan-svg" role="img" aria-label="Mapa interativo da Itália">`;
   s += `<rect width="${W}" height="${H}" fill="url(#seaGrad)"/>`;
   [[39.4, 11.2], [42.2, 9.2], [40.2, 13.4], [38.6, 17.8], [43.1, 14.6], [37.0, 17.0], [41.0, 17.9], [39.0, 15.0]].forEach(([a, b], i) => { const [x, y] = p(a, b); s += `<use href="#wave" x="${rn(x)}" y="${rn(y)}" width="${30 + (i % 3) * 6}" height="10"/>`; });
   s += `<g filter="url(#rough)"><path d="${poly(EUROPE)}" fill="#ebe0c6" stroke="#b09466" stroke-width="1.5"/><path d="${poly(BALKANS)}" fill="#ebe0c6" stroke="#b09466" stroke-width="1.5"/>`;
@@ -3754,17 +3851,24 @@ function planMapSVG() {
     s += `<path d="M${rn(x1)} ${rn(y1)}Q${rn(cx)} ${rn(cy)} ${rn(x2)} ${rn(y2)}" fill="none" stroke="${col}" stroke-width="3.2" stroke-dasharray="${L.mode === 'voo' ? '7 7' : L.mode === 'barco' ? '2 6' : '10 6'}" stroke-linecap="round" class="route-anim"/>`;
     if (len > 46) { const bx = (x1 + 2 * cx + x2) / 4, by = (y1 + 2 * cy + y2) / 4; s += `<g class="pl-leg" transform="translate(${rn(bx)},${rn(by)})"><title>${MODE[L.mode][0]} ${a.name} → ${b.name}: ${fmtDur(L.min)}</title><circle r="11" fill="#fffaf0" stroke="${col}" stroke-width="2.2"/><use href="#ic-${MODE[L.mode][1]}" x="-7.5" y="-7.5" width="15" height="15" color="${col}"/></g>`; }
   }
+  s += `<defs><marker id="pl-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0f766e"/></marker></defs>`;
+  const fIn = plan().entry ? flightSVG(plan().entry, 'entry') : {svg: '', at: null}, fOut = plan().exit ? flightSVG(plan().exit, 'exit', fIn.at) : {svg: '', at: null};
+  s += fIn.svg + fOut.svg;
   // cidades
-  const labels = [], boxes = [];
+  const labels = [], boxes = [fIn.at, fOut.at].filter(Boolean).map(([x, y]) => ({x0: x - 24, x1: x + 24, y0: y - 20, y1: y + 36}));
   const fits = r => !boxes.some(o => r.x0 < o.x1 && r.x1 > o.x0 && r.y0 < o.y1 && r.y1 > o.y0);
   const ordered = [...IT_CITIES].sort((a, b) => (inPlan.has(a.k) - inPlan.has(b.k)) || (a.k === planSel) - (b.k === planSel));
   let dots = '';
+  const step = planStep(), {entry, exit} = plan();
+  const plane = (bx, by, fill) => `<g transform="translate(${bx},${by})" pointer-events="none"><circle r="7.5" fill="${fill}" stroke="#fffaf0" stroke-width="1.5"/><use href="#ic-voo" x="-5.5" y="-5.5" width="11" height="11" color="#fff"/></g>`;
   ordered.forEach(c => {
     const [x, y] = p(c.lat, c.lon), nums = inPlan.get(c.k), on = !!nums, sel = c.k === planSel;
     const col = on ? cityColor(c.name) : '#fffaf0', numTxt = on ? nums.join('·') : '', rw = on ? Math.max(11, numTxt.length * 4 + 6) : 6;
-    dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(c.name)} — ${esc(c.reg)}${on ? ` (parada${nums.length > 1 ? 's' : ''} ${nums.join(' e ')})` : ' · clique para ver os lugares'}</title>
+    const tip = step ? ` · clique para escolher como ${step === 'entry' ? 'chegada' : 'saída'}${GATEWAYS[c.k] ? ` (aeroporto ${GATEWAYS[c.k]})` : ''}` : on ? ` (parada${nums.length > 1 ? 's' : ''} ${nums.join(' e ')})` : ' · clique para ver os lugares';
+    const badge = step && GATEWAYS[c.k] && !on ? plane(8, -8, '#0f766e') : '';
+    dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(c.name)} — ${esc(c.reg)}${tip}</title>
       <circle r="16" fill="transparent"/>${sel ? `<rect x="${-rw - 6}" y="-17" width="${2 * rw + 12}" height="34" rx="17" fill="none" stroke="#f59e0b" stroke-width="4"/>` : ''}
-      ${on ? `<rect x="${-rw}" y="-11" width="${2 * rw}" height="22" rx="11" fill="${col}" stroke="${INK}" stroke-width="2.5"/><text y="4.5" text-anchor="middle" font-size="${nums.length > 1 ? 11 : 12}" class="f-bold" fill="#fff">${numTxt}</text>` : `<circle r="6" fill="${col}" stroke="${INK}" stroke-width="2"/>`}</g>`;
+      ${on ? `<rect x="${-rw}" y="-11" width="${2 * rw}" height="22" rx="11" fill="${col}" stroke="${INK}" stroke-width="2.5"/><text y="4.5" text-anchor="middle" font-size="${nums.length > 1 ? 11 : 12}" class="f-bold" fill="#fff">${numTxt}</text>` : `<circle r="6" fill="${col}" stroke="${INK}" stroke-width="2"/>`}${badge}</g>`;
     boxes.push({x0: x - (on ? rw + 1 : 7), x1: x + (on ? rw + 1 : 7), y0: y - (on ? 12 : 7), y1: y + (on ? 12 : 7)});
   });
   ordered.slice().reverse().forEach(c => {
@@ -3787,6 +3891,7 @@ function planMapSVG() {
 
 /* ---------- painel lateral e sequência ---------- */
 function planSideHTML() {
+  if (planStep()) return `<div class="card pl-browse"><h3>Cidades da Itália</h3>${planEndsHTML()}</div>`;
   if (planSel && CAT[planSel]) {
     const c = CAT[planSel], occ = occOf(c.k), idx = activeOcc(c.k), pc = plan().cities[idx] || null, sel = pc ? pc.p : [];
     const pcs = plan().cities, prev = idx > 0 ? CAT[pcs[idx - 1].k] : pcs.length && !pc ? CAT[pcs[pcs.length - 1].k] : null;
@@ -3808,7 +3913,6 @@ function planSideHTML() {
   return `<div class="card pl-browse">
     <h3>Cidades da Itália</h3>
     ${planEndsHTML()}
-    <p class="muted" style="font-size:12.5px;margin:0 0 8px">Clique numa cidade (aqui ou no mapa) para ver como chegar e incluir na sua sequência.</p>
     <input class="pl-search" type="search" placeholder="Buscar cidade, região ou lugar…" value="${esc(planQuery)}">
     ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const occ = occOf(c.k); return `<button class="pl-chip ${occ.length ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${occ.length ? `<span>${occ.map(i => i + 1).join('·')}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
   </div>`;
@@ -3819,7 +3923,7 @@ function legHTML(L, a, b) {
 }
 function planSeqHTML() {
   const pcs = plan().cities;
-  if (!pcs.length) return `<section class="pl-seq"><h3>Sua sequência</h3><div class="pl-empty">Nenhuma cidade ainda. Escolha cidades no mapa ou na lista ao lado.</div></section>`;
+  if (!pcs.length) return `<section class="pl-seq"><h3>Sua sequência</h3><div class="pl-empty">Nenhuma cidade ainda. Comece clicando no mapa na cidade onde você chega.</div></section>`;
   let totalMin = 0, nights = 0, places = 0;
   const parts = pcs.map((pc, i) => {
     const c = CAT[pc.k]; if (!c) return '';
@@ -3889,7 +3993,8 @@ function genStatusHTML() {
   return g === planKey() ? '<span class="gen-st ok">✓ roteiro em dia com a sequência</span>' : '<span class="gen-st warn">a sequência mudou desde a última vez</span>';
 }
 function planHTML() {
-  return `<div class="plan-grid"><div class="paper plan-paper">${planMapSVG()}</div><aside class="plan-side">${planSideHTML()}</aside></div>${planSeqHTML()}`;
+  const step = planStep();
+  return `<div class="plan-grid"><div class="paper plan-paper ${step ? 'picking' : ''}">${step ? `<div class="pl-pick-banner">${icSvg('voo')}<span>Clique no mapa na cidade ${step === 'entry' ? 'onde você <b>chega</b>' : 'de onde você <b>volta para casa</b>'}</span></div>` : ''}<div class="pl-map-wrap ${planZoom.z > 1 ? 'zoomed' : ''}">${planMapSVG()}${planZoomHTML()}</div></div><aside class="plan-side">${planSideHTML()}</aside></div>${planSeqHTML()}`;
 }
 
 /* ---------- sugestões no mapa do roteiro ---------- */
@@ -4101,12 +4206,37 @@ function openNightsModal(t, n) {
 }
 
 /* ---------- eventos ---------- */
+let planDrag = null, planDragEnd = 0;
 function setupPlanner() {
   const el = $('#tab-mapa');
+  el.addEventListener('wheel', e => {
+    const svg = e.target.closest('.plan-svg'); if (!svg || !(e.ctrlKey || e.metaKey)) return;
+    e.preventDefault();
+    const pt = svgPoint(svg, e.clientX, e.clientY);
+    setPlanZoom(planZoom.z * (e.deltaY < 0 ? 1.15 : 1 / 1.15), pt.x, pt.y);
+  }, {passive: false});
+  el.addEventListener('pointerdown', e => {
+    const svg = e.target.closest('.plan-svg'); if (!svg || planZoom.z <= 1 || e.button) return;
+    planDrag = {x: e.clientX, y: e.clientY, cx: planZoom.cx, cy: planZoom.cy, k: planViewBox()[2] / svg.getBoundingClientRect().width, moved: false};
+  });
+  window.addEventListener('pointermove', e => {
+    if (!planDrag) return;
+    const dx = e.clientX - planDrag.x, dy = e.clientY - planDrag.y;
+    if (!planDrag.moved && Math.hypot(dx, dy) < 5) return;
+    planDrag.moved = true;
+    planZoom.cx = planDrag.cx - dx * planDrag.k; planZoom.cy = planDrag.cy - dy * planDrag.k;
+    applyPlanZoom();
+  });
+  window.addEventListener('pointerup', () => { if (planDrag?.moved) planDragEnd = Date.now(); planDrag = null; });
+  window.addEventListener('pointercancel', () => { planDrag = null; });
   el.addEventListener('click', e => {
     const mode = e.target.closest('[data-mapmode]');
     if (mode) { commit(() => state.settings.mapMode = mode.dataset.mapmode); return; }
+    const zb = e.target.closest('[data-zoom]');
+    if (zb) { const a = zb.dataset.zoom; setPlanZoom(a === 'reset' ? 1 : planZoom.z * (a === 'in' ? 1.5 : 1 / 1.5)); return; }
+    if (Date.now() - planDragEnd < 250) return;
     const city = e.target.closest('.pl-city');
+    if (city && planStep()) { pickCity(planStep(), city.dataset.city); return; }
     if (city) { planSel = city.dataset.city; renderMap(); $('#tab-mapa .plan-side')?.scrollIntoView({behavior: 'smooth', block: 'nearest'}); return; }
     const b = e.target.closest('[data-pl]'); if (!b) return;
     e.preventDefault();
@@ -4132,11 +4262,13 @@ function setupPlanner() {
         state.days = state.days.map(d => ({...d, base: '', title: '', note: '', items: []}));
         state.settings.mapMode = 'plan';
       });
-      planSel = null; planOcc = null; renderMap();
+      planSel = null; planOcc = null; pickEnd = null; renderMap();
       toast('Roteiro limpo.', '<button data-t="undo">Desfazer</button>', undo);
     }
     if (act === 'fit') commit(() => fitNights(pcs, tripNights()));
-    if (act === 'same-exit') commit(() => { plan().exit = plan().entry; applyEnds(); planOcc = null; });
+    if (act === 'same-exit') pickCity('exit', plan().entry);
+    if (act === 'pick') { pickEnd = b.dataset.end; planSel = null; renderMap(); $('#tab-mapa .plan-grid')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+    if (act === 'pick-cancel') { pickEnd = null; renderMap(); }
     if (act === 'ends-fix') commit(() => { applyEnds(); planOcc = null; });
     if (act === 'gen') {
       if (!plan().end && state.days.length && !plan().genKey) plan().end = state.days.at(-1).date;
@@ -4144,15 +4276,6 @@ function setupPlanner() {
       if (t != null && t !== n) { openNightsModal(t, n); return; }
       runGenerate();
     }
-  });
-  el.addEventListener('change', e => {
-    const s = e.target.closest('select[data-end]'); if (!s) return;
-    commit(() => {
-      const P = plan(), old = P[s.dataset.end], last = P.cities.at(-1);
-      if (s.dataset.end === 'exit' && old && last?.k === old && !last.p.length && occOf(old).length > 1) P.cities.pop();
-      if (s.value) P[s.dataset.end] = s.value; else delete P[s.dataset.end];
-      applyEnds(); planOcc = null;
-    });
   });
   el.addEventListener('input', e => {
     if (!e.target.classList.contains('pl-search')) return;
