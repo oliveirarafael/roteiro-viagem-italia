@@ -348,19 +348,18 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .gen-st{font-size:12px;font-weight:700;color:#7a6a52}
 .pl-tip{font-size:12.5px;color:#9a3412;background:#fff1e6;border:1px dashed #f0b27a;border-radius:10px;padding:7px 10px;margin:0 0 10px}
 .ps-warn{font-size:12px;color:#9a3412;margin:6px 0 0;padding-left:40px}
-.pl-presets{margin:4px 0 10px;border:1.5px dashed #c9a46a;border-radius:12px;padding:6px 10px;background:#fffdf7}
-.pl-presets summary{cursor:pointer;font-weight:800;font-size:13px;color:#0f766e}
-.pl-preset{border-top:1px dashed #eadbb8;padding:8px 0;display:flex;flex-direction:column;gap:4px}
-.pl-preset .pp-h{display:flex;justify-content:space-between;gap:6px;font-size:13px}
-.pl-preset .pp-h small{color:#7a6a52;white-space:nowrap}
-.pl-preset>small{font-size:12px;color:#6b5a44}
-.pp-c{display:flex;flex-wrap:wrap;gap:4px}
-.pp-c span{background:var(--c);color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
-.pl-preset button{align-self:flex-start}
-.pp-fit{font-size:10.5px;font-weight:800;border-radius:999px;padding:0 6px;margin-left:4px}
-.pp-fit.ok{color:#15803d;background:#e7f6ec}
-.pp-fit.mid{color:#a16207;background:#fef3c7}
-.pp-fit.bad{color:#b91c1c;background:#fde8e8}
+.pl-ends{display:flex;flex-direction:column;gap:6px;margin:0 0 10px;border:2px solid #0f766e;border-radius:12px;padding:8px 10px;background:#f0fbf8}
+.pl-ends.done{border-width:1.5px;border-style:dashed;background:#fffdf7}
+.pl-ends>b{font-size:13.5px;color:#0f766e}
+.pl-ends label{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700}
+.pl-ends label span{display:flex;align-items:center;gap:4px;width:68px;flex:none}
+.pl-ends label svg{width:14px;height:14px;color:#0f766e}
+.pl-ends select{flex:1;min-width:0;border:1.5px solid var(--ink);border-radius:8px;padding:4px 6px;background:#fff;font-size:12.5px}
+.pl-ends>button{align-self:flex-start}
+.pl-ends small{font-size:11.5px;color:#6b5a44}
+.pl-ends .pe-warn{margin:0;font-size:12px;color:#c2410c;font-weight:700}
+.ps-tag.ps-end{display:inline-flex;align-items:center;gap:3px;color:#0f766e;border-color:#0f766e}
+.ps-tag.ps-end svg{width:11px;height:11px}
 .sug-pt{cursor:pointer}
 .stars{color:#d69e2e;font-size:1.05em;letter-spacing:-.5px;white-space:nowrap;font-weight:400;font-family:system-ui,'Segoe UI',sans-serif}
 .stars i{font-style:normal;color:#d9cdb3}
@@ -2565,6 +2564,7 @@ function buildMapModel() {
     if (own) prev = c;
     if (!c) return;
     if (!c.days.includes(d)) c.days.push(d);
+    const arrival = own && c.stay.days[0] === d ? c : null, dayRecs = [];
     let ctx = null;
     d.items.forEach(it => {
       if (it.type === 'hotel') return;
@@ -2576,17 +2576,20 @@ function buildMapModel() {
       }
       if (loc.kind === 'trip') { ctx = loc; visit(loc.place, d, c.si); } else if (loc.kind !== 'city') ctx = null;
       const rec = {it, d, di: c.days.indexOf(d), loc, c};
-      c.located.push(rec); timeline.push(rec);
+      c.located.push(rec); dayRecs.push(rec);
     });
+    // a cidade-base entra na rota mesmo sem atividades (ex.: primeira cidade, sem trecho de chegada)
+    if (arrival?.key && !dayRecs.some(r => r.c === arrival && r.loc.kind !== 'trip' && TRANSPORT.has(r.it.type))) timeline.push({c: arrival, d, base: true});
+    timeline.push(...dayRecs);
   });
   const seq = [];
   const push = (k, type) => { if (!seq.length || seq[seq.length - 1].k !== k) seq.push({k, type}); };
   if (state.days.length && isNoHotel(state.days[0].base)) push('brasil', 'voo');
-  timeline.forEach(({it, loc, c}) => {
-    const k = loc.kind === 'trip' ? loc.place : c.key;
+  timeline.forEach(({it, loc, c, base}) => {
+    const k = base || loc.kind !== 'trip' ? c.key : loc.place;
     if (!k) return;
     const prevK = seq.length ? seq[seq.length - 1].k : null;
-    const type = TRANSPORT.has(it.type) && it.type !== 'transfer' ? it.type : (PLACES[k]?.water || PLACES[prevK]?.water ? 'barco' : 'trem');
+    const type = !base && TRANSPORT.has(it.type) && it.type !== 'transfer' ? it.type : (PLACES[k]?.water || PLACES[prevK]?.water ? 'barco' : 'trem');
     push(k, type);
   });
   const last = state.days[state.days.length - 1];
@@ -3683,8 +3686,44 @@ const activeOcc = k => { const occ = occOf(k); return occ.includes(planOcc) ? pl
 const activePC = k => plan().cities[activeOcc(k)] || null;
 function planAddCity(k, again = false) {
   if (!again && occOf(k).length) return;
-  plan().cities.push({k, n: again ? 1 : CAT[k].n, p: []});
-  planOcc = plan().cities.length - 1;
+  const pcs = plan().cities, {entry, exit} = plan();
+  const at = exit && pcs.at(-1)?.k === exit && (pcs.length > 1 || entry !== exit) && k !== exit ? pcs.length - 1 : pcs.length;
+  pcs.splice(at, 0, {k, n: again ? 1 : CAT[k].n, p: []});
+  planOcc = at;
+}
+const GATEWAYS = {roma: 'Fiumicino', milao: 'Malpensa', veneza: 'Marco Polo', napoles: 'Capodichino', florenca: 'Peretola', bolonha: 'Marconi', pisa: 'Galilei', bergamo: 'Orio al Serio', turim: 'Caselle', bari: 'Bari-Palese', catania: 'Fontanarossa', palermo: 'Punta Raisi', cagliari: 'Elmas'};
+const endsOff = () => {
+  const {entry, exit, cities: pcs} = plan();
+  return pcs.length > 0 && (entry && pcs[0].k !== entry || exit && (pcs.at(-1).k !== exit || pcs.length < 2 && entry === exit));
+};
+function applyEnds() {
+  const P = plan(), pcs = P.cities, {entry, exit} = P;
+  if (entry && CAT[entry] && pcs[0]?.k !== entry) {
+    const i = pcs.findIndex(pc => pc.k === entry);
+    pcs.unshift(i > 0 ? pcs.splice(i, 1)[0] : {k: entry, n: CAT[entry].n, p: []});
+  }
+  if (exit && CAT[exit] && (pcs.at(-1)?.k !== exit || pcs.length < 2 && entry === exit)) {
+    const i = pcs.findLastIndex(pc => pc.k === exit);
+    pcs.push(i > 0 ? pcs.splice(i, 1)[0] : {k: exit, n: i === 0 ? 1 : CAT[exit].n, p: []});
+  }
+}
+function endSelectHTML(kind) {
+  const v = plan()[kind] || '';
+  const opt = c => `<option value="${c.k}" ${c.k === v ? 'selected' : ''}>${esc(c.name)}${GATEWAYS[c.k] ? ` · aeroporto ${GATEWAYS[c.k]}` : ''}</option>`;
+  return `<select data-end="${kind}"><option value="">${kind === 'entry' ? 'Cidade onde você chega…' : 'Cidade de onde você volta…'}</option>
+    <optgroup label="Aeroportos internacionais">${Object.keys(GATEWAYS).filter(k => CAT[k]).map(k => opt(CAT[k])).join('')}</optgroup>
+    <optgroup label="Outras cidades">${IT_CITIES.filter(c => !GATEWAYS[c.k]).map(opt).join('')}</optgroup></select>`;
+}
+function planEndsHTML() {
+  const {entry, exit} = plan();
+  return `<div class="pl-ends ${entry && exit ? 'done' : ''}">
+    <b>Por onde você entra e sai?</b>
+    <label><span>${icSvg('voo')}Entrada</span>${endSelectHTML('entry')}</label>
+    <label><span>${icSvg('voo')}Saída</span>${endSelectHTML('exit')}</label>
+    ${entry && !exit ? `<button class="ink-btn small" data-pl="same-exit">Voltar por ${esc(CAT[entry].name)} também</button>` : ''}
+    ${endsOff() ? `<p class="pe-warn">A sequência não ${entry && plan().cities[0].k !== entry ? `começa em ${esc(CAT[entry].name)}` : `termina em ${esc(CAT[exit].name)}`}. <button class="ink-btn small" data-pl="ends-fix">Ajustar</button></p>` : ''}
+    <small>${entry || exit ? 'A entrada fica sempre como 1ª parada e a saída como a última; as outras cidades entram no meio.' : 'Comece por aqui: a cidade de chegada vira a 1ª parada e a de saída, a última.'}</small>
+  </div>`;
 }
 
 /* ---------- mapa da Itália ---------- */
@@ -3768,8 +3807,8 @@ function planSideHTML() {
   const match = c => !q || norm(c.name).includes(q) || norm(c.reg).includes(q) || c.places.some(p => norm(p.name).includes(q));
   return `<div class="card pl-browse">
     <h3>Cidades da Itália</h3>
+    ${planEndsHTML()}
     <p class="muted" style="font-size:12.5px;margin:0 0 8px">Clique numa cidade (aqui ou no mapa) para ver como chegar e incluir na sua sequência.</p>
-    ${presetsHTML()}
     <input class="pl-search" type="search" placeholder="Buscar cidade, região ou lugar…" value="${esc(planQuery)}">
     ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const occ = occOf(c.k); return `<button class="pl-chip ${occ.length ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${occ.length ? `<span>${occ.map(i => i + 1).join('·')}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
   </div>`;
@@ -3793,8 +3832,9 @@ function planSeqHTML() {
     }
     const items = pc.p.map(id => PLACE[id]).filter(Boolean), occ = occOf(pc.k);
     const tag = occ.length > 1 ? (i === occ[0] ? 'ida' : i === occ[occ.length - 1] ? 'volta' : 'passagem') : '';
+    const end = [i === 0 && plan().entry === pc.k ? 'entrada' : '', i === pcs.length - 1 && i > 0 && plan().exit === pc.k ? 'saída' : ''].filter(Boolean);
     return `${leg}<article class="pl-stop" style="--c:${cityColor(c.name)}">
-      <div class="ps-head"><span class="ps-num">${i + 1}</span><div class="ps-title"><b data-pl="sel" data-city="${c.k}" data-i="${i}">${esc(c.name)}${tag ? ` <span class="ps-tag">${tag}</span>` : ''}</b><small>${esc(c.reg)}</small></div>
+      <div class="ps-head"><span class="ps-num">${i + 1}</span><div class="ps-title"><b data-pl="sel" data-city="${c.k}" data-i="${i}">${esc(c.name)}${tag ? ` <span class="ps-tag">${tag}</span>` : ''}${end.map(t => ` <span class="ps-tag ps-end">${icSvg('voo')}${t}</span>`).join('')}</b><small>${esc(c.reg)}</small></div>
         <div class="ps-nights" title="Noites nesta cidade"><button data-pl="n-" data-i="${i}">−</button><span>${pc.n} noite${pc.n === 1 ? '' : 's'}</span><button data-pl="n+" data-i="${i}">+</button></div>
         <div class="ps-move"><button data-pl="up" data-i="${i}" title="Mover para antes" ${i ? '' : 'disabled'}>↑</button><button data-pl="down" data-i="${i}" title="Mover para depois" ${i < pcs.length - 1 ? '' : 'disabled'}>↓</button><button data-pl="del" data-i="${i}" title="Remover" class="danger">×</button></div></div>
       ${(w => w ? `<p class="ps-warn">${esc(w)}</p>` : '')(stopWarn(pc, i, occ))}
@@ -3804,7 +3844,7 @@ function planSeqHTML() {
     </article>`;
   }).join('');
   const first = CAT[pcs[0].k], last = CAT[pcs[pcs.length - 1].k];
-  const back = pcs.length > 1 && first && last && first.k !== last.k ? `<button class="ink-btn pl-back-to" data-pl="return" data-city="${first.k}">↩ Voltar para ${esc(first.name)} no fim</button>` : '';
+  const back = !plan().exit && pcs.length > 1 && first && last && first.k !== last.k ? `<button class="ink-btn pl-back-to" data-pl="return" data-city="${first.k}">↩ Voltar para ${esc(first.name)} no fim</button>` : '';
   return `<section class="pl-seq"><div class="pl-seq-head"><h3>Sua sequência</h3><span class="pl-tot">${pcs.length} parada${pcs.length > 1 ? 's' : ''} · ${nights} noite${nights === 1 ? '' : 's'} · ${places} lugar${places === 1 ? '' : 'es'} · ~${fmtDur(totalMin)} de deslocamento</span>
     ${nightsStatusHTML()}<span class="sp"></span>${genStatusHTML()}<button class="ink-btn" data-pl="clear">Limpar</button><button class="ink-btn primary" data-pl="gen">${plan().genKey ? 'Atualizar roteiro' : 'Gerar roteiro'}</button></div>${(() => { const based = pcs.filter(pc => pc.n > 0).length, avg = nights / Math.max(1, based); return based > 2 && avg < 2 ? `<p class="pl-tip">Muitas trocas de hotel: média de ${avg.toFixed(1).replace('.', ',')} noite por cidade. Os guias recomendam pelo menos 2 noites em cada base e 3 nas cidades grandes.</p>` : ''; })()}${parts}${back ? `<div class="pl-seq-foot">${back}</div>` : ''}</section>`;
 }
@@ -3833,32 +3873,6 @@ function nightsStatusHTML() {
   if (t == null) return '';
   if (n === t) return `<span class="gen-st ok">✓ ${n} de ${t} noites da viagem</span>`;
   return `<span class="gen-st warn">${n < t ? `faltam ${t - n} noite${t - n > 1 ? 's' : ''}` : `${n - t} noite${n - t > 1 ? 's' : ''} a mais`} (${n} de ${t})</span><button class="ink-btn small" data-pl="fit" title="Distribuir as ${t} noites entre as cidades, seguindo as sugestões">Ajustar noites</button>`;
-}
-const PRESETS = [
-  {name: 'Clássico: Roma, Florença e Veneza', d: 'O roteiro mais feito na primeira viagem: trem rápido entre as três, sem voltar caminho.', c: [['roma', 3], ['florenca', 2], ['veneza', 2]]},
-  {name: 'Clássico com Toscana', d: 'Mais tempo em cada cidade e um dia para Siena, Pisa ou Lucca a partir de Florença.', c: [['roma', 4], ['florenca', 3], ['veneza', 3]]},
-  {name: 'Roma, Florença e Costa Amalfitana', d: 'Troca Veneza pelo mar: Positano, Amalfi e Ravello.', c: [['roma', 3], ['florenca', 3], ['costa-amalfi', 3]]},
-  {name: 'Duas semanas: norte a sul', d: 'Os quatro clássicos sem pressa (3/4/3/3 noites).', c: [['veneza', 3], ['florenca', 4], ['roma', 3], ['costa-amalfi', 3]]},
-  {name: 'Itália + Suíça pelo Bernina Express', d: 'Do Lago de Como pega-se o trem para Tirano e o Bernina Express até St. Moritz.', c: [['roma', 3], ['florenca', 3], ['veneza', 2], ['lago-como', 2], ['stmoritz', 1], ['milao', 1]]},
-  {name: 'Itália + Alpes suíços', d: 'Depois dos clássicos, Lucerna, Interlaken (Jungfrau) e Zermatt (Matterhorn) de trem.', c: [['roma', 3], ['florenca', 2], ['veneza', 2], ['milao', 1], ['lucerna', 2], ['interlaken', 2], ['zermatt', 2]]},
-  {name: 'Lagos e Alpes', d: 'Milão, Lago de Como, Lugano e o Bernina Express.', c: [['milao', 2], ['lago-como', 3], ['lugano', 1], ['stmoritz', 1]]},
-  {name: 'Sul: Nápoles, Amalfi e Capri', d: 'Pompeia, pizza napolitana e a costa.', c: [['roma', 3], ['napoles', 2], ['costa-amalfi', 3], ['capri', 1]]},
-  {name: 'Volta pela Sicília', d: 'Palermo, Cefalù, Taormina/Etna, Siracusa e o Vale dos Templos (carro ajuda).', c: [['palermo', 3], ['cefalu', 1], ['taormina', 2], ['siracusa', 2], ['agrigento', 1]]},
-  {name: 'Apúlia e Matera', d: 'Trulli, cidades brancas, Lecce barroca e os Sassi.', c: [['bari', 2], ['alberobello', 2], ['lecce', 2], ['matera', 2]]},
-  {name: 'Norte: Milão, lagos e Veneza', d: 'Lago de Como, Lago di Garda, Verona e Veneza.', c: [['milao', 2], ['lago-como', 2], ['lago-garda', 2], ['verona', 1], ['veneza', 3]]},
-];
-function presetsHTML() {
-  const t = tripNights();
-  return `<details class="pl-presets" ${plan().cities.length ? '' : 'open'}><summary>Roteiros sugeridos${t ? ` para ${t} noites` : ''}</summary>
-    <p class="muted" style="font-size:12px;margin:4px 0 6px">Baseados nos roteiros mais recomendados por guias de viagem. ${t ? 'As noites são ajustadas para caber nas datas da sua viagem.' : ''}</p>
-    ${PRESETS.map((pr, i) => ({pr, i, tot: pr.c.reduce((a, [, n]) => a + n, 0)})).sort((a, b) => t ? Math.abs(a.tot - t) - Math.abs(b.tot - t) : 0).map(({pr, i, tot}) => {
-      const fit = !t ? '' : tot > t + 2 ? '<span class="pp-fit bad">fica corrido</span>' : tot < t - 3 ? '<span class="pp-fit mid">sobra tempo</span>' : '<span class="pp-fit ok">cabe bem</span>';
-      return `<div class="pl-preset">
-      <div class="pp-h"><b>${esc(pr.name)}</b><small>${tot} noites ${fit}</small></div>
-      <div class="pp-c">${pr.c.map(([k, n]) => `<span style="--c:${cityColor(CAT[k].name)}">${esc(CAT[k].name)} ${n}</span>`).join('')}</div>
-      <small>${esc(pr.d)}</small>
-      <button class="ink-btn small" data-pl="preset" data-i="${i}">Usar este roteiro</button></div>`; }).join('')}
-  </details>`;
 }
 function stopWarn(pc, i, occ) {
   const c = CAT[pc.k]; if (!c) return '';
@@ -4114,7 +4128,7 @@ function setupPlanner() {
     if (act === 'pdel') commit(() => pcs[i].p.splice(j, 1));
     if (act === 'clear' && confirm('Limpar o roteiro inteiro? Saem todas as cidades e lugares do “Planejar pela Itália” e todos os dias e atividades do “Mapa do roteiro”. As datas da viagem continuam. Dá para desfazer.')) {
       commit(() => {
-        state.plan.cities = []; delete state.plan.genKey;
+        state.plan.cities = []; delete state.plan.genKey; delete state.plan.entry; delete state.plan.exit;
         state.days = state.days.map(d => ({...d, base: '', title: '', note: '', items: []}));
         state.settings.mapMode = 'plan';
       });
@@ -4122,19 +4136,23 @@ function setupPlanner() {
       toast('Roteiro limpo.', '<button data-t="undo">Desfazer</button>', undo);
     }
     if (act === 'fit') commit(() => fitNights(pcs, tripNights()));
-    if (act === 'preset') {
-      const pr = PRESETS[i];
-      if (pcs.length && !confirm(`Trocar a sequência atual pelo roteiro “${pr.name}”? Dá para desfazer.`)) return;
-      commit(() => { state.plan.cities = pr.c.map(([k, n]) => ({k, n, p: []})); fitNights(state.plan.cities, tripNights()); });
-      planSel = null; planOcc = null; renderMap();
-      toast(`Roteiro “${esc(pr.name)}” aplicado${tripNights() ? ` e ajustado para ${tripNights()} noites` : ''}.`, '<button data-t="undo">Desfazer</button>', undo);
-    }
+    if (act === 'same-exit') commit(() => { plan().exit = plan().entry; applyEnds(); planOcc = null; });
+    if (act === 'ends-fix') commit(() => { applyEnds(); planOcc = null; });
     if (act === 'gen') {
       if (!plan().end && state.days.length && !plan().genKey) plan().end = state.days.at(-1).date;
       const t = tripNights(), n = planNights();
       if (t != null && t !== n) { openNightsModal(t, n); return; }
       runGenerate();
     }
+  });
+  el.addEventListener('change', e => {
+    const s = e.target.closest('select[data-end]'); if (!s) return;
+    commit(() => {
+      const P = plan(), old = P[s.dataset.end], last = P.cities.at(-1);
+      if (s.dataset.end === 'exit' && old && last?.k === old && !last.p.length && occOf(old).length > 1) P.cities.pop();
+      if (s.value) P[s.dataset.end] = s.value; else delete P[s.dataset.end];
+      applyEnds(); planOcc = null;
+    });
   });
   el.addEventListener('input', e => {
     if (!e.target.classList.contains('pl-search')) return;
