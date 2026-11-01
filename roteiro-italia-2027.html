@@ -7121,7 +7121,7 @@ function sugKeys(p) {
 }
 const SUG_KEYS = new Map();
 const sugCands = k => { if (!SUG_KEYS.has(k)) SUG_KEYS.set(k, [...(CAT[k]?.places || []), ...(SHOPS[k] || [])].map(p => ({p, keys: [...new Set(sugKeys(p))]}))); return SUG_KEYS.get(k); };
-const SUG_SKIP = /^(chegada|pouso|volta a|volta para|dia de (trem|viagem)|trem |trens |voo |saia cedo|descida|leonardo|onibus|chegue|check|frecciarossa|railjet|noite perto|ultimo dia)|\b(fecha|fecham|reabrem|costumam|nao tem)\b/;
+const SUG_SKIP = /^(chegada|pouso|volta a|volta para|dia de (trem|viagem)|trem |trens |voo |saia cedo|descida|leonardo|onibus|chegue|check|frecciarossa|railjet|noite perto|ultimo dia|(manha|tarde|noite) livre)|\b(fecha|fecham|reabrem|costumam|nao tem)\b/;
 const SUG_FOOD = /\b(tortellini|tagliatelle|risoto|fondue|raclette|trofie|cicchetti|torta fritta|canederli|buffet)\b/;
 /** Trecho do texto que é uma refeição (“almoço no Mercato di Mezzo”, “à noite, tortellini in brodo”, “spritz na praça”). */
 function sugMealOf(n) {
@@ -7130,9 +7130,9 @@ function sugMealOf(n) {
   if (/^(spritz|aperitivo|bicerin|gelato)\b/.test(n)) return 'tarde';
   return null;
 }
-/** Texto de um dia do roteiro pronto → atividades (com lugar do catálogo quando houver) e refeições citadas. */
-function sugDayParse(txt, k) {
-  const acts = [], meals = {};
+/** Texto de um dia do roteiro pronto → atividades (com lugar do catálogo quando houver) e refeições citadas. Um lugar que já faz parte do trajeto de chegada (`via`, ex.: Bernina Express) não vira passeio. */
+function sugDayParse(txt, k, via = '') {
+  const acts = [], meals = {}, vn = mnorm(via), inVia = p => vn && vn.includes(mnorm(p.name).replace(/\s*\(.*?\)/g, '').trim());
   // trechos separados por “;”, por ponto e por “à tarde”; o que é “à tarde”, “ao entardecer” ou “à noite” não começa antes disso
   const safe = txt.replace(/\bSt\. /g, 'St§ ').replace(/\([^)]*\)/g, m => m.replace(/;/g, ','));
   const clauses = safe.split(/;\s*|\.\s+(?=[A-ZÀ-Ú])|\.$|,?\s+e,\s+(?=à tarde)/).flatMap(s => s.split(/,\s+(?=à tarde,)|\s+e\s+(?=tarde de\b)/)).map(s => s.replace(/§/g, '.').trim()).filter(Boolean);
@@ -7154,7 +7154,7 @@ function sugDayParse(txt, k) {
     // um trecho do texto vale para um lugar só (o nome mais longo ganha)
     const used = [];
     hits.sort((a, b) => b.len - a.len).forEach(h => { if (used.some(u => h.i < u.i + u.len && u.i < h.i + h.len)) return; used.push(h); });
-    used.sort((a, b) => a.i - b.i).forEach(({p}) => { taken.add(p.id); acts.push({p, title: p.name, h: p.h, ic: p.ic, after}); });
+    used.sort((a, b) => a.i - b.i).forEach(({p}) => { taken.add(p.id); if (!inVia(p)) acts.push({p, title: p.name, h: p.h, ic: p.ic, after}); });
     if (used.length) return;
     const title = clause.replace(/\s*\([^)]*\)/g, '').split(/\s+ou\s+/)[0].replace(/^(à tarde|de manhã|à noite|às \d{1,2}h(\d\d)?),\s*/i, '').replace(/\s+(de manhã|à tarde)$/i, '').trim();
     if (title.length < 4) return;
@@ -7173,7 +7173,7 @@ function fillSugDays(r) {
     const days = state.days.filter(d => d.pc === pc.id);
     if (days.some(hasActivities)) return;
     days.slice(0, s.d.length).forEach((d, j) => {
-      const {acts, meals} = sugDayParse(s.d[j], pc.k);
+      const {acts, meals} = sugDayParse(s.d[j], pc.k, d.items.filter(it => it.leg).map(it => it.notes).join(' '));
       const span = it => { const a = toMin(it.start), e = toMin(it.end); return [a, e != null && e > a ? e : a + Math.max(30, Math.round(itemHours(it) * 60))]; };
       const timed = d.items.filter(it => it.start && !it.meal), arrived = timed.filter(it => it.leg || it.air?.startsWith('in')).map(it => span(it)[1] + 45);
       sugSchedule(acts, pc.k, Math.max(9 * 60, ...arrived), timed.map(span));
@@ -8638,7 +8638,7 @@ function openNewTripModal() {
 // Modo de revisão: clique em qualquer elemento para pedir um ajuste; a lista vira um .md para a IA aplicar em sequência.
 const HM_KEY = 'homologacao-v1';
 /** hm-id dos ajustes que a IA já aplicou: ao abrir a página, o painel marca cada um como feito (uma vez; depois o usuário pode desmarcar). */
-const HM_FEITOS = ['vnqdznqs', '4aog7rik', '6222mix3', 'wigglhem', '6ewm0od8', 'si83ajlf', 'p47gtk03', 'k8qk3lhw', 'evyeyftn', 'qcfqzmqa', 'oi1cqijq', 'oejf85vp', 'sbbwvj41', 'mndd7vm5', '0qbhbd0g', 'hasp0a9i', '9s14e13m', 'ywbcxdt8', 't33jalcp', 'ryhxkv9y', 'ob7a6luu', '486akmg2', '91pp17dy', 'ktubqq4m', 'sq0tbbi5', 'lxxirs71', '133o111u', '3madlv9a', 'gac1w0xf', 'k7ebcge4', 'k0isl0ov', 'w71fk7nq', 'jc272hzl', 'ki3d1j7y', 'ajw2lm2f', 'cy13vdg6', 'ml286il5', 'xykznl5m', 'bvxps7fh'];
+const HM_FEITOS = ['vnqdznqs', '4aog7rik', '6222mix3', 'wigglhem', '6ewm0od8', 'si83ajlf', 'p47gtk03', 'k8qk3lhw', 'evyeyftn', 'qcfqzmqa', 'oi1cqijq', 'oejf85vp', 'sbbwvj41', 'mndd7vm5', '0qbhbd0g', 'hasp0a9i', '9s14e13m', 'ywbcxdt8', 't33jalcp', 'ryhxkv9y', 'ob7a6luu', '486akmg2', '91pp17dy', 'ktubqq4m', 'sq0tbbi5', 'lxxirs71', '133o111u', '3madlv9a', 'gac1w0xf', 'k7ebcge4', 'k0isl0ov', 'w71fk7nq', 'jc272hzl', 'ki3d1j7y', 'ajw2lm2f', 'cy13vdg6', 'ml286il5', 'xykznl5m', 'bvxps7fh', '2rsvrmhe'];
 const HM_UI = '#hmPanel, #hmPop, #hmBtn, .hm-mark, #hmBox';
 const hm = {on: false, items: [], cur: null, el: null, ui: {min: false, pos: null}};
 try { const x = JSON.parse(localStorage.getItem(HM_KEY)); hm.items = x?.items || []; hm.ui = {...hm.ui, ...(x?.ui || {})}; } catch (e) { hm.items = []; }
@@ -9398,6 +9398,37 @@ const SUG_ROTEIROS = (() => {
       eventos: [{q: 'Toda a temporada', t: 'O Bernina Express roda o ano todo; o ônibus Lugano–Tirano não roda no inverno.', u: SUG_SRC.mb[1]}],
       atencao: ['Reserve o assento do Bernina Express (vagões panorâmicos); o trem regional da Ferrovia Retica faz o mesmo trajeto sem reserva.', 'Frio de verdade: -10 °C em St. Moritz é comum.', 'Franco suíço e preços altos: 1 noite basta para a experiência.'],
       fontes: ['bx', 'mb', 'sw']},
+    {id: 'stmoritz-calmo', cat: 'suica', nome: 'Sem pressa: 2 a 3 noites por cidade + 1 noite em St. Moritz', ritmo: 'tranquilo',
+      resumo: 'Roma, Florença e Veneza com 3 noites cada, Milão e o Lago de Como com 2 e uma única noite nos Alpes suíços pelo Bernina Express; dias com um programa principal e tempo de sobra, e 2 noites em Roma no fim.',
+      ideal: 'Quem quer conhecer as cidades com calma, trocar de hotel poucas vezes e ainda ver a neve da Suíça.',
+      stops: [
+        roma(3, [R.cheg, 'Coliseu, Fórum Romano e Palatino de manhã (ingresso com horário marcado); tarde livre em Monti.', 'Museus Vaticanos e Capela Sistina de manhã; Basílica de São Pedro à tarde.']),
+        flo(3, [FLO.a, 'Galleria degli Uffizi de manhã; à tarde, Ponte Vecchio e Oltrarno sem pressa.', FLO.c]),
+        ven(3, ['Chegada; vaporetto pelo Grande Canal e Rialto ao entardecer.', 'Dom 14/02: Praça e Basílica de São Marcos e Palácio Ducal; à noite, jantar de San Valentino (reserve).', 'Murano e Burano de barco; tarde livre.'], 'Trem rápido Florença → Veneza · 2h14'),
+        S('Milão', 2, 'Trem rápido Veneza → Milão · 2h27', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Corso Buenos Aires'], ['Chegada; Duomo com os terraços e Galleria Vittorio Emanuele II.', 'A Última Ceia de manhã (reserve); tarde de compras no Corso Buenos Aires.'], {w: 'Milão'}),
+        S('St. Moritz', 1, 'Trem Milão → Tirano 2h30 + Bernina Express até St. Moritz ~2h20', '-12 a -1 °C', ['Bernina Express', 'Lago congelado', 'Viaduto de Brusio'], ['Saia cedo de Milão; Bernina Express pelo viaduto circular de Brusio e o passo Bernina (UNESCO); à tarde, lago congelado e centro; jantar com fondue.'], {pais: 'Suíça'}),
+        S('Lago de Como', 2, 'Trem regional da Ferrovia Retica St. Moritz → Tirano + trem Tirano → Varenna · ~3h40', '2–10 °C', ['Varenna', 'Bellagio', 'Castello di Vezio'], ['Descida de manhã no trem regional (mesma linha do Bernina, sem reserva); à tarde, orla de Varenna e Castello di Vezio.', 'Balsa para Bellagio (horário de inverno); tarde livre na orla.'], {w: 'Lago de Como'}),
+        roma(2, ['Volta a Roma; à tarde, Trastevere.', 'Piazza di Spagna e Pincio de manhã; à tarde, compras na Via del Corso e jantar de despedida.'], 'Trem Varenna → Milão → Roma · ~4h'),
+      ],
+      eventos: [{q: 'Toda a temporada', t: 'O Bernina Express roda o ano todo; o trem regional da Ferrovia Retica faz o mesmo trajeto várias vezes por dia.', u: SUG_SRC.mb[1]}],
+      atencao: ['Só 6 trocas de hotel em 16 noites, e só St. Moritz tem 1 noite.', 'Reserve o assento do Bernina Express, a Última Ceia, o Coliseu e a Cúpula de Florença.', 'Ter 23/02: o voo sai às 22:30, então ainda dá para usar a manhã em Roma (a Galleria Borghese abre na terça).'],
+      fontes: ['bx', 'mb', 'sw']},
+    {id: 'stmoritz-verona', cat: 'suica', nome: 'Sem pressa + St. Moritz e 1 noite em Verona no San Valentino', ritmo: 'tranquilo',
+      resumo: 'Igual ao “sem pressa”, com 1 noite em Verona no caminho entre Veneza e Milão, durante a Verona in Love; as outras cidades ficam com 2 ou 3 noites.',
+      ideal: 'Quem quer a calma de 2 a 3 noites por cidade e ainda passar uma noite na cidade de Romeu e Julieta.',
+      stops: [
+        roma(2, [R.cheg, 'Coliseu, Fórum Romano e Palatino de manhã (ingresso com horário marcado); tarde livre em Monti.']),
+        flo(3, [FLO.a, 'Galleria degli Uffizi de manhã; à tarde, Ponte Vecchio e Oltrarno sem pressa.', FLO.c]),
+        ven(3, ['Chegada; vaporetto pelo Grande Canal e Rialto ao entardecer.', 'Praça e Basílica de São Marcos e Palácio Ducal; tarde livre.', 'Dom 14/02: Murano e Burano de barco; à noite, jantar de San Valentino (reserve).'], 'Trem rápido Florença → Veneza · 2h14'),
+        S('Verona', 1, 'Trem rápido Veneza → Verona · 1h10', '1–9 °C', ['Arena', 'Casa de Julieta', 'Verona in Love'], ['Chegada de manhã; Arena e Piazza delle Erbe; à tarde, Verona in Love na Piazza dei Signori e Castel San Pietro ao pôr do sol.']),
+        S('Milão', 2, 'Trem rápido Verona → Milão · 1h15', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Corso Buenos Aires'], ['Chegada; Duomo com os terraços e Galleria Vittorio Emanuele II.', 'A Última Ceia de manhã (reserve); tarde de compras no Corso Buenos Aires.'], {w: 'Milão'}),
+        S('St. Moritz', 1, 'Trem Milão → Tirano 2h30 + Bernina Express até St. Moritz ~2h20', '-12 a -1 °C', ['Bernina Express', 'Lago congelado', 'Viaduto de Brusio'], ['Saia cedo de Milão; Bernina Express pelo viaduto circular de Brusio e o passo Bernina (UNESCO); à tarde, lago congelado e centro; jantar com fondue.'], {pais: 'Suíça'}),
+        S('Lago de Como', 2, 'Trem regional da Ferrovia Retica St. Moritz → Tirano + trem Tirano → Varenna · ~3h40', '2–10 °C', ['Varenna', 'Bellagio', 'Castello di Vezio'], ['Descida de manhã no trem regional (mesma linha do Bernina, sem reserva); à tarde, orla de Varenna e Castello di Vezio.', 'Balsa para Bellagio (horário de inverno); tarde livre na orla.'], {w: 'Lago de Como'}),
+        roma(2, ['Volta a Roma; à tarde, Trastevere.', 'Museus Vaticanos e Capela Sistina de manhã; Basílica de São Pedro à tarde.'], 'Trem Varenna → Milão → Roma · ~4h'),
+      ],
+      eventos: [{q: '14 a 16/02 (2027 a confirmar)', t: 'Verona in Love na Piazza dei Signori; em 2025 e 2026 foi de 14 a 16/02.', u: SUG_SRC.vl[1]}, {q: 'Toda a temporada', t: 'O Bernina Express roda o ano todo; o trem regional da Ferrovia Retica faz o mesmo trajeto várias vezes por dia.', u: SUG_SRC.mb[1]}],
+      atencao: ['Duas cidades com 1 noite (Verona e St. Moritz): leve uma mala pequena de mão para não desfazer a grande.', 'Casa de Julieta: o pátio só abre com reserva.', 'Os Museus Vaticanos fecham no domingo: por isso ficam para a segunda, 22/02.'],
+      fontes: ['bx', 'mb', 'vl']},
     {id: 'zermatt-1', cat: 'suica', nome: 'Matterhorn: 1 noite em Zermatt', ritmo: 'intenso',
       resumo: 'Roma, Florença, Bolonha, Veneza, Verona e Milão, depois 1 noite em Zermatt aos pés do Matterhorn indo pelo EuroCity até Visp (sem o Glacier Express) e volta direta para Roma.',
       ideal: 'Quem sonha com a vista do Matterhorn e aceita um dia longo de trem na volta.',
@@ -9942,7 +9973,7 @@ function passHTML(r) {
 }
 /** Programa de um dia do roteiro pronto, com horários: as atividades do texto (com o trajeto entre elas) e as refeições — café, almoço, café da tarde quando citado e jantar. */
 function sugDaySchedHTML(s, txt, j, from, cafeAt) {
-  const {acts, meals} = sugDayParse(txt, s.k);
+  const {acts, meals} = sugDayParse(txt, s.k, j ? '' : s.via);
   let {lunch} = sugSchedule(acts, s.k, from);
   const timed = acts.filter(a => a.s != null), C = SUG_COMER[s.nome] || {};
   if (lunch == null) { const over = timed.find(a => a.s < 13 * 60 && a.e > 13 * 60); lunch = over ? Math.max(12 * 60, over.e) : 13 * 60; }
