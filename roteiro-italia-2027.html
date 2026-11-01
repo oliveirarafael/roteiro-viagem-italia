@@ -6,7 +6,7 @@
 <title>Roteiro Itália + Suíça · Fevereiro 2027</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Lilita+One&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Lilita+One&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f5f3ee; --panel:#fff; --ink:#1f2933; --muted:#6b7280; --line:#e6e1d6;
@@ -59,6 +59,11 @@ dialog.drawer[open]{display:flex;flex-direction:column;animation:drawerIn .22s e
 .tc-top{display:flex;align-items:flex-start;gap:8px}
 .tc-top h4{margin:0;font-family:'Lilita One','Arial Black',sans-serif;font-weight:400;font-size:18px;letter-spacing:.02em;line-height:1.15;color:var(--ink);flex:1;min-width:0;overflow-wrap:anywhere}
 .tc-badge{flex:none;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#0f766e;background:#d6f0ea;border:1.5px solid #0f766e;border-radius:999px;padding:0 7px;line-height:17px}
+.tc-badge.real{color:#fff;background:#1e3a8a;border-color:#1e3a8a;display:inline-flex;align-items:center;gap:3px}
+.tc-badge.real svg{width:11px;height:11px}
+.trip-card.real{border-color:#1e3a8a;box-shadow:3px 3px 0 #1e3a8a}
+.tc-flights{font-size:12px;color:#1e3a8a;margin:-2px 0 6px;line-height:1.35}
+.real-note{background:#eef2ff;border:1.5px solid #1e3a8a;border-radius:10px;padding:8px 10px;color:#1e3a8a}
 .tc-dates{font-family:'Caveat','Segoe Print',cursive;font-size:18px;color:#4a3b2a;margin:2px 0 6px}
 .tc-cities{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
 .tc-cities span{background:var(--c);color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
@@ -156,6 +161,9 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .ev.conflict{outline:2px dashed #dc2626;outline-offset:-1px}
 .stat.warn-stat{background:#fee2e2;color:#b91c1c}
 .stat.ok-stat{background:#e7f6ec;color:#15803d}
+.stat.real-stat{background:#1e3a8a;color:#fff;font-weight:800}
+.stat svg{width:13px;height:13px;vertical-align:-2px;margin-right:4px}
+.stat-btn svg{margin:0 0 0 2px}
 .cost{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap}
 .eur{font-size:.82em;color:var(--muted);font-weight:500;margin-left:2px;white-space:nowrap}
 .item-title{font-weight:600;margin-top:2px;word-wrap:break-word}
@@ -213,10 +221,9 @@ main{max-width:1500px;margin:0 auto;padding:16px 18px 60px}
 .f-hand{font-family:'Patrick Hand','Segoe Print','Ink Free','Comic Sans MS',cursive}
 .f-bold{font-family:'Lilita One','Arial Black','Segoe UI Black',sans-serif;letter-spacing:.02em}
 .map-hero{text-align:center;margin:4px 0 14px}
-.map-title{font-family:'Lilita One','Arial Black',sans-serif;font-size:clamp(34px,6vw,64px);margin:0;line-height:1;letter-spacing:.03em;-webkit-text-stroke:2px #3b2a1e;paint-order:stroke fill;text-shadow:3px 3px 0 #3b2a1e}
-.map-title span:nth-child(3n+1){color:#1f9d55}
-.map-title span:nth-child(3n+2){color:#f4b400}
-.map-title span:nth-child(3n){color:#d93a2b}
+.map-title{font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-weight:800;font-size:clamp(34px,5.2vw,58px);margin:0;line-height:1.05;letter-spacing:.16em;padding-left:.16em;color:#2b1d12}
+.map-title .yr{font-style:italic;font-weight:600;letter-spacing:.06em;color:#b0413e}
+.map-title::after{content:"";display:block;width:132px;height:5px;margin:10px auto 0;border-radius:3px;background:linear-gradient(90deg,#1f9d55 0 33.3%,#fffaf0 33.3% 66.6%,#d93a2b 66.6%);box-shadow:0 0 0 1.5px #2b1d12}
 .map-sub{font-family:'Caveat','Segoe Print',cursive;font-size:clamp(20px,2.6vw,30px);color:#3b2a1e;margin-top:2px}
 .map-jump{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 0 4px}
 .map-jump button{border:2px solid #3b2a1e;background:var(--c);color:#fff;border-radius:999px;font-family:'Lilita One','Arial Black',sans-serif;letter-spacing:.03em;padding:5px 14px;box-shadow:2px 2px 0 #3b2a1e}
@@ -427,10 +434,10 @@ body.hm-on main *{cursor:crosshair!important}
 .hm-mark{position:fixed;z-index:2147483001;width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#7c3aed;color:#fff;font:800 11px system-ui,sans-serif;display:grid;place-items:center;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .hm-mark.done{background:#15803d}
 #hmPanel{position:fixed;z-index:2147483002;right:12px;bottom:12px;width:340px;max-height:min(70vh,640px);display:flex;flex-direction:column;background:#fffaf0;border:2px solid #7c3aed;border-radius:14px;box-shadow:4px 4px 0 #3b2a1e;font-size:13px}
-#hmPanel .hm-head{display:flex;align-items:baseline;gap:8px;padding:9px 12px 4px}
+#hmPanel .hm-head{display:flex;align-items:baseline;gap:8px;padding:9px 12px 4px;cursor:move;user-select:none;touch-action:none}
+#hmPanel.moving{opacity:.92;box-shadow:6px 6px 0 #3b2a1e}
 #hmPanel .hm-head b{color:#5b21b6;font-size:15px}
 #hmPanel .hm-head small{color:#7a6a52}
-#hmPanel.left{right:auto;left:12px}
 #hmPanel.min{width:auto}
 #hmPanel.min .hm-help,#hmPanel.min .hm-actions,#hmPanel.min .hm-list{display:none}
 #hmPanel .hm-head-act{margin-left:auto;display:flex;gap:2px}
@@ -634,6 +641,24 @@ body.hm-on main *{cursor:crosshair!important}
 .dq-day:hover{border-color:var(--ink);background:#fde68a}
 .pl-trip{margin-top:10px!important}
 .pl-trip h3{margin:0 0 6px}
+.card-min{float:right;width:28px;height:28px;margin-left:6px;padding:0;border:1.5px solid var(--ink);border-radius:999px;background:#fffaf0;color:var(--ink);font:700 13px/1 system-ui,sans-serif;-webkit-text-stroke:0;text-shadow:none;box-shadow:2px 2px 0 var(--ink);cursor:pointer}
+.card-min:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.rs-head{margin:12px 0 4px;padding-top:10px;border-top:1.5px dashed #e2cfa6;display:flex;flex-direction:column;gap:2px}
+.rs-head b{font-family:'Playfair Display',Georgia,serif;font-size:16px;color:#2b1d12}
+.rs-head small{font-size:11.5px;color:#7a6a52}
+.rs-gt{margin:10px 0 4px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#9a805c}
+.rs-item{background:#fff;border:1.5px solid #ead9b5;border-radius:12px;padding:8px 10px;margin-bottom:6px;display:flex;flex-direction:column;gap:5px}
+.rs-item:hover{border-color:#c9a86a;box-shadow:2px 2px 0 #e2cfa6}
+.rs-top{display:flex;align-items:flex-start;gap:8px}
+.rs-top b{flex:1;font-size:13.5px;line-height:1.25;color:#2b1d12}
+.rs-top .ink-btn{font-size:12px;padding:2px 9px;flex:none}
+.rs-route{display:flex;flex-wrap:wrap;gap:3px}
+.rs-route span{background:var(--c);color:#fff;border-radius:999px;padding:1px 4px 1px 8px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+.rs-route i{font-style:normal;background:rgba(255,255,255,.28);border-radius:999px;padding:0 5px;font-size:10px}
+.rs-item small{font-size:11.5px;color:#6b5a44;line-height:1.35}
+.card.is-min>:not(h3,h4){display:none}
+.card.is-min h3,.card.is-min h4{margin:0}
+.city-side h4 .card-min{width:22px;height:22px;font-size:11px;box-shadow:1.5px 1.5px 0 var(--ink)}
 .pt-list{list-style:none;margin:0;padding:0}
 .pt-stop{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:14px}
 .pt-stop b{cursor:pointer}
@@ -1093,7 +1118,7 @@ dialog{max-height:92vh;overflow:auto}
   .pills{max-width:100%;overflow-x:auto;scrollbar-width:none}
   .pills button{white-space:nowrap;flex:none;padding:5px 10px}
 
-  .map-title{font-size:clamp(26px,9vw,40px);-webkit-text-stroke:1.5px #3b2a1e;text-shadow:2px 2px 0 #3b2a1e}
+  .map-title{font-size:clamp(26px,9vw,40px);letter-spacing:.1em}
   .map-sub{font-size:18px}
   .map-jump button{padding:4px 10px;font-size:13px}
   .paper{padding:5px;border-radius:12px;box-shadow:var(--shadow),inset 0 0 0 3px #f7edd5,inset 0 0 0 4px #b88d55}
@@ -1133,6 +1158,41 @@ dialog{max-height:92vh;overflow:auto}
   .item{break-inside:avoid}
   .item-notes{-webkit-line-clamp:unset}
 }
+
+/* ---------- cabeçalho ---------- */
+header.top{background:linear-gradient(180deg,#fffcf5 0%,#f8efda 100%);border-bottom:2px solid var(--ink);box-shadow:0 6px 16px rgba(59,42,30,.08)}
+.flag{height:6px;background:linear-gradient(90deg,#1f9d55 0 33.3%,#fffaf0 33.3% 66.6%,#d93a2b 66.6%);border-bottom:1px solid rgba(59,42,30,.25)}
+.top-inner{padding:10px 18px 9px}
+.trip-title{font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:22px;letter-spacing:.01em;color:#2b1d12}
+.stats{gap:7px}
+.stat{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #e2cfa6;border-radius:999px;padding:4px 11px;font-size:12.5px;color:#3b2a1e;box-shadow:0 1px 0 #e2cfa6}
+.stat svg{width:14px;height:14px;margin:0;flex:none;color:#0f766e}
+.stat b{color:#2b1d12}
+.stat.ok-stat{background:#ecf8f0;border-color:#a7dcb8;color:#15803d}
+.stat.ok-stat svg{color:#15803d}
+.stat.warn-stat{background:#fdecec;border-color:#f3b4b4;color:#b91c1c}
+.stat.warn-stat svg,.stat.warn-stat b{color:#b91c1c}
+.stat.count{background:#fff7e0;border-color:#efd28a}
+.stat.count svg{color:#b45309}
+.stat.real-stat{background:linear-gradient(135deg,#1e3a8a,#2f4fb3);border-color:#1e3a8a;color:#fff;font-weight:800;letter-spacing:.02em;box-shadow:2px 2px 0 var(--ink)}
+.stat.real-stat svg{color:#fff}
+.stat-btn.pass{gap:10px;padding:4px 10px 4px 14px;background:#fff;border:1.5px solid var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.stat-btn.pass:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.pass-leg{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+.pass-leg small{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:#9a805c;font-weight:700}
+.pass-leg b{font-size:13px}
+.pass-leg i{font-style:normal;font-size:11px;color:#0f766e;font-weight:700}
+.pass-line{display:flex;align-items:center;gap:4px;color:#9a805c}
+.pass-line::before,.pass-line::after{content:"";width:16px;border-top:2px dotted #c9b48a}
+.stat-btn.pass .pass-line svg{width:15px;height:15px;color:#0f766e}
+.pass-ed{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#f3ead4;margin-left:2px}
+.stat-btn.pass .pass-ed svg{width:12px;height:12px;color:#3b2a1e}
+.free-stat{padding-right:9px}
+.free-stat svg{color:#d97706}
+.mini-bar{display:inline-block;width:46px;height:6px;border-radius:4px;background:#f1e4c4;overflow:hidden;margin-left:3px}
+.mini-bar i{display:block;height:100%;background:linear-gradient(90deg,#1f9d55,#0f766e);border-radius:4px;transition:width .3s}
+.actions button{box-shadow:1.5px 1.5px 0 var(--ink)}
+.actions button:hover{transform:translate(-1px,-1px);box-shadow:2.5px 2.5px 0 var(--ink)}
 </style>
 </head>
 <body>
@@ -1262,8 +1322,24 @@ function migrate(s) {
 }
 const INDEX_KEY = 'roteiros-v2', FIRST_TRIP = 'inicial';
 const tripKey = id => 'roteiro-v2:' + id;
+/** Roteiro verdadeiro: os voos já comprados. Datas, horários e o aeroporto (Fiumicino, chegada e saída por Roma) não podem ser alterados. */
+const REAL_TRIP = {
+  id: 'verdadeiro', title: 'Itália 2027 · voos comprados',
+  start: '2027-02-07', end: '2027-02-23', arrive: '06:40', depart: '22:30', entry: 'roma', exit: 'roma',
+  ida: 'Voo comprado GIG → FCO: sai do Rio sáb 06/02/2027 às 15:35 e pousa em Roma dom 07/02 às 06:40.',
+  volta: 'Voo comprado FCO → GIG: decola de Roma ter 23/02/2027 às 22:30 e pousa no Rio qua 24/02 às 06:40.',
+};
+const isReal = id => id === REAL_TRIP.id;
+function lockReal(s, id) {
+  if (!isReal(id)) return s;
+  const {start, end, arrive, depart, entry, exit} = REAL_TRIP;
+  s.plan = {...(s.plan || {}), start, end, arrive, depart, entry, exit};
+  s.plan.cities ||= [];
+  if (!s.plan.cities.some(pc => pc.k === entry)) s.plan.cities.unshift({id: uid(), k: entry, n: 0, p: []});
+  return s;
+}
 function readTrip(id) {
-  try { const s = JSON.parse(localStorage.getItem(tripKey(id))); if (s && Array.isArray(s.days)) return migrate(s); } catch (e) {}
+  try { const s = JSON.parse(localStorage.getItem(tripKey(id))); if (s && Array.isArray(s.days)) return lockReal(migrate(s), id); } catch (e) {}
   return null;
 }
 function loadIndex() {
@@ -1273,6 +1349,16 @@ function loadIndex() {
 const tripMeta = s => ({title: s.title, start: s.days[0]?.date || '', end: s.days[s.days.length - 1]?.date || ''});
 const saveIndex = () => localStorage.setItem(INDEX_KEY, JSON.stringify(tripIndex));
 let tripIndex = loadIndex();
+if (!tripIndex.trips.some(t => isReal(t.id))) {
+  const s = lockReal(blankState({title: REAL_TRIP.title, start: REAL_TRIP.start, end: REAL_TRIP.end, city: '', travelers: 2, checklist: true}), REAL_TRIP.id);
+  localStorage.setItem(tripKey(REAL_TRIP.id), JSON.stringify(s));
+  tripIndex.trips.unshift({id: REAL_TRIP.id, ...tripMeta(s)});
+  tripIndex.current = REAL_TRIP.id;
+  saveIndex();
+}
+const realNow = () => isReal(tripIndex.current);
+/** Voo comprado (chegada ou volta) no roteiro verdadeiro: não muda de dia nem de horário. */
+const isLockedFlight = it => realNow() && /^(in|out):/.test(it.air || '');
 let state = readTrip(tripIndex.current);
 if (!state) {
   tripIndex.current = FIRST_TRIP;
@@ -1298,6 +1384,7 @@ function snapshot(debounce) {
 function commit(fn, opts = {}) {
   snapshot(opts.debounce);
   fn();
+  lockReal(state, tripIndex.current);
   if (state.plan?.cities?.length) syncPlan();
   save();
   if (opts.render !== false) renderAll(); else renderHeader();
@@ -1375,13 +1462,24 @@ function renderHeader() {
   const res = days.flatMap(d => d.items.filter(i => i.status));
   const total = state.checklist.length + res.length;
   const done = state.checklist.filter(c => c.done).length + res.filter(i => i.status === 'reservado').length;
+  const real = realNow(), P = state.plan || {};
+  $('#shiftTrip').hidden = real;
+  // o roteiro se planeja por noites (são as que se reservam): livres = noites da viagem que ainda não estão em nenhuma cidade
+  const tn = tripNights(), used = (P.cities || []).reduce((a, pc) => a + (pc.n || 1), 0), free = tn == null ? null : tn - used;
+  const nDays = diffDays(first, last) + 1, why = `A viagem tem ${tn} noites (${fmtBR(first)} a ${fmtBR(last)}) e ${nDays} dias de passeio: o dia do pouso e o da volta também rendem.`;
+  const freeStat = free == null ? '' : free < 0
+    ? `<button type="button" class="stat stat-btn warn-stat free-stat" data-timeline title="${why} As cidades já usam ${used} noites. Clique para abrir a linha do tempo do roteiro.">${icSvg('alerta')}<b>${-free}</b> noite${free === -1 ? '' : 's'} a mais</button>`
+    : `<button type="button" class="stat stat-btn free-stat ${free ? '' : 'ok-stat'}" data-timeline title="${why} ${used} já estão nas cidades e ${free} continua${free === 1 ? '' : 'm'} livre${free === 1 ? '' : 's'}: o número cai quando uma cidade ganha noites e sobe quando você tira. Clique para abrir a linha do tempo do roteiro.">${icSvg(free ? 'sol' : 'check')}<b>${free}</b> noite${free === 1 ? '' : 's'} livre${free === 1 ? '' : 's'}<i class="mini-bar" aria-hidden="true"><i style="width:${tn ? Math.round(used / tn * 100) : 0}%"></i></i>${icSvg('calendario')}</button>`;
+  const leg = (lbl, d, time) => `<span class="pass-leg"><small>${lbl}</small><b>${weekday(d)} ${fmtBR(d)}</b>${time ? `<i>${esc(time)}</i>` : ''}</span>`;
   $('#stats').innerHTML = `
-    <button class="stat stat-btn" data-dates title="Alterar nome, datas e horários dos voos">${fmtBRY(first)}${state.plan?.arrive ? ` <small>pouso ${esc(state.plan.arrive)}</small>` : ''} → ${fmtBRY(last)}${state.plan?.depart ? ` <small>voo ${esc(state.plan.depart)}</small>` : ''} ✎</button>
-    ${state.plan?.arrive && state.plan?.depart ? '' : '<button class="stat stat-btn warn-stat" data-dates title="Com o horário de chegada e de saída, o roteiro calcula o que dá para fazer no primeiro e no último dia">Definir horário de chegada e saída</button>'}
-    <span class="stat"><b>${diffDays(first, last) + 1}</b> dias · <b>${nights}</b> noites</span>
-    <span class="stat count">${count}</span>
+    ${real ? `<span class="stat real-stat" title="${esc(REAL_TRIP.ida + '\n' + REAL_TRIP.volta)}">${icSvg('cadeado')}Roteiro verdadeiro</span>` : ''}
+    <button class="stat stat-btn pass" data-dates title="${real ? 'Voos comprados: datas e horários travados' : 'Alterar nome, datas e horários dos voos'}">${leg(P.arrive ? 'pouso' : 'início', first, P.arrive)}<span class="pass-line">${icSvg('voo')}</span>${leg(P.depart ? 'voo de volta' : 'fim', last, P.depart)}<span class="pass-ed">${icSvg(real ? 'cadeado' : 'lapis')}</span></button>
+    ${P.arrive && P.depart ? '' : '<button class="stat stat-btn warn-stat" data-dates title="Com o horário de chegada e de saída, o roteiro calcula o que dá para fazer no primeiro e no último dia">Definir horário de chegada e saída</button>'}
+    <span class="stat">${icSvg('calendario')}<b>${diffDays(first, last) + 1}</b> dias · <b>${nights}</b> noites</span>
+    ${freeStat}
+    <span class="stat count">${icSvg('voo')}${count}</span>
     ${tabOn('checklist') ? `<span class="stat">Checklist <b>${done}/${total}</b></span>` : ''}
-    ${CONFLICTS.size ? `<span class="stat warn-stat" title="Atividades do mesmo dia com horários que se sobrepõem">Conflitos de horário: <b>${CONFLICTS.size}</b> atividades</span>` : '<span class="stat ok-stat">Horários sem conflito</span>'}`;
+    ${CONFLICTS.size ? `<span class="stat warn-stat" title="Atividades do mesmo dia com horários que se sobrepõem">${icSvg('alerta')}Conflitos de horário: <b>${CONFLICTS.size}</b> atividades</span>` : `<span class="stat ok-stat">${icSvg('check')}Horários sem conflito</span>`}`;
 }
 
 /* ======================= roteiro ======================= */
@@ -1413,7 +1511,7 @@ function dayHTML(d, i) {
       <span class="day-handle" title="Arraste para reordenar o dia">${GRIP}</span>
       <div class="day-when">
         <span class="day-num">Dia ${i} · ${weekday(d.date)}</span>
-        <input type="date" class="day-date" value="${d.date}" title="Mudar a data">
+        <input type="date" class="day-date" value="${d.date}" title="Mudar a data" ${realNow() ? 'disabled' : ''}>
       </div>
       <input class="day-base" list="bases" value="${esc(d.base)}" title="Cidade onde vocês dormem (pernoite)">
       <details class="menu"><summary title="Mais opções">···</summary>
@@ -1728,13 +1826,13 @@ function setupCalEvents() {
     const wrap = $('.cal-wrap', board);
     const s = toMin(f.item.start), en = toMin(f.item.end);
     const hasEnd = s != null && en != null && en > s;
-    cd = {el, f, wrap, x0: e.clientX, y0: e.clientY, sl0: wrap.scrollLeft, st0: wrap.scrollTop, moved: false,
+    cd = {el, f, wrap, x0: e.clientX, y0: e.clientY, sl0: wrap.scrollLeft, st0: wrap.scrollTop, moved: false, lock: isLockedFlight(f.item),
       resize: e.target.classList.contains('ev-resize'), chip: el.classList.contains('chip-ev'), s, hasEnd, dur: hasEnd ? en - s : 60};
     try { el.setPointerCapture(e.pointerId); } catch (err) {}
     e.preventDefault();
   });
   board.addEventListener('pointermove', e => {
-    if (!cd) return;
+    if (!cd || cd.lock) return;
     const dx = e.clientX - cd.x0, dy = e.clientY - cd.y0;
     if (!cd.moved && Math.hypot(dx, dy) < 4) return;
     cd.moved = true; cd.el.classList.add('moving');
@@ -1822,7 +1920,8 @@ function openItemView(f) {
     ${conf.length ? `<div class="modal-conflict on"><b>Atenção: o horário sobrepõe</b> ${esc(conflictText(it.id))}</div>` : ''}
     ${TICKETS[it.cat] ? ticketHTML(it.cat) : ''}
     <div class="modal-guide"><h4>Fotos, vídeos e avaliações</h4>${guideHTML(guideTarget(it, d), {open: true})}</div>
-    <div class="modal-actions"><button type="button" data-m="delete" class="danger">Excluir</button><span class="sp"></span><button type="button" class="primary" data-m="cancel">Fechar</button></div>`,
+    ${isLockedFlight(it) ? '<p class="map-hint real-note">Voo comprado do roteiro verdadeiro: o dia e o horário não podem ser alterados.</p>' : ''}
+    <div class="modal-actions">${isLockedFlight(it) ? '' : '<button type="button" data-m="delete" class="danger">Excluir</button>'}<span class="sp"></span><button type="button" class="primary" data-m="cancel">Fechar</button></div>`,
     () => {},
     act => {
       if (act === 'delete') { if (!confirm('Excluir esta atividade?')) return false; commit(() => d.items.splice(d.items.indexOf(it), 1)); syncToast(null, 'del', it.title); }
@@ -1930,10 +2029,10 @@ function openDayModal(d) {
   openModal(`
     <h3>Editar dia</h3>
     <div class="grid2">
-      <label>Data<input type="date" name="date" value="${d.date}" required></label>
+      <label>Data<input type="date" name="date" value="${d.date}" required ${realNow() ? 'disabled title="Roteiro verdadeiro: as datas seguem os voos comprados"' : ''}></label>
       <label>Pernoite (cidade)<input name="base" list="bases" value="${esc(d.base)}" required></label>
     </div>
-    <label class="chk"><input type="checkbox" name="shift" checked> Ao mudar a data, deslocar também os dias seguintes</label>
+    ${realNow() ? '' : '<label class="chk"><input type="checkbox" name="shift" checked> Ao mudar a data, deslocar também os dias seguintes</label>'}
     <label>Título<input name="title" value="${esc(d.title)}" autofocus></label>
     <label>Observação do dia<textarea name="note" rows="4">${esc(d.note)}</textarea></label>
     <p class="muted" style="margin:0;font-size:12px">Use “Voo” como pernoite nos dias de avião — esses dias não contam noite de hotel.</p>
@@ -1943,7 +2042,7 @@ function openDayModal(d) {
       <button type="button" data-m="insert-day" title="Cria um dia vazio logo depois e empurra os dias seguintes">Inserir dia depois</button>
       <span class="sp"></span><button type="button" data-m="cancel">Cancelar</button><button type="submit" class="primary">Salvar</button></div>`,
     fd => {
-      const date = fd.get('date'), delta = diffDays(d.date, date), shift = fd.get('shift');
+      const date = fd.get('date') || d.date, delta = diffDays(d.date, date), shift = fd.get('shift');
       commit(() => {
         const idx = state.days.indexOf(d);
         if (delta && shift) state.days.slice(idx + 1).forEach(x => x.date = addDays(x.date, delta));
@@ -2406,6 +2505,7 @@ const IC = {
   gondola: '<path d="M2 15c4 3 15 3 20-3M17 4l-3 13"/><circle cx="12" cy="9" r="1.6"/>',
   calendario: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   check: '<path d="M4 12l5 5L20 6"/>',
+  cadeado: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
   moeda: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1.2-1.7-2-3-2-1.7 0-3 1-3 2.3 0 3.2 6 1.7 6 4.9 0 1.3-1.3 2.3-3 2.3-1.3 0-2.5-.8-3-2M12 5.5v13"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
@@ -4837,7 +4937,7 @@ function cityPanelHTML(c) {
   if (!tabs.length) return '';
   const on = tabs.some(([k]) => k === cityTab[c.si]) ? cityTab[c.si] : tabs[0][0];
   const body = {sug: () => sugCardHTML(c), rest: () => restaurantsCardHTML(c), hotel: () => hotelsCardHTML(c), transit: () => transitCardHTML(c)};
-  return `<div class="card city-panel" data-si="${c.si}"><h4>Montar ${esc(cat?.name || c.stay.base)}</h4>
+  return `<div class="card city-panel ${cardMin('panel')}" data-si="${c.si}"><h4>Montar ${esc(cat?.name || c.stay.base)}${minBtn('panel')}</h4>
     <div class="cp-tabs" role="tablist">${tabs.map(([k, l, n]) => `<button type="button" role="tab" class="${k === on ? 'on' : ''}" aria-selected="${k === on}" data-cptab="${k}" data-si="${c.si}">${l} <small>${n}</small></button>`).join('')}</div>
     ${tabs.map(([k]) => `<div class="cp-pane" data-cp="${k}" ${k === on ? '' : 'hidden'}>${body[k]()}</div>`).join('')}</div>`;
 }
@@ -4882,7 +4982,7 @@ const mapLayersOff = new Set();
 function mapLegendHTML(c) {
   const lines = c.cfg?.transit?.lines || [];
   const sw = body => `<svg width="34" height="30" viewBox="-17 -15 34 30" aria-hidden="true">${body}</svg>`;
-  return `<div class="card map-legend"><h4>No mapa</h4>${c.cfg?.auto ? `<p class="muted lg-note">Ainda não há o desenho detalhado de ${esc(c.stay.base)}: este é o mapa padrão, com os lugares nas posições reais.</p>` : ''}
+  return `<div class="card map-legend ${cardMin('legend')}"><h4>No mapa${minBtn('legend')}</h4>${c.cfg?.auto ? `<p class="muted lg-note">Ainda não há o desenho detalhado de ${esc(c.stay.base)}: este é o mapa padrão, com os lugares nas posições reais.</p>` : ''}
     <div class="layer-tgl">${MAP_LAYERS.map(([k, l, ic]) => `<button type="button" class="${mapLayersOff.has(k) ? 'off' : ''}" data-layer="${k}" aria-pressed="${!mapLayersOff.has(k)}">${icSvg(ic)}${l}</button>`).join('')}</div>
     <div class="legend-row">${sw(`<circle r="13" fill="#fffaf0" stroke="#b7791f" stroke-width="2.5"/><use href="#lm-colosseo" x="-10" y="-10" width="20" height="20"/>`)}Ponto turístico famoso: desenho próprio; clique para incluir</div>
     <div class="legend-row">${sw(`<circle r="8" fill="#fffaf0" stroke="${INK}" stroke-width="2" stroke-dasharray="3 2"/><path d="M-3.5 0H3.5M0-3.5V3.5" stroke="${INK}" stroke-width="2"/>`)}Outros lugares (roxo: pouco conhecidos)</div>
@@ -4913,7 +5013,7 @@ function citySectionHTML(c) {
     <div class="city-grid">
       <aside class="city-side city-left">
         ${mapLegendHTML(c)}
-        <div class="card check-card"><h4>Verificação</h4>
+        <div class="card check-card ${cardMin('check')}"><h4>Verificação${minBtn('check')}</h4>
           <div class="check-row ${pairs.length ? 'warn' : 'ok'}">${pairs.length ? `<b>${pairs.length} conflito${pairs.length > 1 ? 's' : ''} de horário</b>${pairs.map(({d, a, b}) => `<div class="check-item"><span>${weekday(d.date)} ${fmtBR(d.date)}:</span> <a href="#" data-open-item="${a.id}">${esc(a.start)} ${esc(a.title)}</a> × <a href="#" data-open-item="${b.id}">${esc(b.start)} ${esc(b.title)}</a></div>`).join('')}` : '<b>Horários OK</b> — nenhuma atividade se sobrepõe.'}</div>
           <div class="check-row ${hotel ? 'ok' : 'warn'}">${hotel ? `<b>Hotel:</b> ${esc(hotel.name)}` : `<b>Hotel a definir</b> — escolha onde ficar em ${esc(s.base)} na aba Hotéis.`}</div>
           <div class="check-row ok"><b>Mapa sem sobreposição</b> — ${check.total} marcadores${check.moved ? `; ${check.moved} foram afastados do ponto exato para não cobrir outro (a linha pontilhada liga ao lugar real)` : ''}.</div>
@@ -4991,8 +5091,10 @@ function planSummary() {
 function overCapacityHTML() {
   const t = tripNights(), need = plan().need;
   if (!planDays().length || t == null || !(need > t)) return '';
-  return `<div class="card map-note over-note">As atividades escolhidas pedem <b>${need} dias</b>, mas a viagem tem <b>${t} noites</b>. Alguns dias ficaram com mais de ${DAY_CAP} h: tire algumas atividades ou mude as datas <a href="#" data-dates>aqui</a>.</div>`;
+  return `<div class="card map-note over-note">As atividades escolhidas pedem <b>${need} dias</b>, mas a viagem tem <b>${t} noites</b>. Alguns dias ficaram com mais de ${DAY_CAP} h: tire algumas atividades${realNow() ? ' (as datas seguem os voos comprados)' : ' ou mude as datas <a href="#" data-dates>aqui</a>'}.</div>`;
 }
+/** Título do mapa: o nome em versalete e o ano (quando houver) em itálico. */
+const mapTitleHTML = title => esc(title).replace(/\s*(\d{4})$/, ' <span class="yr">$1</span>');
 function renderMap() {
   const el = $('#tab-mapa');
   closeMapPop();
@@ -5009,7 +5111,7 @@ function renderMap() {
     const pcs = plan().cities;
     el.innerHTML = `${modeBar}
     <div class="map-hero">
-      <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
+      <h2 class="map-title">${mapTitleHTML(title)}</h2>
       <div class="map-sub">${pcs.length ? `${pcs.length} cidade${pcs.length > 1 ? 's' : ''} escolhida${pcs.length > 1 ? 's' : ''} · depois monte o roteiro no mapa, escolhendo as atividades` : 'comece escolhendo a cidade onde você chega'}</div>
     </div>${planHTML()}`;
     return;
@@ -5017,7 +5119,7 @@ function renderMap() {
   if (!coversMap(m)) {
     el.innerHTML = `${modeBar}
     <div class="map-hero">
-      <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
+      <h2 class="map-title">${mapTitleHTML(title)}</h2>
       <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) + ' <a href="#" class="hero-dates" data-dates title="Alterar datas">✎</a>' : '<a href="#" class="hero-dates" data-dates>definir datas ✎</a>'} · ${state.days.length} dias${m.cities.length ? ` · ${m.cities.length} cidade${m.cities.length > 1 ? 's' : ''}` : ''}</div>
       ${m.cities.length ? `<div class="map-jump">${m.cities.map(c => `<button data-goto="city-${c.si}" style="--c:${c.color}">${c.si + 1}. ${esc(c.stay.base.toUpperCase())}</button>`).join('')}</div>` : ''}
     </div>
@@ -5027,7 +5129,7 @@ function renderMap() {
   }
   el.innerHTML = `${modeBar}
     <div class="map-hero">
-      <h2 class="map-title">${[...title].map(ch => ch === ' ' ? ' ' : `<span>${esc(ch)}</span>`).join('')}</h2>
+      <h2 class="map-title">${mapTitleHTML(title)}</h2>
       <div class="map-sub">${first ? fmtBRY(first.date) + ' → ' + fmtBRY(last.date) + ' <a href="#" class="hero-dates" data-dates title="Alterar datas">✎</a>' : '<a href="#" class="hero-dates" data-dates>definir datas ✎</a>'} · ${m.cities.length} cidades-base · ${trips} passeios e bate-voltas${planSummary()}</div>
       <div class="map-jump">${m.cities.map(c => `<button data-goto="city-${c.si}" style="--c:${c.color}">${c.si + 1}. ${esc(c.stay.base.toUpperCase())}</button>`).join('')}</div>
     </div>
@@ -5141,6 +5243,15 @@ const IT_CITIES = [
     P('Accademia Carrara', 'visita', 45.706, 9.675, 0, 1.5, 'Pinacoteca com Rafael, Botticelli e Bellini.'),
     P('San Vigilio', 'foto', 45.7085, 9.651, 0, 1, 'Segundo funicular até o castelo e a melhor vista.'),
   ], {via: 'Trem de Milão (50 min); aeroporto de Orio al Serio.'}),
+  CC('brescia', 'Brescia', 'Lombardia', 45.5416, 10.2118, 1, 'Cidade romana e lombarda entre Milão e o Lago de Garda, com o maior sítio romano do norte da Itália.', [
+    P('Brixia — Parque Arqueológico (Capitolium)', 'templo', 45.5398, 10.2246, 1, 1.5, 'Templo romano e teatro, patrimônio da UNESCO.'),
+    P('Museo di Santa Giulia', 'visita', 45.5398, 10.2280, 1, 2, 'Mosteiro lombardo com a Vitória Alada e a Cruz de Desidério (UNESCO).'),
+    P('Piazza della Loggia', 'passeio', 45.5404, 10.2197, 1, 0.5, 'Praça renascentista com o relógio astronômico.'),
+    P('Duomo Vecchio (Rotonda) e Duomo Nuovo', 'igreja', 45.5389, 10.2216, 1, 0.75, 'Rotunda românica do século XI ao lado da catedral barroca.'),
+    P('Castello di Brescia', 'castelo', 45.5427, 10.2248, 0, 1.5, 'Fortaleza no morro Cidneo com vista da cidade.'),
+    P('Pinacoteca Tosio Martinengo', 'visita', 45.5363, 10.2269, 0, 1.5, 'Rafael, Lotto e Moretto num palácio do centro.'),
+    P('Franciacorta', 'comida', 45.6000, 9.9700, 0, 3, 'Região dos espumantes a 20 min, com visitas a vinícolas.', 1),
+  ], {av: 1, via: 'Trem rápido de Milão (~40 min) ou de Verona (~40 min).'}),
   CC('lago-garda', 'Lago di Garda', 'Lombardia/Vêneto', 45.4925, 10.6076, 2, 'O maior lago da Itália: castelos, termas e vilarejos.', [
     P('Sirmione e Castelo Scaligero', 'castelo', 45.4925, 10.6076, 1, 1.5, 'Castelo cercado de água na ponta da península.'),
     P('Grotte di Catullo', 'visita', 45.5045, 10.6055, 1, 1.5, 'Ruínas de vila romana debruçadas sobre o lago.'),
@@ -5200,6 +5311,22 @@ const IT_CITIES = [
     P('Val di Funes (Santa Maddalena)', 'foto', 46.63, 11.724, 0, 1.5, 'A igrejinha diante das Odle.'),
     P('Bolzano e o Ötzi', 'visita', 46.4997, 11.349, 0, 2, 'Múmia de 5.300 anos no Museu Arqueológico.'),
   ], {car: 1, via: 'Trem até Bolzano (Verona 1h30) + ônibus; carro recomendado. No inverno, várias trilhas fecham.'}),
+  CC('trento', 'Trento', 'Trentino-Alto Ádige', 46.0679, 11.1211, 1, 'Cidade do Concílio de Trento entre montanhas, com castelo e afrescos góticos.', [
+    P('Piazza Duomo e Catedral de San Vigilio', 'igreja', 46.0668, 11.1216, 1, 1, 'Praça com a Fonte de Netuno e a catedral românica do Concílio.'),
+    P('Castello del Buonconsiglio', 'castelo', 46.0713, 11.1273, 1, 2, 'Residência dos príncipes-bispos com o Ciclo dos Meses na Torre Aquila.'),
+    P('MUSE — Museu das Ciências', 'visita', 46.0629, 11.1137, 1, 2, 'Museu de Renzo Piano sobre os Alpes e a natureza.'),
+    P('Teleférico de Sardagna', 'foto', 46.0706, 11.1155, 0, 1, 'Sobe 400 m em poucos minutos até um mirante sobre a cidade.'),
+    P('S.A.S.S. — Trento romana subterrânea', 'visita', 46.0668, 11.1221, 0, 0.75, 'Ruas e casas da Tridentum romana sob a Piazza Battisti.'),
+    P('Via Belenzani e palácios pintados', 'passeio', 46.0690, 11.1211, 0, 0.75, 'Rua renascentista de fachadas com afrescos.'),
+  ], {av: 1, via: 'Trem rápido de Verona (~55 min) ou de Bolonha (~2h).'}),
+  CC('bolzano', 'Bolzano', 'Trentino-Alto Ádige', 46.4983, 11.3548, 1, 'Porta das Dolomitas, metade italiana e metade tirolesa, casa do Ötzi.', [
+    P('Museu Arqueológico do Alto Ádige (Ötzi)', 'visita', 46.4995, 11.3486, 1, 1.5, 'A múmia do Homem do Gelo, de 5.300 anos.'),
+    P('Piazza Walther e catedral', 'passeio', 46.4980, 11.3546, 1, 0.5, 'Praça central com a catedral gótica de telhado colorido.'),
+    P('Via dei Portici', 'compras', 46.4994, 11.3530, 1, 1, 'Rua medieval de arcadas com lojas e cafés.'),
+    P('Teleférico do Renon e trenzinho', 'foto', 46.4983, 11.3615, 0, 3, 'Teleférico até Soprabolzano e trem até as Pirâmides de Terra.'),
+    P('Castel Roncolo', 'castelo', 46.5162, 11.3595, 0, 1.5, 'Castelo com o maior ciclo de afrescos profanos da Idade Média.'),
+    P('Mercado da Piazza delle Erbe', 'comida', 46.4996, 11.3519, 0, 0.75, 'Frutas, speck e pães tiroleses.'),
+  ], {av: 1, via: 'Trem de Verona (~1h30) ou de Trento (~30 min).'}),
   CC('trieste', 'Trieste', 'Friuli', 45.6495, 13.7768, 1, 'Cidade de cafés literários entre a Itália e a Europa Central.', [
     P('Piazza Unità d’Italia', 'passeio', 45.6503, 13.7677, 1, 0.5, 'A maior praça aberta para o mar da Europa.'),
     P('Castelo de Miramare', 'castelo', 45.7026, 13.7128, 1, 1.5, 'Castelo branco de Maximiliano sobre o mar.'),
@@ -5338,6 +5465,15 @@ const IT_CITIES = [
     P('Ciprestes de Monticchiello', 'foto', 43.071, 11.723, 0, 0.5, 'Estrada em zigue-zague com ciprestes.'),
     P('Abadia de Sant’Antimo', 'igreja', 43.0, 11.515, 0, 1, 'Abadia românica isolada no campo.'),
   ], {car: 1, via: 'Carro recomendado (Florença ~1h45, Siena ~50 min); ônibus limitados.'}),
+  CC('arezzo', 'Arezzo', 'Toscana', 43.4633, 11.8796, 1, 'Cidade toscana dos afrescos de Piero della Francesca e da Piazza Grande.', [
+    P('Basílica de San Francesco (Piero della Francesca)', 'igreja', 43.4631, 11.8804, 1, 1, 'O ciclo da Lenda da Vera Cruz; visita com horário marcado.', 1),
+    P('Piazza Grande', 'passeio', 43.4648, 11.8833, 1, 0.75, 'Praça inclinada com a Loggia de Vasari, cenário de “A Vida É Bela”.'),
+    P('Catedral de Arezzo', 'igreja', 43.4677, 11.8841, 1, 0.5, 'Gótica, com a Madalena de Piero della Francesca.'),
+    P('Pieve di Santa Maria', 'igreja', 43.4646, 11.8826, 0, 0.5, 'Igreja românica com a torre das cem janelas.'),
+    P('Casa de Vasari', 'visita', 43.4661, 11.8771, 0, 1, 'Casa decorada pelo próprio Giorgio Vasari.'),
+    P('Fortezza Medicea e Parco del Prato', 'foto', 43.4690, 11.8866, 0, 1, 'Fortaleza dos Médici com vista do vale.'),
+    P('Cortona', 'passeio', 43.2756, 11.9853, 0, 3, 'Cidade etrusca no alto, de “Sob o Sol da Toscana” (trem + ônibus ~40 min).'),
+  ], {via: 'Trem de Florença (~1h) ou de Roma (~2h).'}),
   CC('perugia', 'Perúgia', 'Úmbria', 43.1107, 12.3908, 1, 'Capital da Úmbria, etrusca e medieval, e do chocolate.', [
     P('Corso Vannucci e Fontana Maggiore', 'fonte', 43.1121, 12.3888, 1, 1, 'O passeio principal e a fonte do séc. XIII.'),
     P('Rocca Paolina', 'visita', 43.109, 12.389, 0, 0.75, 'Ruas medievais engolidas por uma fortaleza, com escadas rolantes.'),
@@ -5436,6 +5572,15 @@ const IT_CITIES = [
     P('Valle delle Ferriere', 'passeio', 40.644, 14.594, 0, 3, 'Trilha por um vale úmido com cachoeiras e ruínas.'),
     P('Praiano', 'passeio', 40.6115, 14.53, 0, 1, 'Pôr do sol sem multidões.'),
   ], {via: 'Trem até Salerno (Roma 1h45) + balsa, ou ônibus SITA de Sorrento.'}),
+  CC('salerno', 'Salerno', 'Campânia', 40.6824, 14.7681, 1, 'Porta da Costa Amalfitana, com orla arborizada e a catedral de São Mateus.', [
+    P('Catedral de Salerno (San Matteo)', 'igreja', 40.6809, 14.7593, 1, 0.75, 'Catedral normanda com a cripta de São Mateus.'),
+    P('Lungomare Trieste', 'passeio', 40.6772, 14.7558, 1, 1, 'Orla arborizada de 2 km diante do golfo.'),
+    P('Paestum', 'templo', 40.4197, 15.0053, 1, 3, 'Templos gregos de 2.500 anos (trem ~35 min).'),
+    P('Castello di Arechi', 'castelo', 40.6868, 14.7522, 0, 1.5, 'Castelo lombardo no alto, com vista do golfo.'),
+    P('Giardino della Minerva', 'passeio', 40.6814, 14.7562, 0, 0.75, 'O primeiro jardim botânico da Europa, da Escola Médica Salernitana.'),
+    P('Centro histórico e Via dei Mercanti', 'compras', 40.6798, 14.7570, 0, 1, 'Rua medieval de lojas e pizzarias.'),
+    P('Vietri sul Mare', 'compras', 40.6727, 14.7289, 0, 1.5, 'Cerâmicas coloridas no começo da Costa Amalfitana.'),
+  ], {av: 1, via: 'Trem rápido de Roma (~1h40) ou de Nápoles (~40 min); ônibus e barcos para Amalfi.'}),
   CC('matera', 'Matera', 'Basilicata', 40.6664, 16.6043, 2, 'Cidade de casas-caverna habitadas há 9.000 anos.', [
     P('Sassi (Barisano e Caveoso)', 'passeio', 40.665, 16.61, 1, 2.5, 'Labirinto de casas escavadas na rocha.'),
     P('Belvedere Luigi Guerricchio', 'foto', 40.668, 16.608, 1, 0.25, 'A vista clássica dos Sassi.'),
@@ -5481,6 +5626,20 @@ const IT_CITIES = [
     P('Pizzo: tartufo e Chiesetta di Piedigrotta', 'comida', 38.734, 16.16, 0, 2, 'Igreja escavada numa gruta e o sorvete tartufo.'),
     P('Scilla (Chianalea)', 'passeio', 38.254, 15.717, 0, 2, 'Bairro de pescadores sobre a água.'),
   ], {via: 'Trem rápido até Lamezia/Vibo Pizzo + regional; aeroporto de Lamezia.'}),
+  CC('cosenza', 'Cosenza', 'Calábria', 39.2983, 16.2537, 1, 'Centro histórico no alto, um museu ao ar livre no Corso Mazzini e a porta para a Sila.', [
+    P('Centro histórico e Catedral', 'igreja', 39.2892, 16.2546, 1, 1, 'Catedral do século XII, reconhecida pela UNESCO como Mensageira da Paz.'),
+    P('Castello Svevo', 'castelo', 39.2853, 16.2565, 1, 1, 'Castelo normando-suábio no alto do Colle Pancrazio.'),
+    P('MAB — Museu ao Ar Livre Bilotti', 'visita', 39.3025, 16.2525, 1, 1, 'Esculturas de Dalí, De Chirico e Manzù ao longo do Corso Mazzini.'),
+    P('Teatro Rendano', 'visita', 39.2895, 16.2555, 0, 0.5, 'Teatro de ópera do século XIX no centro antigo.'),
+    P('Parque Nacional da Sila (Camigliatello)', 'passeio', 39.3395, 16.4495, 0, 4, 'Florestas e lagos de montanha a ~40 min de carro; neve no inverno.'),
+  ], {car: 1, via: 'Trem de Paola, na linha Roma–Reggio (~4h de Roma), ou ônibus; carro para a Sila.'}),
+  CC('reggio', 'Reggio Calabria', 'Calábria', 38.1113, 15.6473, 1, 'Na ponta da bota, diante do Estreito de Messina, com os Bronzes de Riace.', [
+    P('Museu Arqueológico Nacional (Bronzes de Riace)', 'visita', 38.1139, 15.6494, 1, 2, 'As duas estátuas gregas de bronze do século V a.C.'),
+    P('Lungomare Falcomatà', 'passeio', 38.1108, 15.6447, 1, 1, 'Orla com vista para a Sicília e o Etna.'),
+    P('Scilla e Chianalea', 'foto', 38.2538, 15.7158, 1, 2.5, 'Vila de pescadores sob o castelo (trem ~30 min).'),
+    P('Catedral de Reggio', 'igreja', 38.1080, 15.6462, 0, 0.5, 'A maior igreja da Calábria.'),
+    P('Castello Aragonese', 'castelo', 38.1067, 15.6492, 0, 0.75, 'Torres aragonesas no centro da cidade.'),
+  ], {via: 'Trem Frecciarossa de Roma (~5h) ou voo; balsa para Messina, na Sicília.'}),
   CC('palermo', 'Palermo', 'Sicília', 38.1157, 13.3615, 3, 'Árabe, normanda e barroca: mercados e mosaicos dourados.', [
     P('Catedral de Palermo', 'igreja', 38.1144, 13.3561, 1, 1, 'Mistura de estilos e terraços no telhado.'),
     P('Capela Palatina (Palazzo dei Normanni)', 'igreja', 38.111, 13.353, 1, 1.5, 'Mosaicos dourados árabe-normandos.', 1),
@@ -5548,6 +5707,14 @@ const IT_CITIES = [
     P('Praia La Pelosa (Stintino)', 'sol', 40.965, 8.211, 1, 3, 'Água rasa turquesa; acesso pago e com reserva no verão.', 1),
     P('Nuraghe di Palmavera', 'visita', 40.594, 8.241, 0, 0.75, 'Vila nurágica perto da cidade.'),
   ], {isl: 'sar', car: 1, via: 'Voo de Roma/Milão (~1h); aeroporto de Alghero-Fertilia.'}),
+  CC('sassari', 'Sassari', 'Sardenha', 40.7259, 8.5557, 1, 'Segunda cidade da Sardenha, base para Castelsardo, Stintino e o norte da ilha.', [
+    P('Piazza d’Italia', 'passeio', 40.7252, 8.5606, 1, 0.5, 'Praça do século XIX com o Palácio da Província.'),
+    P('Catedral de San Nicola', 'igreja', 40.7267, 8.5578, 1, 0.5, 'Fachada barroca de inspiração espanhola.'),
+    P('Fontana di Rosello', 'fonte', 40.7296, 8.5552, 0, 0.5, 'Fonte renascentista, símbolo da cidade.'),
+    P('Museu Nacional Sanna', 'visita', 40.7235, 8.5638, 0, 1.5, 'Arqueologia nurágica e arte sarda.'),
+    P('Castelsardo', 'foto', 40.9140, 8.7131, 0, 2.5, 'Vila medieval murada sobre o mar.'),
+    P('Santissima Trinità di Saccargia', 'igreja', 40.6397, 8.6461, 0, 1, 'Basílica românica listrada de preto e branco.'),
+  ], {isl: 'sar', car: 1, via: 'Voo para Alghero (~35 km) ou Olbia; balsa noturna até Porto Torres.'}),
 ];
 const slugify = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 // ★★★ = os mais visitados de cada cidade; demais imperdíveis = ★★; pouco conhecidos = ★
@@ -5567,6 +5734,8 @@ const TOP_PLACES = {
   bari: ['Polignano', 'Bari Vecchia'], alberobello: ['Rione Monti'], lecce: ['Basílica de Santa Croce'], tropea: ['Centro histórico', 'Santa Maria dell'],
   palermo: ['Catedral', 'Monreale', 'Capela Palatina'], cefalu: ['Catedral'], agrigento: ['Vale dos Templos'], taormina: ['Teatro Antico', 'Etna'],
   catania: ['Piazza del Duomo'], siracusa: ['Ortigia', 'Parque Arqueológico'], cagliari: ['Bairro Castello', 'Praia do Poetto'], alghero: ['Centro histórico', 'Grotta di Nettuno'],
+  brescia: ['Brixia', 'Museo di Santa Giulia'], trento: ['Piazza Duomo', 'Castello del Buonconsiglio'], bolzano: ['Museu Arqueológico'], arezzo: ['Basílica de San Francesco', 'Piazza Grande'],
+  salerno: ['Catedral de Salerno', 'Lungomare'], cosenza: ['Centro histórico'], reggio: ['Museu Arqueológico', 'Lungomare'], sassari: ['Piazza d’Italia'],
 };
 // desenho próprio (símbolo #lm-…) e nome curto dos pontos famosos nos mapas das cidades: [início do nome, desenho, nome curto]
 const PLACE_LM = {
@@ -5596,7 +5765,7 @@ const PLACE = Object.fromEntries(IT_CITIES.flatMap(c => c.places.map(p => [p.id,
 const placeById = id => PLACE[id] || REST_BY_ID[id] || OWN[id];
 const IT_REGIONS = [...new Set(IT_CITIES.map(c => c.reg))];
 // toda cidade do planejador precisa existir no mapa geral do roteiro
-const CITY_LM = {lucerna: 'lago', 'lago-garda': 'lago', padua: 'cupola', dolomitas: 'alpes', interlaken: 'alpes', trieste: 'castelo', genova: 'casinhas', portofino: 'casinhas', 'cinque-terre': 'casinhas', modena: 'cupola', parma: 'cupola', ravenna: 'cupola', 'san-gimignano': 'castelo', 'val-dorcia': 'pin', perugia: 'castelo', assis: 'cupola', orvieto: 'cupola', pompeia: 'templo', sorrento: 'casinhas', capri: 'casinhas', 'costa-amalfi': 'casinhas', matera: 'castelo', bari: 'casinhas', alberobello: 'casinhas', lecce: 'cupola', tropea: 'casinhas', palermo: 'cupola', cefalu: 'casinhas', agrigento: 'templo', taormina: 'templo', catania: 'cupola', siracusa: 'templo', cagliari: 'castelo', alghero: 'castelo', napoles: 'castelo'};
+const CITY_LM = {lucerna: 'lago', 'lago-garda': 'lago', padua: 'cupola', dolomitas: 'alpes', interlaken: 'alpes', trieste: 'castelo', genova: 'casinhas', portofino: 'casinhas', 'cinque-terre': 'casinhas', modena: 'cupola', parma: 'cupola', ravenna: 'cupola', 'san-gimignano': 'castelo', 'val-dorcia': 'pin', perugia: 'castelo', assis: 'cupola', orvieto: 'cupola', pompeia: 'templo', sorrento: 'casinhas', capri: 'casinhas', 'costa-amalfi': 'casinhas', matera: 'castelo', bari: 'casinhas', alberobello: 'casinhas', lecce: 'cupola', tropea: 'casinhas', palermo: 'cupola', cefalu: 'casinhas', agrigento: 'templo', taormina: 'templo', catania: 'cupola', siracusa: 'templo', cagliari: 'castelo', alghero: 'castelo', napoles: 'castelo', brescia: 'templo', trento: 'castelo', bolzano: 'alpes', arezzo: 'cupola', salerno: 'casinhas', cosenza: 'castelo', reggio: 'templo', sassari: 'cupola'};
 IT_CITIES.forEach(c => {
   const k = Object.keys(PLACES).find(pk => mnorm(PLACES[pk].name) === mnorm(c.name));
   if (k) { if (PLACES[k].lm === 'pin' && CITY_LM[c.k]) PLACES[k].lm = CITY_LM[c.k]; return; }
@@ -5621,6 +5790,17 @@ IT_CITIES.forEach(c => {
 
 // [modo, minutos, observação] — trens: menor tempo direto (Trenitalia/Italo, set/2026); demais: tempos típicos
 const LEGS = {
+  'brescia|milao': ['trem', 40, 'Frecciarossa/Italo, direto'], 'brescia|verona': ['trem', 40, 'Frecciarossa, direto'], 'brescia|veneza': ['trem', 110, 'Frecciarossa, direto'],
+  'brescia|roma': ['trem', 225, 'Frecciarossa, direto'], 'bergamo|brescia': ['trem', 55, 'regional, direto'], 'brescia|lago-garda': ['trem', 25, 'trem até Desenzano'],
+  'trento|verona': ['trem', 55, 'Frecciargento/regional, direto'], 'bolzano|trento': ['trem', 35, 'regional/Frecce, direto'], 'bolzano|verona': ['trem', 90, 'Frecce/Eurocity, direto'],
+  'roma|trento': ['trem', 250, 'Frecciargento, direto (via Bolonha e Verona)'], 'bolzano|roma': ['trem', 285, 'Frecciargento, direto'],
+  'bolonha|trento': ['trem', 130, 'Frecciargento, direto'], 'bolonha|bolzano': ['trem', 160, 'Frecciargento, direto'], 'bolzano|dolomitas': ['onibus', 60, 'ônibus para Val Gardena'],
+  'arezzo|florenca': ['trem', 55, 'regional, direto (alguns Frecciarossa em ~40 min)'], 'arezzo|roma': ['trem', 110, 'Frecciarossa (poucos horários) ou regional ~2h10'], 'arezzo|perugia': ['trem', 75, 'regional, direto'],
+  'lucca|roma': ['trem', 185, 'Frecciarossa até Florença + regional'],
+  'napoles|salerno': ['trem', 40, 'Frecciarossa ou regional, direto'], 'roma|salerno': ['trem', 105, 'Frecciarossa/Italo, direto'], 'costa-amalfi|salerno': ['onibus', 75, 'ônibus SITA ou barco Travelmar'], 'pompeia|salerno': ['trem', 35, 'regional'],
+  'reggio|roma': ['trem', 300, 'Frecciarossa/Italo, direto'], 'napoles|reggio': ['trem', 210, 'Frecciarossa/Italo, direto'], 'reggio|tropea': ['trem', 115, 'regional'],
+  'cosenza|roma': ['trem', 255, 'Frecciarossa/Intercity até Paola + regional'], 'cosenza|napoles': ['trem', 180, 'Frecciarossa até Paola + regional'], 'cosenza|reggio': ['trem', 150, 'Intercity/regional via Paola'],
+  'alghero|sassari': ['onibus', 50, 'ônibus ARST'], 'cagliari|sassari': ['trem', 195, 'trem regional, direto'],
   'florenca|roma': ['trem', 95, 'Frecciarossa/Italo, direto'], 'napoles|roma': ['trem', 73, 'Frecciarossa/Italo, direto'], 'milao|roma': ['trem', 175, 'Frecciarossa/Italo, direto'],
   'roma|veneza': ['trem', 239, 'Frecciarossa/Italo, direto'], 'bolonha|roma': ['trem', 123, 'Frecciarossa/Italo, direto'], 'orvieto|roma': ['trem', 70, 'regional/Intercity'],
   'assis|roma': ['trem', 130, 'regional, troca em Foligno'], 'perugia|roma': ['trem', 140, 'Frecciarossa ou regional'], 'pisa|roma': ['trem', 165, 'Intercity ou Frecce via Florença'],
@@ -5897,6 +6077,10 @@ function syncPlan() {
   };
   const setNotes = (it, notes) => { if (!it.notes || it.notes === it.ncalc || /normalmente (a partir das 14h–15h|até 10h–11h)/.test(it.notes)) it.notes = notes; it.ncalc = notes; };
   const all = state.days.flatMap(d => d.items), find = f => all.find(f);
+  all.filter(isLockedFlight).forEach(it => {
+    it.start = '';
+    it.notes = it.air.startsWith('in:') ? `${REAL_TRIP.ida} Desembarque, imigração e bagagem: conte de 1h30 a 2h.` : `${REAL_TRIP.volta} Chegue ao aeroporto 3 h antes do voo internacional.`;
+  });
   const arr = toMin(P.arrive), dep = toMin(P.depart);
   if (ain && arr != null) {
     setTime(find(it => it.air === `in:${ain.k}`), arr, arr + 120);
@@ -5947,7 +6131,7 @@ function planEndsHTML() {
     const k = plan()[kind], on = step === kind;
     return `<div class="pe-step ${on ? 'on' : k ? 'ok' : ''}"><span class="pe-n">${k && !on ? '✓' : n}</span><div><b>${label}</b>
       ${on ? `<small>${hint}</small>` : k ? `<span class="pe-city">${icSvg('voo')}${esc(CAT[k].name)}${GATEWAYS[k] ? ` <small>aeroporto ${GATEWAYS[k]}</small>` : ''}</span>` : '<small>depois da chegada</small>'}</div>
-      ${k && !on && !(step && step !== kind) ? `<button class="ink-btn small" data-pl="pick" data-end="${kind}">trocar</button>` : ''}</div>`;
+      ${k && !on && !(step && step !== kind) && !realNow() ? `<button class="ink-btn small" data-pl="pick" data-end="${kind}">trocar</button>` : ''}</div>`;
   };
   return `<div class="pl-ends ${step ? '' : 'done'}">
     ${row('entry', 1, 'Chegada', 'Clique no mapa na cidade onde você chega. As cidades com ✈ têm aeroporto internacional.')}
@@ -6024,7 +6208,7 @@ function planMapSVG() {
     const col = on ? cityColor(c.name) : '#fffaf0', numTxt = on ? nums.join('·') : '', rw = on ? Math.max(11, numTxt.length * 4 + 6) : 6;
     const tip = step ? ` · clique para escolher como ${step === 'entry' ? 'chegada' : 'saída'}${GATEWAYS[c.k] ? ` (aeroporto ${GATEWAYS[c.k]})` : ''}` : on ? ` (parada${nums.length > 1 ? 's' : ''} ${nums.join(' e ')})` : ' · clique para ver os lugares';
     const badge = step && GATEWAYS[c.k] && !on ? plane(8, -8, '#0f766e') : '';
-    dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})"><title>${esc(c.name)} — ${esc(c.reg)}${tip}</title>
+    dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})" role="button" aria-label="${esc(c.name)} — ${esc(c.reg)}${tip}">
       <circle r="16" fill="transparent"/>${sel ? `<rect x="${-rw - 6}" y="-17" width="${2 * rw + 12}" height="34" rx="17" fill="none" stroke="#f59e0b" stroke-width="4"/>` : ''}
       ${on ? `<rect x="${-rw}" y="-11" width="${2 * rw}" height="22" rx="11" fill="${col}" stroke="${INK}" stroke-width="2.5"/><text y="4.5" text-anchor="middle" font-size="${nums.length > 1 ? 11 : 12}" class="f-bold" fill="#fff">${numTxt}</text>` : `<circle r="6" fill="${col}" stroke="${INK}" stroke-width="2"/>`}${badge}</g>`;
     boxes.push({x0: x - (on ? rw + 1 : 7), x1: x + (on ? rw + 1 : 7), y0: y - (on ? 12 : 7), y1: y + (on ? 12 : 7)});
@@ -6048,8 +6232,12 @@ function planMapSVG() {
 }
 
 /* ---------- painel lateral e sequência ---------- */
+/** Cartões do planejador que o usuário pode minimizar (fica só o título). */
+const planMin = () => (state.settings.planMin ||= {});
+const cardMin = k => planMin()[k] ? 'is-min' : '';
+const minBtn = k => `<button type="button" class="card-min" data-pl="min" data-card="${k}" aria-expanded="${!planMin()[k]}" title="${planMin()[k] ? 'Abrir' : 'Minimizar'}">${planMin()[k] ? '▸' : '▾'}</button>`;
 function planSideHTML() {
-  if (planStep()) return `<div class="card pl-browse"><h3>Cidades da Itália</h3>${planEndsHTML()}</div>`;
+  if (planStep()) return `<div class="card pl-browse ${cardMin('browse')}"><h3>Cidades da Itália${minBtn('browse')}</h3>${planEndsHTML()}</div>`;
   if (planSel && CAT[planSel]) {
     const c = CAT[planSel], pcs = plan().cities, idx = pcs.findIndex(pc => pc.k === c.k), pc = pcs[idx] || null;
     const prev = idx > 0 ? CAT[pcs[idx - 1].k] : !pc && pcs.length ? CAT[pcs[pcs.length > 1 ? pcs.length - 2 : 0].k] : null;
@@ -6068,8 +6256,8 @@ function planSideHTML() {
   }
   const q = norm(planQuery);
   const match = c => !q || norm(c.name).includes(q) || norm(c.reg).includes(q) || c.places.some(p => norm(p.name).includes(q));
-  return `<div class="card pl-browse">
-    <h3>Cidades da Itália</h3>
+  return `<div class="card pl-browse ${cardMin('browse')}">
+    <h3>Cidades da Itália${minBtn('browse')}</h3>
     ${planEndsHTML()}
     <input class="pl-search" type="search" placeholder="Buscar cidade, região ou lugar…" value="${esc(planQuery)}">
     ${IT_REGIONS.map(r => { const cs = IT_CITIES.filter(c => c.reg === r && match(c)); return cs.length ? `<div class="pl-region"><b>${esc(r)}</b><div>${cs.map(c => { const occ = plan().cities.map((pc, i) => pc.k === c.k ? i + 1 : 0).filter(Boolean); return `<button class="pl-chip ${occ.length ? 'on' : ''}" data-pl="sel" data-city="${c.k}" style="--c:${cityColor(c.name)}">${occ.length ? `<span>${occ.join('·')}</span>` : ''}${esc(c.name)}</button>`; }).join('')}</div></div>` : ''; }).join('')}
@@ -6087,7 +6275,7 @@ function airRowHTML(a, dir) {
 function planTripHTML() {
   const pcs = plan().cities; if (!pcs.length || planStep() === 'entry') return '';
   const t = tripNights(), {entry, exit} = plan();
-  return `<div class="card pl-trip"><h3>Seu roteiro</h3>
+  return `<div class="card pl-trip ${cardMin('trip')}"><h3>Seu roteiro${minBtn('trip')}</h3>
     <ol class="pt-list">${airRowHTML(AIRPORTS[pcs[0].k], 'in')}${pcs.map((pc, i) => {
       const c = CAT[pc.k], prev = i ? CAT[pcs[i - 1].k] : null, L = prev && prev.k !== c.k ? legInfo(prev, c) : null;
       const tag = i === 0 && entry === pc.k ? 'chegada' : i === pcs.length - 1 && i > 0 && exit === pc.k ? (entry === exit ? 'volta' : 'saída') : '';
@@ -6102,13 +6290,15 @@ function planTripHTML() {
 function nightsSummaryHTML() {
   const pcs = plan().cities, t = tripNights(), sum = pcs.reduce((a, pc) => a + (pc.n || 1), 0);
   if (t == null || !pcs.length) return '';
-  if (sum > t) return `<p class="pt-sum warn">As cidades já usam ${sum} noites e a viagem tem <b>${t}</b>: a volta ficaria em <b>${fmtBRY(addDays(planStart(), sum))}</b> em vez de ${fmtBRY(plan().end)}. Tire uma cidade ou mude as datas.</p>`;
+  if (sum > t) return `<p class="pt-sum warn">As cidades já usam ${sum} noites e a viagem tem <b>${t}</b>: a volta ficaria em <b>${fmtBRY(addDays(planStart(), sum))}</b> em vez de ${fmtBRY(plan().end)}. ${realNow() ? 'Tire uma cidade ou noites: as datas seguem os voos comprados.' : 'Tire uma cidade ou mude as datas.'}</p>`;
   const free = t - sum;
   return `<p class="pt-sum ${free ? 'ok' : ''}"><b>${sum}</b> de ${t} noites nas cidades · <b>${free}</b> noite${free === 1 ? '' : 's'} livre${free === 1 ? '' : 's'}${free ? ` (por enquanto no fim, em ${esc(CAT[pcs.at(-1).k].name)})` : ''}</p>`;
 }
 /** Sugestões abaixo do "Seu roteiro": não mudam nada sozinhas; explicam o que pode melhorar e deixam usar ou salvar como outro roteiro. */
 function planAdviceHTML() {
-  const a = planAdviceData(); if (!a) return '';
+  const a = planAdviceData();
+  const head = `<h3>Sugestões${minBtn('advice')}</h3>`;
+  if (!a) return `<div class="card pl-advice ${cardMin('advice')}">${head}${sugRoteirosHTML()}</div>`;
   const {opts, notes, cur, curLegs, legs, pair, name} = a;
   const optHTML = (o, i) => {
     const oLegs = new Set(legs(o.ks).map(pair)), gone = curLegs.filter(l => !oLegs.has(pair([l.a, l.b]))).sort((a, b) => b.min - a.min).slice(0, 2);
@@ -6116,10 +6306,21 @@ function planAdviceHTML() {
       <small>${fmtDur(o.total)} entre cidades, ${fmtDur(cur - o.total)} a menos que o seu (${fmtDur(cur)}).${gone.length ? ` Sai ${gone.map(l => `${esc(name(l.a))} → ${esc(name(l.b))} (${fmtDur(l.min)})`).join(' e ')}${gone.length > 1 ? ', que fazem' : ', que faz'} você ir e voltar no mapa.` : ''}</small>
       <div class="adv-btns"><button type="button" class="ink-btn small" data-pl="use-order" data-order="${o.ks.join(',')}">Usar esta ordem</button><button type="button" class="ink-btn small" data-pl="save-order" data-order="${o.ks.join(',')}">Salvar como novo roteiro</button></div></div>`;
   };
-  if (!opts.length && !notes.length) return `<div class="card pl-advice ok"><h3>Sugestões</h3><p class="pt-note">Sua ordem já é a mais rápida (${fmtDur(cur)} entre cidades) e as noites dão conta das atividades.</p></div>`;
-  return `<div class="card pl-advice"><h3>Sugestões para o seu roteiro</h3><p class="pt-note">Nada aqui muda o seu roteiro sozinho: escolha uma opção se quiser.</p>
+  if (!opts.length && !notes.length) return `<div class="card pl-advice ok ${cardMin('advice')}">${head}<p class="pt-note">Sua ordem já é a mais rápida (${fmtDur(cur)} entre cidades) e as noites dão conta das atividades.</p>${sugRoteirosHTML()}</div>`;
+  return `<div class="card pl-advice ${cardMin('advice')}">${head}<p class="pt-note">Nada aqui muda o seu roteiro sozinho: escolha uma opção se quiser.</p>
     ${notes.length ? `<ul class="adv-notes">${notes.map(n => `<li>${n}</li>`).join('')}</ul>` : ''}
-    ${opts.map(optHTML).join('')}</div>`;
+    ${opts.map(optHTML).join('')}${sugRoteirosHTML()}</div>`;
+}
+/** Roteiros prontos (pesquisados) para as datas dos voos, agrupados por tipo; “Detalhes” abre a página do roteiro numa nova aba. */
+function sugRoteirosHTML() {
+  return `<div class="rs-head"><b>Roteiros prontos para as suas datas</b><small>${fmtBR(REAL_TRIP.start)} a ${fmtBR(REAL_TRIP.end)} · 16 noites · chegada e volta por Roma · pesquisados em guias e sites oficiais (nov/2026)</small></div>
+    ${Object.entries(SUG_CATS).map(([cat, label]) => {
+      const list = SUG_ROTEIROS.filter(r => r.cat === cat); if (!list.length) return '';
+      return `<div class="rs-group"><div class="rs-gt">${esc(label)}</div>${list.map(r => `<div class="rs-item">
+        <div class="rs-top"><b>${esc(r.nome)}</b><button type="button" class="ink-btn small" data-sugr="${r.id}" title="Abrir o roteiro detalhado numa nova aba">Detalhes ↗</button></div>
+        <div class="rs-route">${r.stops.map(s => `<span style="--c:${cityColor(s.nome)}">${esc(s.nome)} <i>${s.n}</i></span>`).join('')}</div>
+        <small>${esc(r.resumo)}</small></div>`).join('')}</div>`;
+    }).join('')}`;
 }
 /** Avisos e ordens melhores do planejador (o mesmo que aparece em "Sugestões para o seu roteiro"). */
 function planAdviceData() {
@@ -6309,6 +6510,31 @@ function wikiInfo(name, city) {
   wikiCache.set(key, pr);
   return pr;
 }
+/** Foto e resumo de uma cidade do catálogo: só aceita artigos com o nome da cidade a até 10 km das coordenadas dela (a busca por nome trazia pessoas homônimas). */
+function cityWikiInfo(c) {
+  const key = `city|${c.k}`;
+  if (wikiCache.has(key)) return wikiCache.get(key);
+  if (wikiStore[key]) return Promise.resolve(wikiStore[key]);
+  const base = norm(c.name.split(/ e |\s\(/)[0]);
+  const pr = (async () => {
+    for (const lang of ['pt', 'en', 'it']) {
+      try {
+        const api = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*`;
+        const near = (await getJSON(`${api}&list=geosearch&gscoord=${c.lat}|${c.lon}&gsradius=10000&gslimit=500`)).query?.geosearch || [];
+        const title = near.map(g => g.title).find(t => norm(t.replace(/\s*\(.*\)$/, '')) === base && !/provinc|metropol/.test(norm(t)));
+        if (!title) continue;
+        const p = Object.values((await getJSON(`${api}&titles=${encodeURIComponent(title)}&prop=pageimages|extracts|info&inprop=url&exintro=1&explaintext=1&exsentences=2&pithumbsize=480`)).query?.pages || {})[0];
+        if (p?.thumbnail) return {img: p.thumbnail.source, text: lang === 'pt' ? p.extract || '' : '', url: p.fullurl || '', title: p.title};
+      } catch (e) { return null; }
+    }
+    return wikiInfo(c.name, c.reg);
+  })().then(res => {
+    if (res) { wikiStore[key] = res; try { localStorage.setItem(WIKI_KEY, JSON.stringify(wikiStore)); } catch (e) {} } else wikiCache.delete(key);
+    return res;
+  });
+  wikiCache.set(key, pr);
+  return pr;
+}
 /** Foto do hotel no Wikimedia Commons (arquivo com o nome do hotel) ou, sem ela, uma foto tirada a até 150 m do endereço. */
 function hotelPhoto(name, city, geo) {
   const key = `hotel|${name}|${city}`;
@@ -6399,7 +6625,33 @@ function transitHoverHTML(h) {
       <small class="hc-hint">Clique para ver a linha no mapa e incluir no roteiro.</small>
     </div>`;
 }
+/** Cartão da cidade no mapa do “Planejar pela Itália”: o mesmo formato dos pontos turísticos, com os dados do catálogo. */
+function cityHoverHTML(h) {
+  const c = h.plCity, q = encodeURIComponent(`${c.name} Itália`), pcs = plan().cities, step = planStep();
+  const stops = pcs.map((pc, i) => pc.k === c.k ? i + 1 : 0).filter(Boolean), idx = pcs.findIndex(pc => pc.k === c.k);
+  const prev = idx > 0 ? CAT[pcs[idx - 1].k] : idx < 0 && pcs.length ? CAT[pcs[pcs.length > 1 ? pcs.length - 2 : 0].k] : null;
+  const L = prev && prev.k !== c.k ? legInfo(prev, c) : null;
+  const nLv = lv => c.places.filter(p => p.lv === lv).length, top = c.places.filter(p => p.lv === 3).slice(0, 4);
+  const meta = [stops.length ? `<b style="color:#15803d">no seu roteiro (parada ${stops.join(' e ')})</b>` : '', `sugestão: ${c.n} noite${c.n > 1 ? 's' : ''}`, GATEWAYS[c.k] ? `aeroporto ${GATEWAYS[c.k]}` : ''].filter(Boolean).join(' · ');
+  const hint = step ? `Clique para escolher ${esc(c.name)} como ${step === 'entry' ? 'chegada' : 'saída'}.` : stops.length ? 'Clique para ver os detalhes da cidade.' : 'Clique para ver os detalhes e incluir no roteiro.';
+  return `<div class="hc-img"><span>carregando foto…</span></div>
+    <div class="hc-body">
+      <b class="hc-title">${esc(c.name)}</b><div class="hc-city">${esc(c.reg)}</div>
+      <div class="hc-meta">${meta}</div>
+      <p class="hc-desc">${esc(c.d)}</p>
+      <p class="hc-wiki"></p>
+      <ul class="hc-facts">
+        ${c.via ? `<li>${icSvg('trem')}<span><b>Como chegar:</b> ${esc(c.via)}</span></li>` : ''}
+        ${L ? `<li>${icSvg(MODE[L.mode][1])}<span>${MODE[L.mode][0]} de ${esc(prev.name)}: <b>${fmtDur(L.min)}</b>${L.est ? ' (estimativa)' : ''}</span></li>` : ''}
+        <li>${icSvg('visita')}<span>${c.places.length} lugares: ${starsHTML(3)} ${nLv(3)} · ${starsHTML(2)} ${nLv(2)} · ${starsHTML(1)} ${nLv(1)}</span></li>
+        ${top.length ? `<li>${icSvg('estrela')}<span><b>Imperdíveis:</b> ${top.map(p => esc(p.name)).join(' · ')}</span></li>` : ''}
+      </ul>
+      <div class="hc-links"><a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">${icSvg('foto')}Fotos</a><a href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Vídeos</a><a href="${mapsUrl(c.name + ', Itália')}" target="_blank" rel="noopener">${icSvg('mapa')}Mapa</a><a class="hc-wl" target="_blank" rel="noopener" hidden>Wikipédia</a></div>
+      <small class="hc-hint">${hint}</small>
+    </div>`;
+}
 function hoverInfo(el) {
+  if (el.matches('.pl-city')) { const c = CAT[el.dataset.city]; return c ? {plCity: c, name: c.name, city: c.reg} : null; }
   if (el.matches('.tr-stop, .tr-station')) return transitHoverInfo(el);
   if (el.matches('.hotel-mk, .pin[data-kind="hotel"], [data-hopen]')) return hotelHoverInfo(el);
   if (el.matches('.rest-mk, [data-rs]')) {
@@ -6440,7 +6692,7 @@ function showHoverCard(el) {
     card.addEventListener('mouseenter', () => clearTimeout(hcHideT));
     card.addEventListener('mouseleave', () => { hcHideT = setTimeout(hideHoverCard, 250); });
   }
-  hcEl = el; card.innerHTML = h.transit ? transitHoverHTML(h) : h.hotel ? hotelHoverHTML(h) : h.rest ? restHoverHTML(h) : hoverCardHTML(h); card.classList.add('on');
+  hcEl = el; card.innerHTML = h.transit ? transitHoverHTML(h) : h.hotel ? hotelHoverHTML(h) : h.rest ? restHoverHTML(h) : h.plCity ? cityHoverHTML(h) : hoverCardHTML(h); card.classList.add('on');
   card.classList.toggle('hc-small', !!h.transit);
   placeHoverCard();
   if (h.transit) return;
@@ -6453,11 +6705,11 @@ function showHoverCard(el) {
     });
     return;
   }
-  wikiInfo(h.name, h.city).then(w => {
+  (h.plCity ? cityWikiInfo(h.plCity) : wikiInfo(h.name, h.city)).then(w => {
     if (hcEl !== el) return;
     const img = $('.hc-img', card), wl = $('.hc-wl', card);
     if (w?.img) img.innerHTML = `<img src="${esc(w.img)}" alt="${esc(h.name)}">`; else img.remove();
-    if (w?.text && !h.p) $('.hc-wiki', card).textContent = w.text;
+    if (w?.text && !h.p) $('.hc-wiki', card).textContent = h.plCity ? w.text.replace(/\s*\([^()]*\)/g, '') : w.text;
     if (w?.url) { wl.href = w.url; wl.hidden = false; }
     placeHoverCard();
   });
@@ -6474,10 +6726,10 @@ function placeHoverCard() {
 }
 function hideHoverCard() { hcEl = null; $('#hoverCard')?.classList.remove('on'); }
 function setupHoverCards() {
-  const el = $('#tab-mapa'), SEL = '.sug-pt, .pin[data-kind="item"], [data-hc], .plain-day li[data-item], .pc-place[data-item], svg.citymap .tr-stop, svg.citymap .tr-station, svg.citymap .hotel-mk, svg.citymap .pin[data-kind="hotel"], li[data-hopen], svg.citymap .rest-mk, li[data-rs]';
+  const el = $('#tab-mapa'), SEL = '.sug-pt, .pin[data-kind="item"], [data-hc], .plain-day li[data-item], .pc-place[data-item], svg.citymap .tr-stop, svg.citymap .tr-station, svg.citymap .hotel-mk, svg.citymap .pin[data-kind="hotel"], li[data-hopen], svg.citymap .rest-mk, li[data-rs], svg.plan-svg .pl-city';
   el.addEventListener('mouseover', e => {
     const t = e.target.closest(SEL); if (!t || t === hcEl) return;
-    if (typeof mapDrag !== 'undefined' && mapDrag) return;
+    if ((typeof mapDrag !== 'undefined' && mapDrag) || planDrag?.moved) return;
     clearTimeout(hcHideT); clearTimeout(hcShowT);
     hcShowT = setTimeout(() => showHoverCard(t), 220);
   });
@@ -6520,12 +6772,15 @@ function setupPlanner() {
     const zb = e.target.closest('[data-zoom]');
     if (zb) { const a = zb.dataset.zoom; setPlanZoom(a === 'reset' ? 1 : planZoom.z * (a === 'in' ? 1.5 : 1 / 1.5)); return; }
     if (Date.now() - planDragEnd < 250) return;
+    const sr = e.target.closest('[data-sugr]');
+    if (sr) { openSugRoteiro(sr.dataset.sugr); return; }
     const city = e.target.closest('.pl-city');
     if (city && planStep()) { pickCity(planStep(), city.dataset.city); return; }
     if (city) { planSel = city.dataset.city; renderMap(); $('#tab-mapa .plan-left')?.scrollIntoView({behavior: 'smooth', block: 'nearest'}); return; }
     const b = e.target.closest('[data-pl]'); if (!b) return;
     e.preventDefault();
     const act = b.dataset.pl, k = b.dataset.city;
+    if (act === 'min') { planMin()[b.dataset.card] = !planMin()[b.dataset.card]; save(); renderMap(); return; }
     if (act === 'sel') { planSel = k; renderMap(); $('#tab-mapa .plan-grid')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }
     if (act === 'back') { planSel = null; renderMap(); }
     if (act === 'add-city') commit(() => planAddCity(k));
@@ -7017,6 +7272,7 @@ function addTrip(s) {
 }
 const tripData = id => id === tripIndex.current ? state : readTrip(id);
 function deleteTrip(id = tripIndex.current) {
+  if (isReal(id)) { alert('O roteiro verdadeiro (voos comprados) não pode ser excluído.'); return; }
   if (tripIndex.trips.length < 2) { alert('Este é o único roteiro. Crie outro antes de excluir este.'); return; }
   const t = tripIndex.trips.find(x => x.id === id); if (!t) return;
   if (!confirm(`Excluir o roteiro “${t.title || 'Sem título'}”? Isso não pode ser desfeito.`)) return;
@@ -7052,19 +7308,20 @@ function renderTripsPanel() {
   const all = tripIndex.trips.map(t => ({t, s: tripData(t.id)})).filter(x => x.s).map(x => ({...x, sum: tripSummary(x.s)}));
   const q = norm(tripsQuery);
   const list = all.filter(x => !q || norm(x.s.title).includes(q) || x.sum.stays.some(st => norm(st.base).includes(q)))
-    .sort((a, b) => (a.sum.past - b.sum.past) || (a.sum.start || '9').localeCompare(b.sum.start || '9'));
+    .sort((a, b) => (isReal(b.t.id) - isReal(a.t.id)) || (a.sum.past - b.sum.past) || (a.sum.start || '9').localeCompare(b.sum.start || '9'));
   const card = ({t, s, sum}) => {
-    const on = t.id === tripIndex.current, color = sum.stays[0] ? cityColor(sum.stays[0].base) : '#0f766e';
+    const on = t.id === tripIndex.current, real = isReal(t.id), color = sum.stays[0] ? cityColor(sum.stays[0].base) : '#0f766e';
     const cities = sum.stays.slice(0, 5).map(st => `<span style="--c:${cityColor(st.base)}">${esc(st.base)}</span>`).join('') + (sum.stays.length > 5 ? `<span class="more">+${sum.stays.length - 5}</span>` : '');
     const when = sum.toGo == null ? '' : sum.past ? 'já aconteceu' : sum.toGo > 0 ? `faltam <b>${sum.toGo}</b> dias` : 'em andamento';
     const pct = sum.clN ? Math.round(sum.clDone / sum.clN * 100) : 0;
-    return `<article class="trip-card ${on ? 'on' : ''} ${sum.past ? 'past' : ''}" data-trip="${t.id}" style="--c:${color}">
-      <div class="tc-top"><h4>${esc(s.title || 'Sem título')}</h4>${on ? '<span class="tc-badge">aberto</span>' : ''}</div>
+    return `<article class="trip-card ${on ? 'on' : ''} ${real ? 'real' : ''} ${sum.past ? 'past' : ''}" data-trip="${t.id}" style="--c:${color}">
+      <div class="tc-top"><h4>${esc(s.title || 'Sem título')}</h4>${real ? `<span class="tc-badge real" title="Voos comprados: datas e horários travados">${icSvg('cadeado')}verdadeiro</span>` : ''}${on ? '<span class="tc-badge">aberto</span>' : ''}</div>
       <div class="tc-dates">${sum.start ? `${weekday(sum.start)} ${fmtBRY(sum.start)} → ${weekday(sum.end)} ${fmtBRY(sum.end)} · ${sum.n} dia${sum.n > 1 ? 's' : ''}` : 'sem datas'}</div>
+      ${real ? `<div class="tc-flights">Ida: GIG sáb 06/02 15:35 → FCO dom 07/02 06:40<br>Volta: FCO ter 23/02 22:30 → GIG qua 24/02 06:40</div>` : ''}
       ${cities ? `<div class="tc-cities">${cities}</div>` : ''}
       <div class="tc-stats"><span><b>${sum.items}</b> atividade${sum.items === 1 ? '' : 's'}</span><span>checklist <b>${sum.clDone}/${sum.clN}</b></span>${when ? `<span>${when}</span>` : ''}</div>
       <div class="tc-bar" title="Checklist ${pct}%"><div style="width:${pct}%"></div></div>
-      <div class="tc-actions">${on ? '<button data-ta="close" class="primary">Continuar</button>' : '<button data-ta="open" class="primary">Abrir</button>'}<button data-ta="dates">Datas</button><button data-ta="dup">Duplicar</button><button data-ta="del" class="danger">Excluir</button></div>
+      <div class="tc-actions">${on ? '<button data-ta="close" class="primary">Continuar</button>' : '<button data-ta="open" class="primary">Abrir</button>'}<button data-ta="dates">Datas</button><button data-ta="dup">Duplicar</button>${real ? '' : '<button data-ta="del" class="danger">Excluir</button>'}</div>
     </article>`;
   };
   const upcoming = list.filter(x => !x.sum.past), past = list.filter(x => x.sum.past);
@@ -7135,21 +7392,28 @@ function datesPreview(s, start, end) {
 function openDatesModal(id = tripIndex.current) {
   const s = tripData(id); if (!s) return;
   const d0 = s.days[0]?.date || s.plan?.start || addDays(todayStr(), 60), d1 = s.days[s.days.length - 1]?.date || addDays(d0, 9);
+  const real = isReal(id), off = real ? 'disabled' : '';
   openModal(`
     <h3>Nome e datas do roteiro</h3>
     <label>Nome da viagem<input name="title" required value="${esc(s.title)}"></label>
     <div class="grid2">
-      <label>Primeiro dia<input type="date" name="start" required value="${d0}"></label>
-      <label>Último dia<input type="date" name="end" required value="${d1}"></label>
-      <label>Pouso na chegada<input type="time" name="arrive" value="${esc(s.plan?.arrive || '')}"></label>
-      <label>Decolagem do voo de volta<input type="time" name="depart" value="${esc(s.plan?.depart || '')}"></label>
+      <label>Primeiro dia<input type="date" name="start" required value="${real ? REAL_TRIP.start : d0}" ${off}></label>
+      <label>Último dia<input type="date" name="end" required value="${real ? REAL_TRIP.end : d1}" ${off}></label>
+      <label>Pouso na chegada<input type="time" name="arrive" value="${esc(s.plan?.arrive || '')}" ${off}></label>
+      <label>Decolagem do voo de volta<input type="time" name="depart" value="${esc(s.plan?.depart || '')}" ${off}></label>
     </div>
-    <p class="map-hint">Com os horários dos voos, o roteiro calcula o traslado, a chegada ao hotel e quanto tempo sobra no primeiro e no último dia.</p>
+    ${real ? `<p class="map-hint real-note"><b>Roteiro verdadeiro: voos comprados.</b><br>${esc(REAL_TRIP.ida)}<br>${esc(REAL_TRIP.volta)}<br>As datas e os horários não podem ser alterados; só o nome. Para testar outras datas, use “Duplicar” em Meus roteiros.</p>`
+      : '<p class="map-hint">Com os horários dos voos, o roteiro calcula o traslado, a chegada ao hotel e quanto tempo sobra no primeiro e no último dia.</p>'}
     <p class="map-hint" id="dtHint"></p>
     <div class="modal-conflict" id="dtErr"></div>
     <div class="modal-actions"><span class="sp"></span><button type="button" data-m="cancel">Cancelar</button><button type="submit" class="primary">Salvar</button></div>`,
     fd => {
       const title = String(fd.get('title')).trim() || s.title, start = fd.get('start'), end = fd.get('end'), err = $('#dtErr');
+      if (real) {
+        if (id === tripIndex.current) commit(() => { state.title = title; });
+        else { s.title = title; localStorage.setItem(tripKey(id), JSON.stringify(s)); Object.assign(tripIndex.trips.find(t => t.id === id), tripMeta(s)); saveIndex(); renderHeader(); }
+        return;
+      }
       const fail = msg => { err.textContent = msg; err.classList.add('on'); return false; };
       if (!start || !end || end < start) return fail('O último dia precisa ser igual ou depois do primeiro.');
       if (diffDays(start, end) > 119) return fail('Máximo de 120 dias por roteiro.');
@@ -7161,7 +7425,7 @@ function openDatesModal(id = tripIndex.current) {
       else { localStorage.setItem(tripKey(id), JSON.stringify(out)); Object.assign(tripIndex.trips.find(t => t.id === id), tripMeta(out)); saveIndex(); renderHeader(); }
       toast(`<b>${esc(title)}</b>: ${fmtBRY(start)} a ${fmtBRY(end)}.`, id === tripIndex.current ? '<button data-t="undo">Desfazer</button>' : '', undo);
     });
-  const f = mform, hint = () => { $('#dtHint').innerHTML = datesPreview(s, f.start.value, f.end.value); };
+  const f = mform, hint = () => { $('#dtHint').innerHTML = real ? '' : datesPreview(s, f.start.value, f.end.value); };
   f.oninput = hint; hint();
 }
 function openNewTripModal() {
@@ -7190,12 +7454,16 @@ function openNewTripModal() {
 /* ======================= homologação ======================= */
 // Modo de revisão: clique em qualquer elemento para pedir um ajuste; a lista vira um .md para a IA aplicar em sequência.
 const HM_KEY = 'homologacao-v1';
-const HM_TIPOS = {texto: 'Texto', visual: 'Visual / estilo', imagem: 'Imagem / ícone', campo: 'Campo / formulário', comportamento: 'Comportamento', erro: 'Erro / bug', outro: 'Outro'};
-const HM_PRIO = {alta: 'Alta', media: 'Média', baixa: 'Baixa'};
+/** hm-id dos ajustes que a IA já aplicou: ao abrir a página, o painel marca cada um como feito (uma vez; depois o usuário pode desmarcar). */
+const HM_FEITOS = ['vnqdznqs', '4aog7rik', '6222mix3', 'wigglhem', '6ewm0od8', 'si83ajlf', 'p47gtk03', 'k8qk3lhw', 'evyeyftn', 'qcfqzmqa', 'oi1cqijq', 'oejf85vp', 'sbbwvj41', 'mndd7vm5'];
 const HM_UI = '#hmPanel, #hmPop, #hmBtn, .hm-mark, #hmBox';
-const hm = {on: false, items: [], cur: null, el: null, ui: {left: false, min: false}};
+const hm = {on: false, items: [], cur: null, el: null, ui: {min: false, pos: null}};
 try { const x = JSON.parse(localStorage.getItem(HM_KEY)); hm.items = x?.items || []; hm.ui = {...hm.ui, ...(x?.ui || {})}; } catch (e) { hm.items = []; }
 const hmSave = () => localStorage.setItem(HM_KEY, JSON.stringify({items: hm.items, ui: hm.ui}));
+if (hm.items.some(it => HM_FEITOS.includes(it.id) && !it.iaFeito)) {
+  hm.items.forEach(it => { if (HM_FEITOS.includes(it.id) && !it.iaFeito) Object.assign(it, {status: 'feito', iaFeito: true}); });
+  hmSave();
+}
 const hmClean = s => String(s || '').replace(/\s+/g, ' ').trim();
 const HM_STATE_CLASSES = /^(on|off|sel|pop-sel|zoomed|flash|flash-it|full|hidden|active|open|ok|warn|placing|dragging|hm-.*)$/;
 /** Seletor CSS curto e único (id, data-*, classes e posição entre irmãos). */
@@ -7256,17 +7524,25 @@ function hmRenderPanel() {
   if (!hm.on) { p?.remove(); return; }
   if (!p) { p = document.createElement('aside'); p.id = 'hmPanel'; p.setAttribute('aria-label', 'Homologação'); document.body.appendChild(p); }
   const open = hmAlive().length;
-  p.classList.toggle('left', hm.ui.left); p.classList.toggle('min', hm.ui.min);
-  p.innerHTML = `<div class="hm-head"><b>Homologação</b><small>${hm.items.length} ajuste${hm.items.length === 1 ? '' : 's'} · ${open} aberto${open === 1 ? '' : 's'}</small>
-      <span class="hm-head-act"><button type="button" data-hm="side" title="Levar o painel para o outro lado da tela">⇆</button><button type="button" data-hm="min" title="${hm.ui.min ? 'Abrir o painel' : 'Minimizar o painel'}">${hm.ui.min ? '▴' : '▾'}</button><button type="button" data-hm="close" title="Sair do modo homologação (Esc)">×</button></span></div>
-    <p class="hm-help">Clique em qualquer texto, botão, campo, ícone ou ponto do mapa para pedir um ajuste. Segure <b>Alt</b> para usar a tela normalmente.</p>
-    <div class="hm-actions"><button type="button" class="primary" data-hm="export" ${hm.items.length ? '' : 'disabled'}>Exportar .md</button><button type="button" data-hm="copy" ${hm.items.length ? '' : 'disabled'}>Copiar .md</button><button type="button" data-hm="import" ${hm.items.length ? '' : 'disabled'} title="Escolha o homologacao-*.md já trabalhado: os itens com [x] ficam como feitos aqui">Importar .md</button><button type="button" data-hm="clear-done" ${hm.items.some(i => i.status === 'feito') ? '' : 'disabled'}>Limpar feitos</button><input type="file" id="hmImport" accept=".md,text/markdown,text/plain" hidden></div>
+  p.classList.toggle('min', hm.ui.min);
+  p.innerHTML = `<div class="hm-head" title="Arraste para mover o painel"><b>Homologação</b><small>${hm.items.length} ajuste${hm.items.length === 1 ? '' : 's'} · ${open} aberto${open === 1 ? '' : 's'}</small>
+      <span class="hm-head-act"><button type="button" data-hm="min" title="${hm.ui.min ? 'Abrir o painel' : 'Minimizar o painel'}">${hm.ui.min ? '▴' : '▾'}</button><button type="button" data-hm="close" title="Sair do modo homologação (Esc)">×</button></span></div>
+    <p class="hm-help">Clique em qualquer texto, botão, campo, ícone ou ponto do mapa para pedir um ajuste. Segure <b>Alt</b> para usar a tela normalmente. Arraste o título para mover o painel.</p>
+    <div class="hm-actions"><button type="button" class="primary" data-hm="export" ${hm.items.length ? '' : 'disabled'}>Exportar .md</button><button type="button" data-hm="clear-done" ${hm.items.some(i => i.status === 'feito') ? '' : 'disabled'}>Limpar feitos</button></div>
     <ol class="hm-list">${hm.items.map((it, i) => `<li class="${it.status === 'feito' ? 'done' : ''}" data-hid="${it.id}">
-      <div class="hm-li-top"><span class="hm-n">${i + 1}</span><span class="hm-tag">${esc(HM_TIPOS[it.tipo] || it.tipo)} · ${esc(HM_PRIO[it.prioridade] || '')}</span>
+      <div class="hm-li-top"><span class="hm-n">${i + 1}</span>${it.status === 'feito' ? '<span class="hm-tag">concluído</span>' : ''}
         <span class="hm-li-act"><button type="button" data-hm="up" ${i ? '' : 'disabled'} title="Subir na sequência">↑</button><button type="button" data-hm="down" ${i < hm.items.length - 1 ? '' : 'disabled'} title="Descer na sequência">↓</button><button type="button" data-hm="show" title="Mostrar na tela">◎</button><button type="button" data-hm="edit" title="Editar">✎</button><button type="button" data-hm="del" class="danger" title="Excluir">×</button></span></div>
       <p class="hm-c">${esc(it.comentario)}</p>
       <small class="hm-where">${esc(it.context.join(' › ') || it.selector)}${it.text ? ` · “${esc(it.text.slice(0, 50))}”` : ''}</small>
       <label class="hm-done"><input type="checkbox" data-hm="done" ${it.status === 'feito' ? 'checked' : ''}> feito</label></li>`).join('') || '<li class="hm-empty">Nenhum ajuste ainda.</li>'}</ol>`;
+  hmPlacePanel(p);
+}
+/** Põe o painel na posição para onde o usuário arrastou (sempre dentro da janela). */
+function hmPlacePanel(p = $('#hmPanel')) {
+  if (!p || !hm.ui.pos) return;
+  const x = Math.min(Math.max(0, hm.ui.pos.x), innerWidth - Math.min(p.offsetWidth, innerWidth));
+  const y = Math.min(Math.max(0, hm.ui.pos.y), innerHeight - Math.min(p.querySelector('.hm-head').offsetHeight + 8, innerHeight));
+  Object.assign(p.style, {left: x + 'px', top: y + 'px', right: 'auto', bottom: 'auto'});
 }
 let hmMarkT = 0;
 function hmRenderMarks() {
@@ -7287,7 +7563,7 @@ function hmClosePop() { const p = $('#hmPop'); if (p) { try { p.hidePopover?.();
 /** Balão para escrever o ajuste do elemento (novo ou editando um item salvo). */
 function hmOpenPop(el, item) {
   hmClosePop();
-  const d = item || {...hmDescribe(el), tipo: el.matches('input, textarea, select') ? 'campo' : el instanceof SVGElement ? 'imagem' : 'texto', prioridade: 'media', comentario: ''};
+  const d = item || {...hmDescribe(el), comentario: ''};
   hm.cur = d; hm.el = el;
   el?.classList?.add('hm-target');
   const p = document.createElement('div');
@@ -7296,8 +7572,6 @@ function hmOpenPop(el, item) {
     <div class="hm-f-head"><b>${item ? `Ajuste ${hm.items.indexOf(item) + 1}` : 'Novo ajuste'}</b><button type="button" data-hm="pop-close" title="Fechar (Esc)">×</button></div>
     <div class="hm-el"><code>${esc(d.tag)}</code> ${d.text ? `“${esc(d.text.slice(0, 90))}”` : '<i>sem texto</i>'}<small>${esc(d.context.join(' › '))}</small><small class="hm-sel">${esc(d.selector)}</small></div>
     ${el && el.parentElement && el.parentElement !== document.body ? '<button type="button" class="hm-up" data-hm="parent">↑ Selecionar o elemento de fora</button>' : ''}
-    <div class="hm-row"><label>Tipo<select name="tipo">${Object.entries(HM_TIPOS).map(([k, v]) => `<option value="${k}" ${k === d.tipo ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
-      <label>Prioridade<select name="prioridade">${Object.entries(HM_PRIO).map(([k, v]) => `<option value="${k}" ${k === d.prioridade ? 'selected' : ''}>${v}</option>`).join('')}</select></label></div>
     <label>O que precisa mudar<textarea name="comentario" rows="4" required placeholder="Ex.: trocar o texto para “Montar meu roteiro”; deixar o botão maior; este campo deveria aceitar…">${esc(d.comentario)}</textarea></label>
     <div class="hm-f-act">${item ? '<button type="button" class="danger" data-hm="pop-del">Excluir</button>' : ''}<span class="sp"></span><button type="button" data-hm="pop-close">Cancelar</button><button type="submit" class="primary">Salvar ajuste</button></div>
   </form>`;
@@ -7312,31 +7586,19 @@ function hmOpenPop(el, item) {
 function hmSubmit(form) {
   const comentario = hmClean(form.comentario.value); if (!comentario) { form.comentario.focus(); return; }
   const d = hm.cur, existing = hm.items.find(i => i === d);
-  Object.assign(d, {tipo: form.tipo.value, prioridade: form.prioridade.value, comentario});
+  d.comentario = comentario;
   if (!existing) hm.items.push(Object.assign(d, {id: uid(), status: 'aberto', criado: new Date().toISOString(), tela: {modo: hmClean($('#tab-mapa [data-mapmode].on')?.textContent), roteiro: state.title, janela: `${innerWidth}×${innerHeight}`}}));
   hmSave(); hmClosePop(); hmRenderPanel(); hmRenderMarks();
 }
+const hmHora = (d = new Date()) => String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0');
 /** Arquivo .md com os ajustes na ordem, com tudo que a IA precisa para achar cada elemento. */
-/** Lê um homologacao-*.md trabalhado e marca como feitos os itens com [x] (pelo hm-id; nos arquivos antigos, pelo pedido e seletor). */
-function hmImportDone(md) {
-  const blocks = md.split(/^(?=### \d+\. \[[ xX]\])/m).filter(b => /^### \d+\. \[[xX]\]/.test(b));
-  let done = 0, already = 0, missing = 0;
-  blocks.forEach(b => {
-    const id = b.match(/hm-id:\s*(\S+)/)?.[1], pedido = b.match(/\*\*Pedido:\*\*\s*(.*)/)?.[1]?.trim(), sel = b.match(/seletor `([^`]*)`/)?.[1];
-    const it = (id && hm.items.find(x => x.id === id)) || hm.items.find(x => x.comentario?.trim() === pedido && (sel == null || x.selector === sel)) || hm.items.find(x => x.comentario?.trim() === pedido);
-    if (!it) { missing++; return; }
-    if (it.status === 'feito') { already++; return; }
-    it.status = 'feito'; done++;
-  });
-  hmSave(); hmRenderPanel(); hmRenderMarks();
-  toast(blocks.length ? `${done} ajuste${done === 1 ? '' : 's'} marcado${done === 1 ? '' : 's'} como feito${done === 1 ? '' : 's'}${already ? ` · ${already} já estava${already === 1 ? '' : 'm'}` : ''}${missing ? ` · ${missing} não encontrado${missing === 1 ? '' : 's'} nesta lista` : ''}.` : 'Nenhum item marcado com [x] nesse arquivo.');
-}
 function hmMarkdown() {
-  const now = new Date(), dt = `${fmtBRY(todayStr())} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const now = new Date(), hhmm = hmHora(now), dt = `${fmtBRY(todayStr())} ${hhmm.slice(0, 2)}:${hhmm.slice(2)}`;
   const open = hmAlive().length;
-  const item = (it, i) => `### ${i + 1}. [${it.status === 'feito' ? 'x' : ' '}] ${HM_TIPOS[it.tipo] || it.tipo} · prioridade ${(HM_PRIO[it.prioridade] || '').toLowerCase()} — ${it.text ? `“${it.text.slice(0, 70)}”` : `\`${it.tag}\``}
+  const item = (it, i) => `### ${i + 1}. [${it.status === 'feito' ? 'x' : ' '}] ${it.text ? `“${it.text.slice(0, 70)}”` : `\`${it.tag}\``}
 <!-- hm-id: ${it.id} -->
 
+- **Status:** ${it.status === 'feito' ? 'concluído' : 'aberto'}
 - **Pedido:** ${it.comentario}
 - **Onde:** ${it.context.join(' › ') || '—'}
 - **Elemento:** \`${it.tag}\` · seletor \`${it.selector}\`${it.size ? ` · ${it.size} px` : ''}
@@ -7355,9 +7617,25 @@ Gerado em ${dt} · ${hm.items.length} ajuste${hm.items.length === 1 ? '' : 's'} 
 1. A aplicação inteira está em \`roteiro-italia-2027.html\` (HTML, CSS e JavaScript num arquivo só).
 2. Faça os ajustes **na ordem abaixo**, um de cada vez. Pule os marcados com \`[x]\` (já feitos).
 3. Para achar o elemento: procure o **seletor** e o **texto atual** no HTML gerado pelo JavaScript; o trecho de HTML de cada item mostra como ele estava na tela.
-4. Depois de cada ajuste, confira no navegador que a tela ficou como pedido e não há erros no console; só então marque o item com \`[x]\` neste arquivo.
-5. Se um pedido estiver ambíguo ou conflitar com outro, pergunte antes de mudar.
-6. A validação final é feita pelo usuário no próprio modo Homologação.
+4. Depois de cada ajuste, confira no navegador que a tela ficou como pedido e não há erros no console.
+5. Só então registre o item como **concluído**, nos dois lugares:
+   - neste arquivo: troque \`[ ]\` por \`[x]\` no título do item e \`**Status:** aberto\` por \`**Status:** concluído\`;
+   - em \`roteiro-italia-2027.html\`: acrescente o \`hm-id\` do item na lista \`HM_FEITOS\` (o painel de Homologação marca esses itens como concluídos ao abrir a página).
+
+   Modelo (item com \`<!-- hm-id: ab12cd34 -->\`):
+
+   \`\`\`md
+   ### 3. [x] “Texto do elemento”
+   <!-- hm-id: ab12cd34 -->
+
+   - **Status:** concluído
+   \`\`\`
+
+   \`\`\`js
+   const HM_FEITOS = ['xy98zw76', 'ab12cd34'];
+   \`\`\`
+6. Se um pedido estiver ambíguo ou conflitar com outro, pergunte antes de mudar.
+7. A validação final é feita pelo usuário no próprio modo Homologação.
 
 ## Ajustes
 
@@ -7365,23 +7643,29 @@ ${hm.items.map(item).join('\n')}`;
 }
 function hmExport() {
   const blob = new Blob([hmMarkdown()], {type: 'text/markdown;charset=utf-8'}), a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = `homologacao-${todayStr()}.md`;
+  a.href = URL.createObjectURL(blob); a.download = `homologacao-${todayStr()}-${hmHora()}.md`;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast(`Arquivo <b>${a.download}</b> gerado. Salve na pasta <b>homologacao/</b> do projeto e peça para a IA aplicar.`);
-}
-async function hmCopy() {
-  const md = hmMarkdown();
-  try { await navigator.clipboard.writeText(md); } catch (e) { const t = document.createElement('textarea'); t.value = md; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
-  toast('Texto da homologação copiado. Cole no chat da IA ou num arquivo .md.');
+  toast(`Arquivo <b>${a.download}</b> gerado. Salve na pasta do projeto e peça para a IA aplicar.`);
 }
 function setupHomologacao() {
   $('#hmBtn').addEventListener('click', e => { e.stopPropagation(); hmToggle(); });
-  document.addEventListener('change', e => {
-    if (e.target.id !== 'hmImport' || !e.target.files?.[0]) return;
-    const file = e.target.files[0];
-    file.text().then(hmImportDone, () => toast('Não consegui ler esse arquivo.'));
-    e.target.value = '';
+  let hmDrag = null;
+  document.addEventListener('pointerdown', e => {
+    const head = e.target.closest?.('#hmPanel .hm-head');
+    if (!head || e.button !== 0 || e.target.closest('button')) return;
+    const p = $('#hmPanel'), r = p.getBoundingClientRect();
+    hmDrag = {dx: e.clientX - r.left, dy: e.clientY - r.top};
+    p.classList.add('moving'); head.setPointerCapture?.(e.pointerId); e.preventDefault();
+  });
+  document.addEventListener('pointermove', e => {
+    if (!hmDrag) return;
+    hm.ui.pos = {x: Math.round(e.clientX - hmDrag.dx), y: Math.round(e.clientY - hmDrag.dy)};
+    hmPlacePanel();
+  });
+  document.addEventListener('pointerup', () => {
+    if (!hmDrag) return;
+    hmDrag = null; $('#hmPanel')?.classList.remove('moving'); hmSave();
   });
   const intercept = e => {
     if (!hm.on || !e.isTrusted || e.altKey || e.target.closest?.(HM_UI)) return;
@@ -7411,11 +7695,8 @@ function setupHomologacao() {
     if (!b || b.dataset.hm === 'done') return;
     const li = b.closest('[data-hid]'), it = li && hm.items.find(i => i.id === li.dataset.hid), i = it ? hm.items.indexOf(it) : -1, act = b.dataset.hm;
     if (act === 'close') hmToggle(false);
-    if (act === 'side') { hm.ui.left = !hm.ui.left; hmSave(); }
     if (act === 'min') { hm.ui.min = !hm.ui.min; hmSave(); }
     if (act === 'export') hmExport();
-    if (act === 'copy') hmCopy();
-    if (act === 'import') $('#hmImport')?.click();
     if (act === 'clear-done' && confirm('Remover da lista os ajustes marcados como feitos?')) { hm.items = hm.items.filter(x => x.status !== 'feito'); hmSave(); }
     if (act === 'up' && i > 0) { [hm.items[i - 1], hm.items[i]] = [hm.items[i], hm.items[i - 1]]; hmSave(); }
     if (act === 'down' && i >= 0 && i < hm.items.length - 1) { [hm.items[i + 1], hm.items[i]] = [hm.items[i], hm.items[i + 1]]; hmSave(); }
@@ -7425,7 +7706,7 @@ function setupHomologacao() {
     if (act === 'pop-close') { hmClosePop(); return; }
     if (act === 'pop-del' && hm.cur && confirm('Excluir este ajuste?')) { hm.items = hm.items.filter(x => x !== hm.cur); hmSave(); hmClosePop(); }
     if (act === 'parent' && hm.el?.parentElement) { const up = hm.el.parentElement; hmOpenPop(up); return; }
-    if (['close', 'export', 'copy'].includes(act)) return;
+    if (['close', 'export'].includes(act)) return;
     hmRenderPanel(); hmRenderMarks();
   });
   document.addEventListener('change', e => {
@@ -7435,8 +7716,450 @@ function setupHomologacao() {
   });
   document.addEventListener('submit', e => { if (e.target.closest('#hmPop')) { e.preventDefault(); hmSubmit(e.target); } });
   window.addEventListener('scroll', () => { if (hm.on) hmMarksSoon(); }, {passive: true});
-  window.addEventListener('resize', () => { if (hm.on) hmMarksSoon(); });
+  window.addEventListener('resize', () => { if (hm.on) { hmMarksSoon(); hmPlacePanel(); } });
   new MutationObserver(() => { if (hm.on) hmMarksSoon(); }).observe($('main'), {childList: true, subtree: true});
+}
+
+/* ======================= roteiros prontos (pesquisa nov/2026) ======================= */
+// Todos encaixam nos voos comprados: chegada a Roma dom 07/02 06:40, volta de Roma ter 23/02 22:30 (16 noites).
+const SUG_CATS = {classico: 'Clássicos — os mais feitos', alternativo: 'Menos comuns', suica: 'Com a Suíça', vizinhos: 'Com países vizinhos', europa: 'Com Espanha, França ou Portugal'};
+const SUG_SRC = {
+  rs: ['Rick Steves — prioridades por número de dias na Itália', 'https://www.ricksteves.com/europe/italy/itinerary'],
+  it: ['ItalyTourism.org — 14 dias na Itália: rotas clássicas', 'https://www.italytourism.org/2-week-italy-itinerary/'],
+  et: ['Earth Trekkers — roteiro de 14 dias na Itália', 'https://www.earthtrekkers.com/two-weeks-in-italy-14-day-italy-itinerary/'],
+  vc: ['Carnevale di Venezia 2027 — site oficial', 'https://carnevale.venezia.it/en/'],
+  vg: ['Carnevale di Viareggio 2027 — site oficial', 'https://viareggio.ilcarnevale.com/en/'],
+  am: ['Positano.com — Costa Amalfitana no inverno', 'https://www.positano.com/en/e/amalfi-coast-in-winter'],
+  ca: ['Ciao Amalfi — o que saber fora de temporada', 'https://www.ciaoamalfi.com/2016/11/amalfi-coast-off-season/'],
+  mf: ['La Sicilia — Festa del Mandorlo in fiore 2027', 'https://agrigento.lasicilia.it/news/cronaca/3074464/festa-del-mandorlo-in-fiore-2027-annunciate-le-date-ufficiali-dal-2-al-7-marzo.html'],
+  ir: ['Interrail — Itália e Suíça em 2 semanas', 'https://www.interrail.com/en/plan-your-trip/trip-ideas/recommended-routes/classic-routes/italy-switzerland-2-weeks'],
+  mb: ['Mobee — Glacier e Bernina Express: temporadas 2026/27', 'https://www.mobeeinternational.com/articles/italy-and-switzerland-lakes-and-mountains-itinerary'],
+  sw: ['MySwissAlps — trens panorâmicos suíços no inverno', 'https://www.myswissalps.com/itinerary/scenic-trains-winter/'],
+  nc: ['Carnaval de Nice 2027 — site oficial', 'https://www.nicecarnaval.com/en/2027-edition/'],
+  nv: ['Ville de Nice — programa do Carnaval 2027', 'https://www.nice.fr/le-carnaval-de-nice/'],
+  mt: ['Fête du Citron de Menton 2027 — programa', 'https://www.fete-du-citron.com/-program-.html'],
+  om: ['Omio — como ir da Itália à Espanha', 'https://www.omio.com/travel/italy/spain'],
+  ts: ['Tourlane — Espanha e Itália em 2 semanas', 'https://www.tourlane.com/europe/spain/spain-italy-itinerary-2-weeks/'],
+  tp: ['Tourlane — Portugal e Itália em 2 semanas', 'https://www.tourlane.com/europe/portugal/portugal-italy-itinerary-2-weeks/'],
+  gf: ['Google Flights — Roma → Lisboa', 'https://www.google.com/travel/flights/flights-from-rome-to-lisbon.html'],
+  fo: ['FlightsFrom — voos diretos Roma ↔ Porto', 'https://www.flightsfrom.com/FCO-OPO'],
+  rv: ['Roamvisa — Paris, Roma e Barcelona em 14 dias', 'https://roamvisa.com/blog/14-day-europe-itinerary/'],
+  ct: ['Cinque Terre no inverno: o que abre e fecha', 'https://cinqueterrefromflorence.tours/cinque-terre-winter-whats-open-closed.html'],
+};
+const SUG_ROTEIROS = (() => {
+  const S = (nome, n, via, clima, top, d, x = {}) => ({nome, n, via, clima, top, d, w: x.w || nome, pais: x.pais || 'Itália'});
+  const IN = 'Pouso em Fiumicino 06:40 · Leonardo Express até Termini 32 min';
+  const R = {
+    cheg: 'Pouso às 06:40, Leonardo Express até Termini e check-in (deixe a mala se o quarto não estiver pronto). À tarde, sem pressa: Pantheon, Fontana di Trevi e Piazza Navona.',
+    ant: 'Roma Antiga: Coliseu, Fórum Romano e Palatino (ingresso com horário marcado).',
+    vat: 'Museus Vaticanos e Capela Sistina de manhã; Basílica de São Pedro e Castel Sant’Angelo à tarde.',
+    bor: 'Galleria Borghese (reserva obrigatória), Piazza di Spagna e jantar em Trastevere.',
+    tiv: 'Bate-volta a Tivoli (Villa d’Este e Villa Adriana) ou a Óstia Antiga.',
+    tra: 'Trastevere, Gueto Judeu e Campo de’ Fiori; compras na Via del Corso e despedida.',
+  };
+  const ROMA_TOP = ['Coliseu e Fórum', 'Vaticano e Capela Sistina', 'Pantheon e Trevi', 'Galleria Borghese'];
+  const roma = (n, d, via = IN) => S('Roma', n, via, '4–14 °C', ROMA_TOP, d);
+  const FLO_TOP = ['Duomo e Cúpula', 'Uffizi', 'Davi de Michelangelo', 'Ponte Vecchio'];
+  const FLO = {
+    a: 'Chegada; Duomo, Batistério e subida à Cúpula de Brunelleschi (reserva com horário).',
+    b: 'Galleria degli Uffizi de manhã; Ponte Vecchio, Palazzo Pitti e Jardim de Boboli à tarde.',
+    c: 'Galleria dell’Accademia (Davi), Mercado Central e pôr do sol no Piazzale Michelangelo.',
+  };
+  const flo = (n, d, via = 'Trem rápido Roma → Florença · 1h35') => S('Florença', n, via, '3–12 °C', FLO_TOP, d);
+  const ven = (n, d, via) => S('Veneza', n, via, '1–8 °C', ['Praça São Marcos', 'Grande Canal', 'Murano e Burano', 'Palácio Ducal'], d);
+  return [
+    {id: 'grand-tour', cat: 'classico', nome: 'Grand Tour clássico: Roma, Florença, Veneza e Milão', ritmo: 'moderado',
+      resumo: 'O roteiro mais recomendado para a primeira viagem: as três grandes cidades de arte, Milão de passagem e a volta para Roma no fim.',
+      ideal: 'Primeira viagem à Itália, quem quer ver os ícones com calma e viajar só de trem.',
+      stops: [
+        roma(4, [R.cheg, R.ant, R.vat, R.bor]),
+        flo(4, [FLO.a, FLO.b, 'Bate-volta a Siena e San Gimignano (ônibus ou excursão; ~1h15 até Siena).', 'Dom 14/02: desfile do Carnaval de Viareggio às 15h (trem ~1h30) ou Accademia e Piazzale Michelangelo.']),
+        ven(3, ['Chegada a Santa Lucia e vaporetto pelo Grande Canal; Rialto ao entardecer.', 'Praça e Basílica de São Marcos, Palácio Ducal e Ponte dos Suspiros.', 'Ilhas da laguna: Murano (vidro soprado) e Burano (casas coloridas).'], 'Trem rápido Florença → Veneza · 2h14'),
+        S('Milão', 2, 'Trem rápido Veneza → Milão · 2h27', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Navigli'], ['Chegada; Duomo com os terraços e Galleria Vittorio Emanuele II.', 'A Última Ceia (reserve com meses de antecedência), Castello Sforzesco e aperitivo nos Navigli.'], {w: 'Milão'}),
+        roma(3, ['Volta a Roma; à tarde, Monti e Santa Maria Maggiore.', R.tiv, R.tra], 'Trem rápido Milão → Roma · ~3h'),
+      ],
+      eventos: [{q: 'Dom 14/02, 15h', t: 'Desfile do Carnaval de Viareggio, a 1h30 de trem de Florença.', u: SUG_SRC.vg[1]}],
+      atencao: ['Fevereiro é baixa temporada: filas menores e hotéis mais baratos, mas os dias são curtos (escurece por volta das 17h45).', 'Veneza pode ter acqua alta: leve calçado impermeável.', 'Garanta com antecedência a Última Ceia, a Galleria Borghese e a Cúpula de Florença.'],
+      fontes: ['rs', 'it', 'et', 'vg']},
+    {id: 'carnaval-veneza', cat: 'classico', nome: 'Clássico com o fim do Carnaval de Veneza', ritmo: 'moderado',
+      resumo: 'Sobe direto do aeroporto para Veneza e pega os três últimos dias do Carnaval; depois Florença, Nápoles com Pompeia e Roma.',
+      ideal: 'Quem quer viver o Carnaval de Veneza e ainda ver o clássico, incluindo o sul.',
+      stops: [
+        ven(3, ['Dom 07/02: chegada à tarde e primeiro passeio entre as máscaras em São Marcos.', 'Seg 08/02: espetáculos de rua do Carnaval, Palácio Ducal e Rialto; à noite, baile ou jantar-show (pago).', 'Ter 09/02, Martedì Grasso: último dia do Carnaval; Burano e Murano de manhã e encerramento em São Marcos.'], 'Pouso 06:40 · Leonardo Express + trem rápido Roma → Veneza · ~3h50'),
+        flo(5, [FLO.a, FLO.b, 'Bate-volta a Siena e às colinas do Chianti.', 'Bate-volta a Pisa e Lucca (trem ~1h).', 'Dom 14/02: desfile do Carnaval de Viareggio às 15h (trem ~1h30) ou Accademia e Piazzale Michelangelo.'], 'Trem rápido Veneza → Florença · 2h14'),
+        S('Nápoles', 3, 'Trem rápido Florença → Nápoles · ~3h', '6–14 °C', ['Pompeia', 'Cristo Velado', 'Pizza napolitana'], ['Chegada; Spaccanapoli, Capela Sansevero (Cristo Velado) e pizza na Via dei Tribunali.', 'Pompeia e Herculano (trem Circumvesuviana ~35 min).', 'Amalfi e Ravello de ônibus SITA ou barco Travelmar (no inverno não há as balsas regulares).']),
+        roma(5, ['Chegada; Pantheon, Fontana di Trevi e Piazza Navona.', R.ant, R.vat, R.bor, R.tiv], 'Trem rápido Nápoles → Roma · 1h10'),
+      ],
+      eventos: [{q: 'Até ter 09/02', t: 'Carnaval de Veneza 2027 (23/01 a 09/02): espetáculos de rua de 04 a 09/02 e jantar-show oficial às 21h.', u: SUG_SRC.vc[1]}, {q: 'Dom 14/02, 15h', t: 'Desfile do Carnaval de Viareggio, a 1h30 de Florença.', u: SUG_SRC.vg[1]}],
+      atencao: ['Hotéis em Veneza no Carnaval esgotam e encarecem: reserve já.', 'O dia da chegada é longo (voo + 4h de trem).', 'Costa Amalfitana no inverno: muitos hotéis e restaurantes fechados e sem balsas — melhor só um bate-volta a partir de Nápoles.'],
+      fontes: ['vc', 'vg', 'it', 'am']},
+    {id: 'sul-sicilia', cat: 'alternativo', nome: 'Sul e Sicília: o sol do inverno italiano', ritmo: 'intenso',
+      resumo: 'Roma, Nápoles, Costa Amalfitana, Palermo e Taormina com o Etna nevado — o lado mais quente da Itália em fevereiro.',
+      ideal: 'Quem prefere clima mais ameno, comida de rua, ruínas gregas e romanas e paisagens de mar.',
+      stops: [
+        roma(3, [R.cheg, R.ant, R.vat]),
+        S('Nápoles', 3, 'Trem rápido Roma → Nápoles · 1h10', '6–14 °C', ['Pompeia', 'Museu Arqueológico', 'Cristo Velado'], ['Chegada; centro histórico e pizza na Via dei Tribunali.', 'Pompeia e subida ao Vesúvio (a trilha fecha com mau tempo).', 'Museu Arqueológico Nacional e Capela Sansevero; fim de tarde no Lungomare.']),
+        S('Amalfi', 2, 'Ônibus SITA ou barco Travelmar via Salerno · ~1h30', '7–14 °C', ['Catedral de Amalfi', 'Ravello', 'Vale dos Moinhos'], ['Chegada; Catedral de Amalfi e trilha do Vale dos Moinhos (Valle delle Ferriere).', 'Ravello (Villa Rufolo e Villa Cimbrone) e Positano de ônibus.']),
+        S('Palermo', 3, 'Voo Nápoles → Palermo · ~1h (ou balsa noturna ~10h)', '10–16 °C', ['Monreale', 'Capela Palatina', 'Mercado de Ballarò'], ['Chegada; Quattro Canti, Fontana Pretoria e o mercado de Ballarò.', 'Catedral de Monreale (mosaicos dourados) e Capela Palatina.', 'Vale dos Templos de Agrigento (ônibus ~2h; as amendoeiras costumam florir no fim do inverno) ou Cefalù.']),
+        S('Taormina', 2, 'Ônibus/trem Palermo → Catania → Taormina · ~3h30', '8–15 °C', ['Teatro Grego', 'Etna', 'Siracusa e Ortigia'], ['Chegada; Teatro Grego com vista para o Etna e o Corso Umberto.', 'Excursão ao Etna (jipe até a neve) ou Siracusa e a ilha de Ortigia.']),
+        roma(3, ['Volta a Roma; à tarde, Monti e Santa Maria Maggiore.', R.bor, R.tra], 'Voo Catania → Roma · 1h15'),
+      ],
+      eventos: [{q: '02 a 07/03 (depois da viagem)', t: 'A Festa do Mandorlo in Fiore de Agrigento é em março, mas as amendoeiras do Vale dos Templos costumam começar a florir em fevereiro.', u: SUG_SRC.mf[1]}],
+      atencao: ['Costa Amalfitana em fevereiro: muitos hotéis fecham (Positano fica quase vazia); Amalfi é a melhor base, com ônibus SITA.', 'Dois voos domésticos: compre cedo e confira bagagem.', 'O topo do Etna e a trilha do Vesúvio dependem do tempo.'],
+      fontes: ['am', 'ca', 'mf', 'it']},
+    {id: 'italia-escondida', cat: 'alternativo', nome: 'Itália escondida: Úmbria, Emília-Romanha e Vêneto', ritmo: 'moderado',
+      resumo: 'Cidades-joia com menos turistas: Perúgia e Assis, a “food valley” de Bolonha, Modena e Parma, mosaicos de Ravenna e Verona.',
+      ideal: 'Quem já foi à Itália ou prefere comer bem, cidades medievais e menos filas.',
+      stops: [
+        roma(3, [R.cheg, R.ant, 'Termas de Caracalla e Via Ápia Antiga com as catacumbas.']),
+        S('Perúgia', 2, 'Trem Roma → Perúgia · ~2h30 (ou carro, passando por Orvieto)', '2–10 °C', ['Assis', 'Orvieto', 'Centro medieval'], ['Chegada (com parada em Orvieto: Duomo e Poço de San Patrizio); à noite, o centro medieval de Perúgia.', 'Assis: Basílica de São Francisco e Rocca Maggiore (trem 25 min).'], {w: 'Perúgia'}),
+        S('Bolonha', 4, 'Trem Perúgia → Florença → Bolonha · ~2h30', '1–9 °C', ['Pórticos (UNESCO)', 'Modena e Parma', 'Mosaicos de Ravenna'], ['Chegada; Piazza Maggiore, Duas Torres e os pórticos; tagliatelle al ragù.', 'Modena: Duomo, vinagre balsâmico e Museu Enzo Ferrari (trem 25 min).', 'Parma: catedral, Batistério, parmigiano e presunto (trem 1h).', 'Dom 14/02: mosaicos bizantinos de Ravenna (trem 1h) ou o Carnaval de Viareggio (~2h30).']),
+        S('Verona', 2, 'Trem Bolonha → Verona · ~55 min', '1–9 °C', ['Arena', 'Casa de Julieta', 'Lago de Garda'], ['Chegada; Arena, Casa de Julieta e Piazza delle Erbe.', 'Sirmione no Lago de Garda (ônibus ~1h) ou Mântua (Palazzo Te).']),
+        flo(2, [FLO.a, 'Uffizi ou Accademia (Davi); Ponte Vecchio e Oltrarno.'], 'Trem rápido Verona → Florença · ~1h30'),
+        roma(3, ['Volta a Roma; à tarde, Trastevere.', R.vat, R.bor], 'Trem rápido Florença → Roma · 1h35'),
+      ],
+      eventos: [{q: 'Dom 14/02, 15h', t: 'Carnaval de Viareggio, a ~2h30 de Bolonha.', u: SUG_SRC.vg[1]}],
+      atencao: ['Úmbria de trem tem baldeações; um carro por 2 dias facilita Orvieto e Assis.', 'Perúgia fica no alto: use as escadas rolantes da Rocca Paolina.', 'Museus pequenos fecham às segundas.'],
+      fontes: ['rs', 'it', 'vg']},
+    {id: 'alpes-trens', cat: 'suica', nome: 'Itália + Alpes suíços de trem: Bernina e Glacier Express', ritmo: 'intenso',
+      resumo: 'Roma e Florença, depois a Suíça nevada pelos dois trens panorâmicos mais famosos: St. Moritz e Zermatt, aos pés do Matterhorn.',
+      ideal: 'Quem sonha com neve e trens panorâmicos e aceita dias inteiros de viagem.',
+      stops: [
+        roma(3, [R.cheg, R.ant, R.vat]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        S('Milão', 1, 'Trem rápido Florença → Milão · 1h54', '0–9 °C', ['Duomo', 'Galleria'], ['Chegada; Duomo e Galleria Vittorio Emanuele II; noite perto da Milano Centrale.'], {w: 'Milão'}),
+        S('St. Moritz', 2, 'Trem Milão → Tirano 2h30 + Bernina Express Tirano → St. Moritz ~2h20', '-12 a -1 °C', ['Bernina Express', 'Lago congelado', 'Diavolezza'], ['Dom 14/02: Bernina Express pelo viaduto circular de Brusio e o passo Bernina (patrimônio da UNESCO); chegada a St. Moritz.', 'Lago congelado, Muottas Muragl ou Diavolezza; ski ou caminhada na neve.'], {pais: 'Suíça'}),
+        S('Zermatt', 3, 'Glacier Express St. Moritz → Zermatt · ~8h (reserva obrigatória)', '-8 a 0 °C', ['Matterhorn', 'Gornergrat', 'Glacier Express'], ['Glacier Express o dia inteiro, com almoço a bordo; chegada a Zermatt à noite.', 'Trem do Gornergrat com vista para o Matterhorn.', 'Matterhorn Glacier Paradise ou ski; a vila não tem carros.'], {pais: 'Suíça'}),
+        roma(4, ['Dia de trem de volta à Itália (Zermatt → Visp → Brig → Milão → Roma); chegada à noite.', R.bor, R.tiv, R.tra], 'Trens Zermatt → Milão ~3h30 + Milão → Roma ~3h'),
+      ],
+      eventos: [{q: 'Toda a temporada', t: 'Glacier Express com horário de inverno de 05/12/2026 a 07/05/2027; o Bernina Express roda o ano todo (o ônibus Lugano–Tirano não roda no inverno).', u: SUG_SRC.mb[1]}],
+      atencao: ['Suíça usa franco suíço e é bem mais cara; o Swiss Travel Pass cobre os trens (o Glacier e o Bernina cobram reserva à parte).', 'Neve pode atrasar trens: deixe folga no último trecho até Roma.', 'Leve roupa de frio de verdade: -10 °C em St. Moritz é comum.'],
+      fontes: ['ir', 'mb', 'sw']},
+    {id: 'lucerna-interlaken', cat: 'suica', nome: 'Itália + Lucerna e Interlaken (Jungfrau)', ritmo: 'moderado',
+      resumo: 'Roma, Florença e Milão, depois o coração da Suíça: lago e ponte de Lucerna, Monte Titlis e o Jungfraujoch, “o topo da Europa”.',
+      ideal: 'Quem quer montanhas e lagos suíços com menos horas de trem.',
+      stops: [
+        roma(3, [R.cheg, R.ant, R.vat]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        S('Milão', 2, 'Trem rápido Florença → Milão · 1h54', '0–9 °C', ['Duomo', 'A Última Ceia', 'Lago de Como'], ['Chegada; Duomo com os terraços e a Galleria.', 'A Última Ceia e Brera, ou bate-volta a Varenna no Lago de Como.'], {w: 'Milão'}),
+        S('Lucerna', 3, 'Trem Milão → Lucerna pelo túnel do Gotardo · ~3h20', '-2 a 5 °C', ['Ponte da Capela', 'Monte Pilatus', 'Monte Titlis'], ['Chegada; Ponte da Capela, Leão de Lucerna e cidade velha.', 'Monte Pilatus pelo teleférico de Kriens (a cremalheira fecha no inverno) ou o Rigi.', 'Monte Titlis em Engelberg: geleira e ponte suspensa.'], {pais: 'Suíça'}),
+        S('Interlaken', 2, 'Trem Luzern–Interlaken Express · 1h50', '-3 a 4 °C', ['Jungfraujoch', 'Grindelwald', 'Harder Kulm'], ['Chegada; Harder Kulm e os lagos de Thun e Brienz.', 'Jungfraujoch (3.454 m) ou Grindelwald First na neve.'], {pais: 'Suíça'}),
+        roma(3, ['Dia de trem de volta (Interlaken → Brig → Milão → Roma); chegada à noite.', R.bor, R.tra], 'Trens Interlaken → Milão ~3h45 + Milão → Roma ~3h'),
+      ],
+      eventos: [],
+      atencao: ['Franco suíço e preços altos; o Swiss Travel Pass ou o Half Fare Card compensam com 2+ montanhas.', 'Montanhas dependem do tempo: veja as webcams antes de subir.', 'O dia de volta para Roma é longo (~7h de trem).'],
+      fontes: ['ir', 'sw']},
+    {id: 'riviera', cat: 'vizinhos', nome: 'Riviera: Itália + Nice e Mônaco no Carnaval', ritmo: 'moderado',
+      resumo: 'Roma e Florença, depois cinco noites em Nice no auge do Carnaval e da Festa do Limão de Menton, com Mônaco e Èze; volta por Turim.',
+      ideal: 'Quem quer festa, mar azul no inverno e três países (Itália, França e Mônaco).',
+      stops: [
+        roma(3, [R.cheg, R.ant, R.vat]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        S('Nice', 5, 'Trem Florença → Gênova → Ventimiglia → Nice · ~7h', '6–14 °C', ['Carnaval de Nice', 'Festa do Limão em Menton', 'Mônaco e Èze'], ['Sáb 13/02: chegada; às 21h, corso iluminado de abertura do Carnaval na Place Masséna.', 'Dom 14/02: Menton e o desfile dos Frutos de Ouro da Festa do Limão (trem 35 min).', 'Mônaco: Palácio do Príncipe, Museu Oceanográfico e Monte Carlo (trem 20 min).', 'Ter 16/02: Èze e Villefranche de dia; às 20h30, corso carnavalesco iluminado.', 'Qua 17/02: Batalha das Flores às 14h30; Promenade des Anglais e Colline du Château.'], {pais: 'França'}),
+        S('Turim', 2, 'Trem Nice → Ventimiglia → Gênova → Turim · ~5h30', '0–9 °C', ['Museu Egípcio', 'Mole Antonelliana', 'Cafés históricos'], ['Chegada; Piazza Castello e a Mole Antonelliana (Museu do Cinema).', 'Museu Egípcio e bicerin num café histórico.'], {w: 'Turim'}),
+        roma(3, ['Trem rápido de manhã; à tarde, Pantheon e Navona.', R.bor, R.tra], 'Trem rápido Turim → Roma · ~4h15'),
+      ],
+      eventos: [{q: '09 a 28/02', t: 'Carnaval de Nice 2027 “Vive l’Amour”: corso iluminado de abertura em 13/02 às 21h, corsos noturnos em 16 e 20/02 e Batalhas de Flores em 17, 20, 24 e 27/02.', u: SUG_SRC.nv[1]}, {q: '13 a 28/02', t: 'Fête du Citron de Menton: desfiles dos Frutos de Ouro aos domingos 14, 21 e 28/02 e desfiles noturnos em 18 e 25/02.', u: SUG_SRC.mt[1]}],
+      atencao: ['Arquibancadas dos desfiles são pagas e esgotam: compre nos sites oficiais.', 'Greves de trem na França acontecem: tenha o ônibus/voo como plano B.', 'França e Mônaco usam euro e estão no Schengen, como a Itália.'],
+      fontes: ['nc', 'nv', 'mt']},
+    {id: 'leste', cat: 'vizinhos', nome: 'Itália + Eslovênia e Viena', ritmo: 'moderado',
+      resumo: 'Roma, Florença e Veneza, depois Liubliana com o Lago Bled e Viena imperial; volta de avião para Roma.',
+      ideal: 'Quem quer somar dois países pouco óbvios, palácios e cafés vienenses.',
+      stops: [
+        roma(3, [R.cheg, R.ant, R.vat]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        ven(2, ['Chegada; vaporetto pelo Grande Canal e Rialto.', 'São Marcos e Palácio Ducal de manhã; Burano à tarde.'], 'Trem rápido Florença → Veneza · 2h14'),
+        S('Liubliana', 2, 'Ônibus/van direto Veneza → Liubliana · ~3h30', '-2 a 6 °C', ['Ponte Tripla', 'Castelo', 'Lago Bled'], ['Chegada; Ponte Tripla, castelo e as margens do rio Ljubljanica.', 'Lago Bled e a igreja da ilha (ônibus ~1h20); o desfiladeiro de Vintgar fecha no inverno.'], {pais: 'Eslovênia'}),
+        S('Viena', 3, 'Trem Liubliana → Viena (EC Emona) · ~6h', '-1 a 6 °C', ['Schönbrunn', 'O Beijo de Klimt', 'Ópera de Viena'], ['Dia de trem pelos Alpes; chegada e café no Café Central.', 'Palácio de Schönbrunn e Hofburg; ópera à noite (há ingressos em pé baratos).', 'Belvedere (O Beijo, de Klimt), Catedral de Santo Estêvão e Naschmarkt.'], {pais: 'Áustria'}),
+        roma(3, ['Voo de manhã; à tarde, Trastevere.', R.bor, R.tiv], 'Voo Viena → Roma · ~1h35'),
+      ],
+      eventos: [],
+      atencao: ['Frio forte em Liubliana e Viena: leve casaco de inverno de verdade.', 'Eslovênia e Áustria usam euro e estão no Schengen.', 'O trecho Veneza–Liubliana é mais simples de van/ônibus (FlixBus, GoOpti) que de trem.'],
+      fontes: ['rs', 'it']},
+    {id: 'espanha', cat: 'europa', nome: 'Itália + Espanha: Barcelona e Madri', ritmo: 'moderado',
+      resumo: 'Roma, voo para Barcelona de Gaudí, trem-bala para Madri e o Prado, e volta para Florença e Roma.',
+      ideal: 'Quem quer conhecer dois países com voos curtos e trem-bala.',
+      stops: [
+        roma(4, [R.cheg, R.ant, R.vat, R.bor]),
+        S('Barcelona', 4, 'Voo Roma → Barcelona · 1h50', '6–15 °C', ['Sagrada Família', 'Park Güell', 'Bairro Gótico'], ['Chegada; Bairro Gótico, Catedral e La Rambla com o Mercado da Boqueria.', 'Sagrada Família (ingresso com horário) e Casa Batlló e La Pedrera no Passeig de Gràcia.', 'Park Güell, Gràcia e pôr do sol nos Bunkers del Carmel.', 'Montjuïc, Museu Picasso e Barceloneta.'], {pais: 'Espanha'}),
+        S('Madri', 3, 'Trem AVE Barcelona → Madri · ~2h30', '3–13 °C', ['Museu do Prado', 'Palácio Real', 'Toledo'], ['Chegada; Puerta del Sol, Plaza Mayor e Mercado de San Miguel.', 'Museu do Prado, Parque do Retiro e Palácio Real.', 'Bate-volta a Toledo (trem 33 min) ou Segóvia.'], {pais: 'Espanha', w: 'Madrid'}),
+        flo(3, ['Voo de manhã e trem para Florença; à noite, Duomo e Signoria iluminados.', FLO.b, FLO.c], 'Voo Madri → Roma ~2h20 + trem rápido para Florença 1h35'),
+        roma(2, ['Volta a Roma; Galleria Borghese e Piazza di Spagna.', R.tra], 'Trem rápido Florença → Roma · 1h35'),
+      ],
+      eventos: [],
+      atencao: ['Voos low-cost cobram bagagem à parte: compare Vueling, ITA e Ryanair com mala.', 'A Sagrada Família esgota: compre o ingresso com horário.', 'Espanha usa euro e está no Schengen.'],
+      fontes: ['om', 'ts', 'rv']},
+    {id: 'paris', cat: 'europa', nome: 'Itália + Paris', ritmo: 'moderado',
+      resumo: 'Roma, Florença e Veneza, voo para quatro noites em Paris e volta para Roma.',
+      ideal: 'Quem quer juntar os dois destinos mais desejados da Europa.',
+      stops: [
+        roma(4, [R.cheg, R.ant, R.vat, R.bor]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        ven(2, ['Chegada; vaporetto pelo Grande Canal e Rialto.', 'São Marcos e Palácio Ducal; Murano e Burano à tarde.'], 'Trem rápido Florença → Veneza · 2h14'),
+        S('Paris', 4, 'Voo Veneza → Paris · ~1h50', '3–8 °C', ['Louvre', 'Torre Eiffel', 'Notre-Dame', 'Versalhes'], ['Chegada; Notre-Dame (reaberta em 2024), Île de la Cité e Sainte-Chapelle.', 'Louvre de manhã; Tulherias e Champs-Élysées até o Arco do Triunfo.', 'Palácio de Versalhes (trem RER C ~45 min).', 'Montmartre e Sacré-Cœur; Torre Eiffel e cruzeiro no Sena à noite.'], {pais: 'França'}),
+        roma(3, ['Voo de manhã; à tarde, Trastevere.', R.tiv, 'Pantheon, Campo de’ Fiori e Gueto Judeu; compras e despedida.'], 'Voo Paris → Roma · ~2h05'),
+      ],
+      eventos: [],
+      atencao: ['Paris em fevereiro é fria e chuvosa (3–8 °C); museus são o forte.', 'Compre o Louvre e a Torre Eiffel com horário marcado.', 'França usa euro e está no Schengen.'],
+      fontes: ['rv', 'it']},
+    {id: 'portugal', cat: 'europa', nome: 'Itália + Portugal: Lisboa e Porto', ritmo: 'moderado',
+      resumo: 'Roma, voo para Lisboa e Sintra, trem para o Porto e o Douro, e volta para Florença e Roma.',
+      ideal: 'Quem quer o melhor dos dois países, com o inverno mais ameno de Lisboa.',
+      stops: [
+        roma(4, [R.cheg, R.ant, R.vat, R.bor]),
+        S('Lisboa', 4, 'Voo Roma → Lisboa · ~3h05 (Portugal tem 1 h a menos)', '9–15 °C', ['Belém e Jerónimos', 'Sintra', 'Alfama e fado'], ['Chegada; Baixa, Praça do Comércio e Alfama no elétrico 28.', 'Belém: Mosteiro dos Jerónimos, Torre de Belém e pastéis de Belém.', 'Sintra: Palácio da Pena e Quinta da Regaleira (trem ~40 min).', 'Cascais e Cabo da Roca; fado em Alfama à noite.'], {pais: 'Portugal'}),
+        S('Porto', 3, 'Trem Alfa Pendular Lisboa → Porto · ~2h50', '6–14 °C', ['Ribeira', 'Caves de vinho do Porto', 'Vale do Douro'], ['Chegada; Ribeira, Ponte Dom Luís I e caves de vinho do Porto em Gaia.', 'Livraria Lello, Torre dos Clérigos e Estação de São Bento (azulejos).', 'Vale do Douro: quintas e vinhedos (excursão ou trem até o Pinhão).'], {pais: 'Portugal'}),
+        flo(3, ['Dia de viagem (voo para Roma e trem); à noite, Duomo iluminado.', FLO.b, FLO.c], 'Voo Porto → Roma ~3h10 + trem rápido para Florença 1h35'),
+        roma(2, ['Volta a Roma; Galleria Borghese e Piazza di Spagna.', R.tra], 'Trem rápido Florença → Roma · 1h35'),
+      ],
+      eventos: [],
+      atencao: ['Porto ↔ Roma tem só ~9 voos diretos por semana (Ryanair e Wizz): escolha o dia pelo voo.', 'Portugal tem 1 h a menos que a Itália.', 'Portugal usa euro e está no Schengen.'],
+      fontes: ['tp', 'gf', 'fo']},
+  ];
+})();
+
+/* ======================= páginas detalhadas (nova aba) ======================= */
+const WD_LONG = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+const wdLong = s => WD_LONG[parseD(s).getUTCDay()];
+const pic = k => `<svg class="ic" aria-hidden="true"><use href="#i-${k}"/></svg>`;
+const legIc = t => /voo/i.test(t) ? 'voo' : /ônibus|van/i.test(t) ? 'onibus' : /balsa|barco|travelmar/i.test(t) ? 'barco' : 'trem';
+/** Na página nova: fotos e resumos da Wikipédia para os elementos com data-wiki (sem dependências). */
+function pagePhotos() {
+  const cache = new Map();
+  const big = j => { const o = j.originalimage, t = j.thumbnail; if (o && o.width <= 1600) return o.source; return t ? t.source.replace(/\/\d+px-/, '/1280px-') : o && o.source; };
+  const get = t => {
+    if (cache.has(t)) return cache.get(t);
+    const pr = (async () => {
+      for (const l of ['pt', 'en']) {
+        try {
+          const r = await fetch(`https://${l}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(t)}`);
+          if (r.ok) { const j = await r.json(); if (j.type !== 'disambiguation' && (j.thumbnail || j.originalimage)) return {img: big(j), text: j.extract, url: j.content_urls && j.content_urls.desktop.page}; }
+        } catch (e) {}
+      }
+      try {
+        const r = await fetch(`https://pt.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=1&gsrsearch=${encodeURIComponent(t)}&prop=pageimages|extracts|info&inprop=url&exintro=1&explaintext=1&exsentences=3&pithumbsize=1280`);
+        const p = Object.values(((await r.json()).query || {}).pages || {})[0];
+        if (p) return {img: p.thumbnail && p.thumbnail.source, text: p.extract, url: p.fullurl};
+      } catch (e) {}
+      return null;
+    })();
+    cache.set(t, pr); return pr;
+  };
+  document.querySelectorAll('[data-wiki]').forEach(async el => {
+    const w = await get(el.dataset.wiki); if (!w) return;
+    if (w.img) { el.style.backgroundImage = `url("${w.img}")`; el.classList.add('ok'); }
+    const tx = el.dataset.wtext && document.getElementById(el.dataset.wtext);
+    if (tx && w.text) { tx.textContent = w.text.replace(/\s*\([^()]*\)/g, ''); tx.hidden = false; }
+    const a = el.dataset.wlink && document.getElementById(el.dataset.wlink);
+    if (a && w.url) { a.href = w.url; a.hidden = false; }
+  });
+}
+const PAGE_CSS = `
+:root{--ink:#2b1d12;--paper:#fbf6ec;--card:#fff;--line:#eadfca;--muted:#7a6a55;--teal:#0f766e;--gold:#b7791f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15.5px/1.6 Inter,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+a{color:var(--teal)}
+.ic{width:16px;height:16px;flex:none;vertical-align:-3px}
+.flag{height:6px;background:linear-gradient(90deg,#1f9d55 0 33.3%,#fff 33.3% 66.6%,#d93a2b 66.6%)}
+.hero{position:relative;min-height:460px;display:flex;align-items:flex-end;color:#fff;background:#2b1d12;overflow:hidden}
+.hero-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr))}
+.hero-bg div{background:#3b2a1e center/cover no-repeat;opacity:0;transition:opacity .8s;transform:scale(1.04)}
+.hero-bg div.ok{opacity:1}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,12,6,.1) 0%,rgba(20,12,6,.5) 50%,rgba(20,12,6,.93) 100%)}
+.hero-in{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:60px 28px 96px;width:100%}
+.kicker{display:inline-flex;gap:6px;align-items:center;font-size:12px;letter-spacing:.16em;text-transform:uppercase;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);padding:5px 14px;border-radius:999px;backdrop-filter:blur(6px)}
+h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(34px,5vw,62px);line-height:1.04;margin:16px 0 12px;font-weight:800;max-width:960px;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.lead{font-size:18.5px;max-width:780px;opacity:.94;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 14px;font-size:13.5px;backdrop-filter:blur(6px)}
+.chip b{font-size:16px}
+main{max-width:1140px;margin:0 auto;padding:0 28px 80px}
+.route{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:0 18px 40px rgba(43,29,18,.12);margin-top:-60px;position:relative;z-index:2}
+.stop{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:5px 14px 5px 5px;background:#f7f1e3;border:1px solid var(--line);text-decoration:none;color:inherit}
+.stop:hover{border-color:var(--c)}
+.stop .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:12.5px;background:var(--c)}
+.stop small{color:var(--muted)}
+.leg{display:inline-flex;align-items:center;gap:4px;color:var(--muted);font-size:12.5px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:22px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 6px 18px rgba(43,29,18,.05)}
+.box h3{margin:0 0 8px;font-family:'Playfair Display',Georgia,serif;font-size:19px;display:flex;gap:8px;align-items:center}
+.box p{margin:4px 0}
+.box ul{margin:6px 0 0;padding-left:18px}
+.box li{margin:4px 0}
+.box.gold{background:linear-gradient(135deg,#fff8e6,#fff);border-color:#f0d58c}
+.box.gold h3 .ic{color:var(--gold)}
+.box.warn{background:linear-gradient(135deg,#fff1ee,#fff);border-color:#f5c2b8}
+.box.warn h3 .ic{color:#c0392b}
+.full{margin-top:16px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:22px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-align:center}
+.st b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:34px;line-height:1.1}
+.st small{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.08em}
+section.city{margin-top:56px;scroll-margin-top:20px}
+.city-head{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:stretch}
+.photo{border-radius:22px;min-height:320px;background:#e9dfca center/cover no-repeat;box-shadow:0 20px 44px rgba(43,29,18,.2);position:relative;overflow:hidden}
+.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55))}
+.photo .cap{position:absolute;z-index:1;left:18px;bottom:14px;color:#fff;font-weight:700;letter-spacing:.04em;font-size:13px;text-transform:uppercase}
+.num{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);font-weight:800}
+.city-info h2{font-family:'Playfair Display',Georgia,serif;font-size:44px;line-height:1.05;margin:6px 0 6px}
+.when{font-weight:700;color:var(--ink)}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.pills span{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px}
+.pills .ic{color:var(--c)}
+.wtext{color:#4a3b2a;margin:8px 0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tags span{display:inline-flex;align-items:center;gap:5px;background:color-mix(in srgb,var(--c) 10%,#fff);border:1px solid color-mix(in srgb,var(--c) 35%,#fff);color:var(--ink);border-radius:10px;padding:4px 10px;font-size:13px;font-weight:600}
+.tags .ic{color:var(--c)}
+.wlink{display:inline-block;margin-top:10px;font-weight:700;font-size:13.5px}
+.days{list-style:none;margin:26px 0 0 12px;padding:0 0 0 30px;border-left:3px dotted color-mix(in srgb,var(--c) 45%,#e5d8bd)}
+.day{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 20px 14px;margin:0 0 14px;box-shadow:0 6px 18px rgba(43,29,18,.05)}
+.day::before{content:"";position:absolute;left:-42px;top:20px;width:18px;height:18px;border-radius:50%;background:var(--c);border:4px solid var(--paper);box-shadow:0 0 0 2px var(--c)}
+.day.free{background:repeating-linear-gradient(135deg,#fff,#fff 12px,#fbf6ec 12px,#fbf6ec 24px)}
+.day.flight::before{background:#1e3a8a;box-shadow:0 0 0 2px #1e3a8a}
+.date{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.date b{font-family:'Playfair Display',Georgia,serif;font-size:21px}
+.date span{text-transform:capitalize;color:var(--muted);font-weight:600}
+.date small{margin-left:auto;background:#f3ead4;border-radius:999px;padding:1px 10px;font-weight:700;color:#7a6a55;font-size:12px}
+.day p{margin:6px 0 0}
+.move{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#eef6f5;color:#115e59;border-radius:10px;padding:4px 10px;font-size:13px;font-weight:600}
+.its{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.it{display:grid;grid-template-columns:86px 1fr auto;gap:12px;align-items:start;padding:8px 10px;border-radius:12px;background:#faf6ee;border-left:4px solid var(--t)}
+.it time{font-weight:800;font-variant-numeric:tabular-nums;color:#4a3b2a}
+.it .tg{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t);margin-right:6px}
+.it b{font-weight:700}
+.it small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.it .cost{font-weight:700;color:#4a3b2a;white-space:nowrap}
+.badge{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;margin-left:6px}
+.badge.reservar{background:#ffedd5;color:#c2410c}
+.badge.reservado{background:#dcfce7;color:#15803d}
+.hotel{margin-top:8px;font-size:13.5px;color:#4a3b2a;display:flex;gap:6px;align-items:center}
+.hotel .ic{color:#7c3aed}
+.sources{margin-top:60px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:13.5px}
+.sources h3{font-family:'Playfair Display',Georgia,serif;color:var(--ink);margin:0 0 8px}
+.toolbar{position:fixed;right:18px;bottom:18px;display:flex;gap:8px;z-index:5}
+.toolbar button{border:none;border-radius:999px;padding:10px 18px;font:700 14px Inter,system-ui,sans-serif;background:#2b1d12;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.25);cursor:pointer}
+@media (max-width:820px){.city-head{grid-template-columns:1fr}.photo{min-height:230px}.it{grid-template-columns:1fr}.hero-in{padding-bottom:84px}}
+@media print{.toolbar{display:none}.hero{min-height:300px}.day,.box{break-inside:avoid;box-shadow:none}body{background:#fff}}
+`;
+/** Abre uma página completa numa nova aba (Blob), com o mesmo jeito visual para roteiros e linha do tempo. */
+function openPage(title, body) {
+  const icons = Object.entries(IC).map(([k, v]) => `<symbol id="i-${k}" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${v}</g></symbol>`).join('');
+  const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>${PAGE_CSS}</style></head><body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${icons}</defs></svg><div class="flag"></div>${body}
+<div class="toolbar"><button type="button" onclick="window.print()">Imprimir / PDF</button></div>
+<script>(${pagePhotos.toString()})();<\/script></body></html>`;
+  const url = URL.createObjectURL(new Blob([html], {type: 'text/html;charset=utf-8'}));
+  if (!window.open(url, '_blank')) toast('O navegador bloqueou a nova aba: permita pop-ups para esta página e tente de novo.');
+}
+const heroBg = titles => `<div class="hero-bg">${[...new Set(titles)].slice(0, 3).map(t => `<div data-wiki="${esc(t)}"></div>`).join('')}</div>`;
+const LAST_DAY = 'Último dia: check-out até 11h (a mala fica no hotel), passeio leve e almoço sem pressa. Leonardo Express até Fiumicino (32 min) para estar no aeroporto até ~19h30 — o voo para o Rio sai às 22:30.';
+function openSugRoteiro(id) {
+  const r = SUG_ROTEIROS.find(x => x.id === id); if (!r) return;
+  const start = REAL_TRIP.start;
+  let cur = start;
+  const stops = r.stops.map((s, i) => { const o = {...s, i, inD: cur, outD: addDays(cur, s.n), color: cityColor(s.nome)}; cur = o.outD; return o; });
+  const countries = [...new Set(stops.map(s => s.pais))], legs = stops.slice(1).map(s => legIc(s.via));
+  const cnt = k => legs.filter(x => x === k).length, plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+  const moves = [cnt('trem') && plural(cnt('trem'), 'trecho de trem', 'trechos de trem'), cnt('voo') && plural(cnt('voo'), 'voo', 'voos'), cnt('onibus') && plural(cnt('onibus'), 'trecho de ônibus', 'trechos de ônibus'), cnt('barco') && plural(cnt('barco'), 'trecho de barco', 'trechos de barco')].filter(Boolean);
+  const route = stops.map((s, i) => `${i ? `<span class="leg">${pic(legIc(s.via))}${esc(s.via.split('·').pop().trim())}</span>` : ''}<a class="stop" href="#p${i}" style="--c:${s.color}"><span class="n">${i + 1}</span><b>${esc(s.nome)}</b><small>${s.n} noite${s.n > 1 ? 's' : ''}</small></a>`).join('');
+  const dayRow = (date, txt, extra = '', cls = '') => `<li class="day ${cls}"><div class="date"><b>${fmtBR(date)}</b><span>${wdLong(date)}</span><small>Dia ${diffDays(start, date) + 1}</small></div><p>${esc(txt)}</p>${extra}</li>`;
+  const sections = stops.map(s => {
+    const days = s.d.map((t, j) => dayRow(addDays(s.inD, j), t, j === 0 ? `<div class="move">${pic(legIc(s.via))}${esc(s.via)}</div>` : ''));
+    if (s === stops.at(-1)) days.push(dayRow(s.outD, LAST_DAY, `<div class="move">${pic('voo')}${esc(REAL_TRIP.volta)}</div>`, 'flight'));
+    return `<section class="city" id="p${s.i}" style="--c:${s.color}">
+      <div class="city-head">
+        <div class="photo" data-wiki="${esc(s.w)}" data-wtext="wt${s.i}" data-wlink="wl${s.i}"><span class="cap">${esc(s.nome)} · ${esc(s.pais)}</span></div>
+        <div class="city-info"><div class="num">Parada ${s.i + 1} de ${stops.length}</div><h2>${esc(s.nome)}</h2>
+          <div class="when">${wdLong(s.inD)} ${fmtBR(s.inD)} → ${wdLong(s.outD)} ${fmtBR(s.outD)} · ${s.n} noite${s.n > 1 ? 's' : ''}</div>
+          <div class="pills"><span>${pic('sol')}Fevereiro: ${esc(s.clima)}</span><span>${pic(legIc(s.via))}${esc(s.via)}</span></div>
+          <p class="wtext" id="wt${s.i}" hidden></p>
+          <div class="tags">${s.top.map(t => `<span>${pic('estrela')}${esc(t)}</span>`).join('')}</div>
+          <a id="wl${s.i}" class="wlink" target="_blank" rel="noopener" hidden>Ler mais na Wikipédia ↗</a>
+        </div></div>
+      <ol class="days">${days.join('')}</ol></section>`;
+  }).join('');
+  const body = `<header class="hero">${heroBg(stops.map(s => s.w))}<div class="hero-in">
+      <span class="kicker">${pic('mapa')}${esc(SUG_CATS[r.cat])} · roteiro sugerido</span>
+      <h1>${esc(r.nome)}</h1><p class="lead">${esc(r.resumo)}</p>
+      <div class="chips"><span class="chip">${pic('calendario')}<b>${fmtBR(start)} → ${fmtBR(REAL_TRIP.end)}</b>2027</span><span class="chip"><b>16</b> noites · <b>17</b> dias</span><span class="chip"><b>${stops.length}</b> paradas</span><span class="chip">${esc(countries.join(' · '))}</span><span class="chip">Ritmo ${esc(r.ritmo)}</span></div>
+    </div></header>
+    <main>
+      <nav class="route">${route}</nav>
+      <div class="grid3">
+        <div class="box"><h3>${pic('estrela')}Ideal para</h3><p>${esc(r.ideal)}</p></div>
+        <div class="box"><h3>${pic('voo')}Seus voos (já comprados)</h3><p>${esc(REAL_TRIP.ida)}</p><p>${esc(REAL_TRIP.volta)}</p></div>
+        <div class="box"><h3>${pic('trem')}Deslocamentos</h3><p>${esc(moves.join(' · ') || 'sem trocas de cidade')}, mais o Leonardo Express entre Fiumicino e Roma Termini (32 min) na chegada e na volta.</p></div>
+      </div>
+      ${r.eventos.length ? `<div class="box gold full"><h3>${pic('calendario')}Acontece nas suas datas</h3><ul>${r.eventos.map(e => `<li><b>${esc(e.q)}</b> — ${esc(e.t)} <a href="${esc(e.u)}" target="_blank" rel="noopener">fonte ↗</a></li>`).join('')}</ul></div>` : ''}
+      <div class="box warn full"><h3>${pic('alerta')}Antes de fechar</h3><ul>${r.atencao.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>
+      ${sections}
+      <footer class="sources"><h3>Fontes da pesquisa</h3><ul>${r.fontes.map(k => `<li><a href="${esc(SUG_SRC[k][1])}" target="_blank" rel="noopener">${esc(SUG_SRC[k][0])}</a></li>`).join('')}</ul>
+        <p>Pesquisa feita em novembro de 2026. Tempos de trem e voo são médios; confira horários e datas de eventos antes de comprar. Clima: médias de fevereiro. Fotos e resumos: Wikipédia.</p></footer>
+    </main>`;
+  openPage(`${r.nome} · roteiro sugerido`, body);
+}
+/** Linha do tempo do roteiro aberto: todos os dias, cidades, atividades, transportes e hotéis, numa nova aba. */
+function openTimelinePage() {
+  const days = state.days; if (!days.length) return;
+  const first = days[0].date, last = days.at(-1).date, stays = getStays(), P = state.plan || {}, real = realNow();
+  const tn = tripNights(), used = (P.cities || []).reduce((a, pc) => a + (pc.n || 1), 0), free = tn == null ? null : Math.max(0, tn - used);
+  const acts = days.reduce((a, d) => a + d.items.filter(it => !isAuto(it)).length, 0);
+  const pend = days.reduce((a, d) => a + d.items.filter(it => it.status === 'reservar' && !it.hout).length, 0);
+  const nights = stays.reduce((a, s) => a + s.nights, 0), cities = [...new Set(stays.map(s => s.base))];
+  const route = stays.map((s, i) => `${i ? `<span class="leg">${pic('trem')}</span>` : ''}<a class="stop" href="#s${i}" style="--c:${cityColor(s.base)}"><span class="n">${i + 1}</span><b>${esc(s.base)}</b><small>${s.nights} noite${s.nights === 1 ? '' : 's'}</small></a>`).join('');
+  const itRow = it => {
+    const ty = TYPES[it.type] || TYPES.livre;
+    return `<li class="it" style="--t:${ty.color}"><time>${esc(it.start || '—')}${it.end ? '–' + esc(it.end) : ''}</time>
+      <div><span class="tg">${pic(TYPE_IC[it.type] || 'livre')}${esc(ty.label)}</span><b>${esc(it.title)}</b>${it.status === 'reservar' ? '<span class="badge reservar">a reservar</span>' : it.status === 'reservado' ? '<span class="badge reservado">reservado</span>' : ''}${it.notes ? `<small>${esc(it.notes)}</small>` : ''}</div>
+      <span class="cost">${+it.cost ? fmtEUR(it.cost) : ''}</span></li>`;
+  };
+  const dayCard = (d, i) => {
+    const items = [...d.items].sort((a, b) => (a.start || '99:99').localeCompare(b.start || '99:99'));
+    const hotel = isNoHotel(d.base) ? null : chosenHotel(d.base), isFree = d.free || !items.some(it => !isAuto(it));
+    const cls = d.ret ? 'flight' : isFree ? 'free' : '';
+    return `<li class="day ${cls}"><div class="date"><b>${fmtBR(d.date)}</b><span>${wdLong(d.date)}</span><small>Dia ${i + 1}</small></div>
+      <p><b>${esc(d.title || d.base)}</b>${d.note ? ` — ${esc(d.note)}` : ''}</p>
+      ${items.length ? `<ul class="its">${items.map(itRow).join('')}</ul>` : ''}
+      ${isFree && !d.ret ? `<p class="hotel">${pic('sol')}${d.free ? 'Noite livre: ainda não está em nenhuma cidade — use no Planejar pela Itália.' : 'Dia livre: nenhuma atividade escolhida ainda.'}</p>` : ''}
+      ${hotel ? `<div class="hotel">${pic('hotel')}Hotel: <b>${esc(hotel.name)}</b>${hotel.status === 'reservado' ? '<span class="badge reservado">reservado</span>' : ''}</div>` : ''}</li>`;
+  };
+  const groups = [];
+  days.forEach((d, i) => { const g = groups.at(-1); if (g && norm(g.base) === norm(d.base) && !d.ret) g.days.push([d, i]); else groups.push({base: d.base, ret: d.ret, days: [[d, i]]}); });
+  let si = -1;
+  const sections = groups.map(g => {
+    const color = isNoHotel(g.base) ? '#1e3a8a' : cityColor(g.base), st = isNoHotel(g.base) ? null : stays.find(s => s.days[0] === g.days[0][0]);
+    if (st) si++;
+    const head = isNoHotel(g.base) ? `<div class="city-info"><div class="num">Volta para casa</div><h2>${pic('voo')} Voo de volta</h2>${real ? `<div class="when">${esc(REAL_TRIP.volta)}</div>` : ''}</div>`
+      : `<div class="city-head"><div class="photo" data-wiki="${esc(g.base)}" data-wtext="tw${si}"><span class="cap">${esc(g.base)}</span></div>
+        <div class="city-info"><div class="num">${st ? `Parada ${si + 1} de ${stays.length}` : ''}</div><h2>${esc(g.base)}</h2>
+          ${st ? `<div class="when">${wdLong(st.checkin)} ${fmtBR(st.checkin)} → ${wdLong(st.checkout)} ${fmtBR(st.checkout)} · ${st.nights} noite${st.nights === 1 ? '' : 's'}</div>` : ''}
+          <div class="pills">${chosenHotel(g.base) ? `<span>${pic('hotel')}${esc(chosenHotel(g.base).name)}</span>` : `<span>${pic('hotel')}hotel a escolher</span>`}<span>${pic('visita')}${g.days.reduce((a, [d]) => a + d.items.filter(it => !isAuto(it)).length, 0)} atividades</span></div>
+          <p class="wtext" id="tw${si}" hidden></p></div></div>`;
+    return `<section class="city" ${st ? `id="s${si}"` : ''} style="--c:${color}">${head}<ol class="days">${g.days.map(([d, i]) => dayCard(d, i)).join('')}</ol></section>`;
+  }).join('');
+  const body = `<header class="hero">${heroBg(cities.length ? cities : ['Itália'])}<div class="hero-in">
+      <span class="kicker">${pic(real ? 'cadeado' : 'calendario')}${real ? 'Roteiro verdadeiro · voos comprados' : 'Linha do tempo do roteiro'}</span>
+      <h1>${esc(state.title)}</h1>
+      <p class="lead">${wdLong(first)} ${fmtBRY(first)} → ${wdLong(last)} ${fmtBRY(last)}${P.arrive ? ` · pouso ${esc(P.arrive)}` : ''}${P.depart ? ` · voo de volta ${esc(P.depart)}` : ''}</p>
+      <div class="chips">${cities.map(c => `<span class="chip">${esc(c)}</span>`).join('')}</div>
+    </div></header>
+    <main>
+      ${stays.length ? `<nav class="route">${route}</nav>` : ''}
+      <div class="stat-row">
+        <div class="st"><b>${diffDays(first, last) + 1}</b><small>dias</small></div>
+        <div class="st"><b>${nights}</b><small>noites</small></div>
+        ${free != null ? `<div class="st"><b>${free}</b><small>noites livres</small></div>` : ''}
+        <div class="st"><b>${cities.length}</b><small>cidades</small></div>
+        <div class="st"><b>${acts}</b><small>atividades</small></div>
+        <div class="st"><b>${pend}</b><small>a reservar</small></div>
+      </div>
+      ${real ? `<div class="grid3"><div class="box"><h3>${pic('voo')}Ida</h3><p>${esc(REAL_TRIP.ida)}</p></div><div class="box"><h3>${pic('voo')}Volta</h3><p>${esc(REAL_TRIP.volta)}</p></div></div>` : ''}
+      ${sections}
+      <footer class="sources"><p>Gerado em ${fmtBRY(todayStr())} a partir do roteiro “${esc(state.title)}”. Fotos e resumos: Wikipédia.</p></footer>
+    </main>`;
+  openPage(`${state.title} · linha do tempo`, body);
 }
 
 /* ======================= abas e init ======================= */
@@ -7703,6 +8426,7 @@ function init() {
   $('#undoBtn').addEventListener('click', undo);
   $('#tripsBtn').addEventListener('click', openTripsPanel);
   document.addEventListener('click', e => { if (e.target.closest('[data-dates]') && !e.target.closest('#tripsPanel')) { e.preventDefault(); openDatesModal(); } });
+  document.addEventListener('click', e => { if (e.target.closest('[data-timeline]')) openTimelinePage(); });
   setupTripsPanel();
   setupHomologacao();
   setupExport();
@@ -7723,7 +8447,7 @@ function init() {
   $('#search').addEventListener('input', applyFilters);
   $('#addDayBtn').addEventListener('click', e => handleDayAct('add-day', null, e));
   $('#shiftTrip').addEventListener('click', () => {
-    if (!state.days.length) return;
+    if (!state.days.length || realNow()) return;
     const first = state.days[0].date;
     const v = prompt('Nova data de início da viagem (AAAA-MM-DD). Todos os dias serão deslocados juntos:', first);
     if (!v || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return;
