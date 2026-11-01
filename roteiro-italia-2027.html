@@ -1412,6 +1412,212 @@ header.top{background:linear-gradient(180deg,#fffcf5 0%,#f8efda 100%);border-bot
 .fs-open:hover{background:var(--accent);border-color:var(--accent)}
 .actions button{box-shadow:var(--sh-ink-sm)}
 .actions button:hover{transform:translate(-1px,-1px);box-shadow:2.5px 2.5px 0 var(--ink)}
+
+/* ---------- checklist e orçamento: escolha do modelo ---------- */
+.pick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr));gap:20px;margin:4px 0 18px}
+.pick-card{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--sh-ink-md);padding:24px 20px 18px;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.pick-card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.pick-card::before{content:"";position:absolute;inset:0 0 auto;height:9px;background:var(--c);border-bottom:2px solid var(--ink)}
+.pick-card::after{content:"";position:absolute;right:-40px;bottom:-40px;width:150px;height:150px;border-radius:50%;background:var(--c);opacity:.07;pointer-events:none}
+.pk-ic{width:54px;height:54px;border-radius:50%;background:var(--c);border:2px solid var(--ink);display:grid;place-items:center;color:#fff;box-shadow:var(--sh-ink)}
+.pk-ic svg{width:27px;height:27px}
+.pick-card h3{font-family:var(--font-display);font-weight:400;font-size:27px;margin:0;line-height:1.05;color:var(--c);-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:var(--sh-ink-sm);letter-spacing:.03em}
+.pick-card p{margin:0;color:var(--ink-soft);font-size:13.5px;line-height:1.45}
+.pick-card .pk-big{font-family:var(--font-display);font-size:30px;color:var(--ink);line-height:1}
+.pick-card .pk-big small{font-family:var(--font-body);font-size:13px;color:var(--muted-warm);font-weight:700}
+.pk-tags{display:flex;flex-wrap:wrap;gap:5px}
+.pk-tags span{font-size:11.5px;font-weight:700;border:1.5px solid var(--c,var(--line-strong));border-radius:var(--r-pill);padding:1px 9px;background:#fff;color:var(--ink-soft)}
+.pick-card>.ink-btn{align-self:flex-start;margin-top:auto}
+.pk-badge{position:absolute;top:20px;right:16px;transform:rotate(5deg);font-family:var(--font-display);font-size:13px;letter-spacing:.03em;background:var(--highlight);border:2px solid var(--ink);border-radius:8px;padding:2px 10px;box-shadow:var(--sh-ink-sm)}
+.pk-sel{border:2px solid var(--ink);border-radius:12px;padding:6px 10px;background:#fff;font-weight:700;font-size:13px;max-width:100%;box-shadow:var(--sh-ink-sm)}
+.pk-bar,.rs-bbar{display:flex;height:12px;border:1.5px solid var(--ink);border-radius:var(--r-pill);overflow:hidden;background:#fff}
+.pk-bar i,.rs-bbar i{display:block;height:100%}
+.pk-bar i+i{border-left:1.5px solid var(--ink)}
+.pick-opts{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;font-size:13.5px;margin:0 0 22px;padding:10px 16px;background:var(--paper);border:1.5px dashed var(--line-strong);border-radius:14px}
+.pick-opts label{display:inline-flex;align-items:center;gap:6px;font-weight:600;cursor:pointer}
+.pick-opts svg{width:16px;height:16px;color:var(--muted-tan)}
+.sec-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:26px 0 12px;padding-bottom:6px;border-bottom:2px dashed var(--line-strong)}
+.sec-title b{font-family:var(--font-display);font-weight:400;font-size:24px;letter-spacing:.03em;color:var(--ink)}
+.sec-title small{font-family:var(--font-script);font-size:19px;color:var(--muted-warm)}
+.pack-chip{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);border-radius:var(--r-pill);background:#fff;padding:3px 13px 3px 3px;box-shadow:var(--sh-ink-sm);text-align:left;line-height:1.15;transition:transform .15s,box-shadow .15s}
+.pack-chip:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:var(--sh-ink);background:#fff}
+.pack-chip .ic-dot{width:28px;height:28px}
+.pack-chip .ic-dot svg{width:15px;height:15px}
+.pack-chip b{display:block;font-size:13px}
+.pack-chip small{display:block;font-size:11px;font-weight:700;color:var(--c)}
+.pack-chip.done{opacity:.55;box-shadow:none;cursor:default}
+.pack-chip.done small{color:var(--ok)}
+/* checklist */
+.cl-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:16px;margin-bottom:18px}
+.cc-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.cc-days{display:flex;align-items:center;gap:10px}
+.cc-days b{font-family:var(--font-display);font-weight:400;font-size:54px;line-height:.9;color:var(--c);-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:var(--sh-ink)}
+.cc-days span{font-family:var(--font-script);font-size:22px;line-height:1;max-width:120px}
+.cc-sum{display:flex;flex-direction:column;gap:3px;margin-left:auto;font-size:12.5px;color:var(--muted-warm);text-align:right}
+.cc-sum b{color:var(--ink);font-size:14px}
+.cc-sum .late,.cc-sum .late b{color:var(--danger)}
+.cl-count-card h4{margin:12px 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-tan)}
+.next-list{list-style:none;margin:0;padding:0}
+.next-list li{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:9px;align-items:center;padding:6px 4px;border-bottom:1px dashed var(--line-dash);cursor:pointer;border-radius:8px}
+.next-list li:hover{background:#f6ecd6}
+.next-list li:last-child{border-bottom:none}
+.next-list .ic-dot{width:26px;height:26px}
+.next-list .ic-dot svg{width:14px;height:14px}
+.nx-t{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.next-list .nx-none{display:block;cursor:default;font-family:var(--font-script);font-size:18px;color:var(--muted-warm)}
+.due-chip{font-size:11px;font-weight:800;border-radius:var(--r-pill);padding:1px 9px;background:#f3ead4;color:var(--muted-warm);white-space:nowrap}
+.due-chip.soon{background:#ffedd5;color:var(--warn)}
+.due-chip.overdue{background:#fee2e2;color:var(--danger)}
+.cl-packs .packs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.cl-fill{margin-top:2px}
+.cl-okline{margin:0;font-size:12.5px;font-weight:700;color:var(--ok)}
+.cl-cat-x{margin-left:4px;border:none;background:none;padding:0 3px;font-size:18px;line-height:1;color:var(--muted-tan);opacity:0;transition:opacity .15s}
+.sticker:hover>h3>.cl-cat-x{opacity:1}
+.cl-cat-x:hover{color:var(--danger);background:none}
+.cl-hint{font-family:var(--font-script);font-size:18px;color:var(--muted-warm);margin:2px 0}
+.sug-chip{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#8a5a12;background:#fdf1d8;border:1.5px solid #d6a54a;border-radius:var(--r-pill);padding:0 7px;line-height:16px}
+.cl-list li.flash{animation:clFlash 1.8s ease-out}
+@keyframes clFlash{0%,40%{background:var(--highlight)}100%{background:transparent}}
+.cl-foot{display:flex;justify-content:center;gap:10px;margin:6px 0 10px}
+/* painel de documentos */
+.flag-ic{width:27px;height:18px;border-radius:3px;box-shadow:0 0 0 1.5px var(--ink);flex:none;display:inline-block;vertical-align:middle}
+.docs{margin:0 0 6px;background:linear-gradient(180deg,#eef4fb 0,#fffaf0 140px);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--sh-ink-md);overflow:hidden}
+.docs>summary{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;list-style:none;flex-wrap:wrap}
+.docs>summary::-webkit-details-marker{display:none}
+.docs-stamp{position:relative;width:62px;height:62px;border-radius:50%;border:3px dashed var(--info);display:grid;place-items:center;color:var(--info);transform:rotate(-10deg);background:#fff;flex:none}
+.docs-stamp svg{width:24px;height:24px;margin-top:-10px}
+.docs-stamp i{position:absolute;bottom:9px;font-style:normal;font-family:var(--font-display);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.docs-tt{display:flex;flex-direction:column;min-width:0;flex:1 1 260px}
+.docs-tt h2{font-family:var(--font-display);font-weight:400;font-size:clamp(24px,3vw,31px);margin:0;line-height:1;color:var(--info);-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:var(--sh-ink-sm);letter-spacing:.03em}
+.docs-tt .f-script{font-size:19px;color:var(--muted-warm)}
+.docs-flags{display:flex;gap:6px;flex-wrap:wrap}
+.docs-tg::after{content:"+";font-family:var(--font-display);font-size:26px;color:var(--muted-tan)}
+.docs[open] .docs-tg::after{content:"–"}
+.docs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:2px 18px 18px;align-items:start}
+.doc-card{background:#fff;border:2px solid var(--ink);border-radius:14px;box-shadow:var(--sh-ink);overflow:hidden}
+.doc-card.wide{grid-column:1 / -1}
+.doc-card>h3{margin:0;padding:9px 14px;background:var(--c);color:#fff;font-family:var(--font-display);font-weight:400;font-size:19px;letter-spacing:.03em;display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink)}
+.doc-card>h3>svg:not(.flag-ic){width:20px;height:20px}
+.doc-card>h3 .flag-ic{box-shadow:0 0 0 1.5px #fff}
+.doc-card>h3 small{margin-left:auto;color:#fff;opacity:.9;font-family:var(--font-body);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.doc-list{list-style:none;margin:0;padding:2px 14px 8px}
+.doc-row{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line-dash);align-items:start}
+.doc-row:last-child{border-bottom:none}
+.doc-ic{width:30px;height:30px;border-radius:9px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);display:grid;place-items:center;border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff)}
+.doc-ic svg{width:16px;height:16px}
+.doc-row b{font-size:13.5px}
+.doc-row small{display:block;color:var(--ink-soft);font-size:12.5px;line-height:1.45;margin-top:1px}
+.doc-row small b{font-size:12.5px}
+.doc-src{display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:4px}
+.doc-src a{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--accent);text-decoration:none}
+.doc-src a:hover{text-decoration:underline}
+.doc-src svg{width:11px;height:11px}
+.doc-act{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:var(--r-pill);padding:1px 8px;border:1.5px solid currentColor;white-space:nowrap}
+.tag.req{color:var(--danger);background:#fde8e8}
+.tag.rec{color:var(--warn);background:#fff1e6}
+.tag.cond{color:var(--pick);background:#f1eafe}
+.tag.inf{color:#475569;background:#f1f5f9}
+.doc-add{border:1.5px dashed var(--accent);color:var(--accent);background:#f0fdfa;border-radius:var(--r-pill);font-size:11.5px;font-weight:800;padding:2px 10px;white-space:nowrap}
+.doc-add:hover{background:var(--accent);color:#fff;border-style:solid}
+.doc-in{font-size:11.5px;font-weight:800;color:var(--ok);white-space:nowrap}
+.drive-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 14px 0}
+.drive-col{background:var(--paper);border:1.5px solid var(--line-strong);border-radius:12px;padding:9px 12px}
+.drive-col h4{margin:0 0 6px;display:flex;gap:8px;align-items:center;font-size:13.5px}
+.drive-col ul{margin:0;padding-left:17px;font-size:12.5px;line-height:1.45;color:var(--ink-soft)}
+.drive-col li{margin-bottom:3px}
+.drive-wrap{padding:12px 14px 2px;overflow-x:auto}
+.drive-tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;border:1.5px solid var(--line-strong);border-radius:12px;overflow:hidden}
+.drive-tbl th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-tan);background:var(--paper);padding:7px 10px}
+.drive-tbl td{padding:7px 10px;border-top:1px dashed var(--line-dash);vertical-align:top;color:var(--ink-soft)}
+.drive-tbl td:first-child{white-space:nowrap;color:var(--ink)}
+.drive-tbl td:first-child .flag-ic{width:21px;height:14px;margin-right:7px}
+.drive-tbl tr.on td{background:#fff8e1}
+.drive-tbl em{display:inline-block;margin-left:7px;font-style:normal;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fff;background:var(--c);border-radius:var(--r-pill);padding:0 6px;vertical-align:1px}
+/* orçamento */
+.bud-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:16px;margin-bottom:18px}
+.bud-kpi{position:relative;background:var(--paper);border:2px solid var(--ink);border-radius:16px;box-shadow:var(--sh-ink-md);padding:14px 16px 13px;overflow:hidden}
+.bud-kpi::before{content:"";position:absolute;inset:0 auto 0 0;width:7px;background:var(--c);border-right:2px solid var(--ink)}
+.bud-kpi::after{content:"";position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;background:var(--c);opacity:.1}
+.bud-kpi>*{position:relative;margin-left:6px}
+.bud-kpi .lbl{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-warm)}
+.bud-kpi .lbl svg{width:16px;height:16px;color:var(--c)}
+.bud-kpi .big{font-family:var(--font-display);font-size:clamp(25px,2.6vw,33px);line-height:1.1;color:var(--c);-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:var(--sh-ink-sm);margin:6px 0 3px;letter-spacing:.01em}
+.bud-kpi .sub{font-size:12.5px;color:var(--muted-warm)}
+.bud-kpi .alt{margin-top:6px;font-size:12px;font-weight:800;color:var(--ink-soft);background:#fff;border:1.5px dashed var(--line-strong);border-radius:var(--r-pill);padding:1px 10px;display:inline-block}
+.kbar{height:11px;border:1.5px solid var(--ink);border-radius:var(--r-pill);background:#fff;overflow:hidden;margin:9px 0 2px 6px}
+.kbar>i{display:block;height:100%;background:var(--c)}
+.kbar.over>i{background:repeating-linear-gradient(135deg,var(--danger) 0 6px,#e05252 6px 12px)}
+.cap-in{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11.5px;font-weight:700;color:var(--muted-warm)}
+.cap-in input{width:120px;border:2px solid var(--ink);border-radius:var(--r-pill);padding:3px 10px;text-align:right;background:#fff;font-weight:800}
+.bud-two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;margin-bottom:6px;align-items:start}
+.bud-bottom{margin-top:18px}
+.donut-wrap{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px;align-items:center}
+.donut{width:190px;height:190px;filter:drop-shadow(3px 3px 0 rgba(59,42,30,.18))}
+.donut circle[stroke-dasharray]{transition:opacity .15s}
+.donut .d-lbl{font-size:11px;fill:var(--muted-warm);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.donut .d-val{font-family:var(--font-display);font-size:17px;fill:var(--ink)}
+.dleg{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.dleg li{display:grid;grid-template-columns:13px minmax(0,1fr) auto 38px;gap:8px;align-items:center;font-size:13px;padding:4px 6px;border-radius:8px}
+.dleg li[data-go]{cursor:pointer}
+.dleg li[data-go]:hover{background:#f6ecd6}
+.dleg i{width:13px;height:13px;border-radius:4px;border:1.5px solid var(--ink)}
+.dleg span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dleg b{white-space:nowrap}
+.dleg .p{color:var(--muted-warm);font-size:12px;text-align:right}
+.wallet .w-big{display:flex;align-items:center;gap:12px;margin:2px 0 10px}
+.wallet .w-big b{font-family:var(--font-display);font-weight:400;font-size:36px;color:var(--c);-webkit-text-stroke:1px var(--ink);paint-order:stroke fill;text-shadow:var(--sh-ink-sm);white-space:nowrap}
+.wallet .w-big span{font-size:12.5px;color:var(--muted-warm);line-height:1.35}
+.w-split{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.w-split span{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:#fff;border:1.5px solid var(--line-warm);border-radius:var(--r-pill);padding:2px 10px}
+.w-split i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.w-tips{margin:0;padding-left:18px;font-size:12.5px;line-height:1.45;color:var(--ink-soft)}
+.w-tips li{margin-bottom:4px}
+.bud-cats{columns:3 340px;column-gap:16px}
+.bud-cat{break-inside:avoid;margin-bottom:16px}
+.bud-cat h3 .bc-n{flex:1;min-width:0}
+.bud-cat h3 .tot{font-family:var(--font-display);font-size:18px;color:var(--c);-webkit-text-stroke:.6px var(--ink);paint-order:stroke fill;white-space:nowrap}
+.bc-sub{margin:-3px 0 4px;font-size:11.5px;color:var(--muted-warm);font-weight:600}
+.bud-rows{list-style:none;margin:0;padding:0}
+.bud-row{padding:7px 0;border-bottom:1px dashed var(--line-dash)}
+.bud-row:last-child{border-bottom:none}
+.br-top{display:grid;grid-template-columns:22px minmax(0,1fr) 22px;gap:6px;align-items:center}
+.br-top .t{border:none;background:transparent;font-size:13px;font-weight:600;padding:2px 4px;border-radius:6px;min-width:0;width:100%}
+.br-top .t:focus{background:#fff;outline:1.5px solid var(--line-strong)}
+.bud-row .x{border:none;background:none;padding:0;font-size:17px;line-height:1;color:var(--muted-tan);opacity:0;transition:opacity .15s}
+.bud-row:hover .x{opacity:1}
+.bud-row .x:hover{color:var(--danger)}
+.br-bot{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding-left:28px;margin-top:3px}
+.br-bot input{width:82px;border:1.5px solid var(--line-warm);border-radius:var(--r-pill);padding:2px 8px;text-align:right;background:#fff;font-weight:800;font-size:12.5px}
+.br-bot select{border:1.5px solid var(--line-warm);border-radius:var(--r-pill);padding:2px 5px;background:#fff;font-size:12px;color:var(--ink-soft)}
+.br-bot input:focus,.br-bot select:focus{border-color:var(--ink);outline:none}
+.br-eq{margin-left:auto;font-size:12.5px;font-weight:800;color:var(--ink);white-space:nowrap}
+.est-chip{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-tan);border:1px dashed var(--line-strong);border-radius:var(--r-pill);padding:0 6px}
+.paid-chip{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ok);background:#e7f6ec;border:1px solid var(--ok);border-radius:var(--r-pill);padding:0 6px}
+.bud-row.paid .br-eq{color:var(--ok)}
+.bud-row.paid .t{color:var(--ink-soft)}
+.bud-empty{font-family:var(--font-script);font-size:18px;color:var(--muted-warm);padding:2px 0 4px;list-style:none}
+.bud-add{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:6px;margin-top:4px}
+.bud-add input{border:none;border-top:1px dashed var(--line-dash);border-radius:0;background:transparent;padding:7px 2px 2px;font-size:13px;min-width:0}
+.bud-add input:focus{outline:none;border-top-color:var(--ink)}
+.bud-add input[type=number]{text-align:right}
+.bud-more{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px}
+.bud-more>span{font-family:var(--font-script);font-size:19px;color:var(--muted-warm)}
+.bud-foot{text-align:center;margin:14px 0 0}
+.rs-item small.rs-bud{display:flex;gap:5px;align-items:flex-start;background:#fff4ec;border-radius:8px;padding:4px 7px;color:#7c2d12}
+.rs-bud svg{width:13px;height:13px;flex:none;margin-top:2px}
+.rs-bud b{color:#c05d2f}
+.rs-bbar{height:6px;border-width:1px;margin-top:4px}
+@media (max-width:980px){
+  .cl-top,.bud-two{grid-template-columns:1fr}
+  .docs-grid,.drive-cols{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .donut-wrap{grid-template-columns:1fr;justify-items:center}
+  .doc-row{grid-template-columns:30px minmax(0,1fr)}
+  .doc-act{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start}
+  .cc-days b{font-size:44px}
+}
 </style>
 </head>
 <body>
@@ -1428,7 +1634,7 @@ header.top{background:linear-gradient(180deg,#fffcf5 0%,#f8efda 100%);border-bot
       <button id="undoBtn" title="Desfazer (Ctrl+Z)">Desfazer</button>
       <div class="exp-wrap"><button id="expBtn" aria-haspopup="true" aria-expanded="false" title="Exportar o roteiro para Excel ou para uma IA avaliar">Exportar ▾</button>
         <div id="expMenu" class="exp-menu" hidden role="menu">
-          <button type="button" role="menuitem" data-exp="xlsx"><b>Planilha Excel (.xlsx)</b><small>Resumo, dia a dia, hotéis, transportes, deslocamentos e checklist</small></button>
+          <button type="button" role="menuitem" data-exp="xlsx"><b>Planilha Excel (.xlsx)</b><small>Resumo, dia a dia, hotéis, transportes, deslocamentos, checklist e orçamento</small></button>
           <button type="button" role="menuitem" data-exp="md"><b>Resumo para IA (.md)</b><small>Roteiro completo com o pedido de avaliação e sugestões</small></button>
           <button type="button" role="menuitem" data-exp="md-copy"><b>Copiar resumo para IA</b><small>Para colar direto no ChatGPT, Claude ou Gemini</small></button>
         </div></div>
@@ -1529,13 +1735,18 @@ const CITY_TIPS = {
 };
 
 
-const defaultSettings = () => ({tab: 'mapa', view: 'cal', hideDone: false, clFilter: 'all', travelers: 2, rooms: 1, eurUsd: 1.12, tourTax: 5, dailyExtra: 20, flightsUsd: 0});
+const defaultSettings = () => ({tab: 'mapa', view: 'cal', hideDone: false, clFilter: 'all', travelers: 2, rooms: 1, eurUsd: 1.12, eurBrl: 6.07, eurChf: 0.92, budCur: 'BRL', iof: true, tourTax: 5, dailyExtra: 20, flightsUsd: 0});
+// textos do checklist básico antigo → item do modelo pesquisado (para não duplicar ao completar a lista)
+const OLD_CL_KEYS = {'Passaporte válido por pelo menos 6 meses depois da volta': ['passaporte', 'Documentos e entrada'], 'Conferir exigências de entrada do destino (visto, autorização eletrônica, vacinas)': ['visto', 'Documentos e entrada'], 'Seguro-viagem com cobertura médica e repatriação (levar apólice)': ['seguro', 'Saúde e seguro'], 'Imprimir/baixar passagens, reservas e seguro': ['volta', 'Documentos e entrada'], 'Cópias digitais dos documentos numa pasta offline + e-mail para você mesmo': ['copias', 'Documentos e entrada'], 'Reservar hospedagem de todas as noites (de preferência com cancelamento grátis)': ['hospedagem', 'Documentos e entrada'], 'Cartão/conta global em dólar + 2º cartão de outra bandeira': ['cartoes', 'Dinheiro e câmbio'], 'Na maquininha, pagar sempre na moeda local — recusar a conversão para dólar (DCC)': ['dcc', 'Dinheiro e câmbio'], 'Avisar o banco e liberar compras internacionais': ['banco', 'Dinheiro e câmbio'], 'Remédios de uso contínuo + receita': ['remedios', 'Saúde e seguro'], 'eSIM/chip internacional que cubra todos os países do roteiro': ['esim', 'Celular e internet'], 'Adaptadores de tomada do destino': ['tomada', 'Celular e internet'], 'Check-in online do voo de ida': ['checkin-ida', 'Embarque'], 'Check-in online do voo de volta': ['checkin-volta', 'Volta ao Brasil']};
+const OLD_CL_CATS = ['Documentos e entrada', 'Hospedagem', 'Dinheiro', 'Saúde', 'Tecnologia', 'Embarque e volta'];
 const defaultState = () => ({version: 1, title: 'Minha viagem pela Itália', settings: defaultSettings(), days: [], hotels: [], checklist: [], notes: '', plan: {cities: []}});
 
 /* ======================= estado ======================= */
 function migrate(s) {
   s.settings = {...defaultSettings(), ...(s.settings || {})};
   s.days ||= []; s.hotels ||= []; s.checklist ||= []; s.notes ??= ''; s.title ||= 'Minha viagem'; s.plan ||= {cities: []};
+  s.checklist.forEach(c => { const o = !c.key && OLD_CL_KEYS[c.text]; if (o) { c.key = o[0]; if (OLD_CL_CATS.includes(c.cat)) c.cat = o[1]; } });
+  if (s.clCats) s.clCats = s.clCats.filter(x => !OLD_CL_CATS.includes(x) || s.checklist.some(c => c.cat === x));
   s.days.forEach(d => { d.id ||= uid(); d.items ||= []; d.items.forEach(i => { i.id ||= uid(); }); });
   return s;
 }
@@ -2335,7 +2546,7 @@ function dueClass(due, done) {
   const left = diffDays(todayStr(), due);
   return left < 0 ? 'overdue' : left <= 14 ? 'soon' : '';
 }
-const CAT_IC = [[/carro|dirig|volante/, 'carro'], [/document|entrada|passaporte/, 'info'], [/hosped|hotel/, 'hotel'], [/transp|trem/, 'trem'], [/ingress/, 'visita'], [/dinheiro|cart/, 'moeda'], [/saude|remed/, 'saude'], [/tecno|chip|celular/, 'celular'], [/bagag|mala|roupa/, 'mala'], [/embarq|volta|voo/, 'voo']];
+const CAT_IC = [[/carro|dirig|volante/, 'carro'], [/document|entrada|passaporte/, 'info'], [/hosped|hotel/, 'hotel'], [/suica/, 'trem'], [/transp|trem/, 'trem'], [/ingress/, 'visita'], [/reserva/, 'calendario'], [/dinheiro|cart|cambio/, 'moeda'], [/saude|remed|seguro/, 'saude'], [/tecno|chip|celular|internet/, 'celular'], [/bagag|mala|roupa/, 'mala'], [/embarq|volta|voo/, 'voo'], [/paises/, 'mapa'], [/crianc/, 'passeio'], [/roteiro/, 'estrela']];
 const CAT_COLORS = ['#b91c1c', '#7e22ce', '#0e7490', '#c05d2f', '#1f9d55', '#be123c', '#1d4ed8', '#a16207', '#475569'];
 const catIcon = cat => (CAT_IC.find(([re]) => re.test(norm(cat))) || [0, 'check'])[1];
 const icSvg = ic => `<svg viewBox="0 0 24 24"><use href="#ic-${ic}"/></svg>`;
@@ -2348,9 +2559,281 @@ function progressRing(pct, color) {
 }
 const clInfoOpen = new Set();
 const siteName = u => { try { return new URL(fixUrl(u)).hostname.replace(/^www\./, ''); } catch (e) { return 'site'; } };
+/* ---------- modelos do checklist: pesquisa de nov/2026 em fontes oficiais (Brasil, Itália, UE e vizinhos) ---------- */
+const CL_SRC = {
+  pf: ['Polícia Federal: passaporte', 'https://www.gov.br/pf/pt-br/assuntos/passaporte'],
+  etias: ['União Europeia: ETIAS', 'https://travel-europe.europa.eu/etias'],
+  ees: ['União Europeia: EES', 'https://travel-europe.europa.eu/en/ees/faq'],
+  meios: ['Itália: tabela de meios de subsistência', 'https://www.esteri.it/it/servizi-opportunita/ingressosoggiornoinitalia/mezzi_finanziari/tabella_mezzi_sussistenza/'],
+  presenca: ['Polizia di Stato: dichiarazione di presenza', 'https://www.poliziadistato.it/articolo/dichiarazione-di-presenza-per-cittadini-stranieri'],
+  cnhMilao: ['Consulado em Milão: CNH na Itália', 'https://www.gov.br/mre/pt-br/consulado-milao/informacoes-uteis/carteira-nacional-de-habilitacao-cnh'],
+  embIt: ['Embaixada da Itália: CNH brasileira', 'https://ambbrasilia.esteri.it/it/servizi-consolari-e-visti/servizi-per-il-cittadino-italiano/autoveicoli-e-patenti-di-guida/'],
+  aci: ['ACI: guia para motoristas estrangeiros (2026)', 'https://aci.gov.it/app/uploads/2026/06/INGLESE-INFORMAZIONI-UTILI-PER-TURISTI-STRANIERI.pdf'],
+  pidSP: ['PID em SP (Poupatempo)', 'https://poupatempo.sp.gov.br/carta/91833900-1B04-426B-8CFB-E6D6D96DD21E'],
+  pidMG: ['PID em MG', 'https://www.mg.gov.br/servico/solicitar-permissao-internacional-para-dirigir-pid'],
+  pidRJ: ['PID no RJ', 'https://detran.rj.gov.br/todos-os-servicos/servicos-hab/permissao-internacional-pid.html'],
+  pidPR: ['PID no PR', 'https://www.detran.pr.gov.br/servicos/Motorista/Carteira-de-motorista/Solicitar-a-emissao-da-Permissao-Internacional-para-Dirigir-PID-J0o2noQR'],
+  chCnh: ['Suíça: dirigir com carteira estrangeira', 'https://www.fdfa.admin.ch/countries/sweden/en/home/services/driving-and-vehicles/driving-ch-foreign-licence.html'],
+  vinCH: ['Suíça: vinheta no site oficial', 'https://via.admin.ch/shop'],
+  frCnh: ['França: carteira estrangeira', 'https://www.service-public.gouv.fr/particuliers/vosdroits/F1459'],
+  ptCnh: ['Portugal (IMT): carteiras aceitas', 'https://imt.madeira.gov.pt/images/Documentos%20Condutor/Troca%20de%20carta%20estrangeira%20para%20portuguesa.v4_19_03_2025%20002_alt.pdf'],
+  vinAT: ['Áustria: vinheta (ASFINAG)', 'https://shop.asfinag.at/'],
+  vinSI: ['Eslovênia: e-vinheta (DARS)', 'https://evinjeta.dars.si/'],
+  cdam: ['gov.br: pedir o CDAM', 'https://www.gov.br/pt-br/servicos/obter-certificado-de-direito-a-assistencia-medica'],
+  cdamMS: ['Ministério da Saúde: CDAM', 'https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/s/saude-do-viajante/cdam'],
+  cota: ['Receita Federal: cota de isenção', 'https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/viagens-internacionais/guia-do-viajante/entrada-no-brasil/cota-de-isencao-duty-free-e-bagagem-tributavel'],
+  edbv: ['Receita Federal: e-DBV', 'https://www.gov.br/pt-br/servicos/declarar-bens-para-viagem-internacional-dbv'],
+  cashEU: ['Comissão Europeia: dinheiro em espécie', 'https://taxation-customs.ec.europa.eu/customs/prohibitions-restrictions/eu-cash-controls_en'],
+  iof: ['IOF em viagem (2026)', 'https://antesdeviajar.com.br/dinheiro/iof/'],
+  aev: ['CNJ: viagem de menores ao exterior', 'https://www.cnj.jus.br/programas-e-acoes/viagem-ao-exterior/'],
+  enot: ['e-Notariado: AEV', 'https://suporte.notariado.org.br/support/solutions/articles/43000613388-aev-autorizac%C3%A3o-eletr%C3%B4nica-de-viagem-como-utilizar'],
+};
+const CLC = {doc: 'Documentos e entrada', drive: 'Para dirigir', health: 'Saúde e seguro', money: 'Dinheiro e câmbio', book: 'Reservas', tech: 'Celular e internet', bag: 'Mala de inverno', board: 'Embarque', back: 'Volta ao Brasil', ch: 'Suíça', eu: 'Outros países', kids: 'Com crianças'};
+const CLC_ORDER = Object.values(CLC);
+const CL_SUG_CAT = 'Antes de fechar o roteiro';
+const BLANK_CATS = [CLC.doc, CLC.health, CLC.money, CLC.book, CLC.tech, CLC.bag, CLC.board, CLC.back];
+const CL_CAT_COLOR = {[CLC.doc]: '#1d4ed8', [CLC.drive]: '#b45309', [CLC.health]: '#be123c', [CLC.money]: '#15803d', [CLC.book]: '#0f766e', [CLC.tech]: '#7c3aed', [CLC.bag]: '#a16207', [CLC.board]: '#475569', [CLC.back]: '#0e7490', [CLC.ch]: '#dc2626', [CLC.eu]: '#1e3a8a', [CLC.kids]: '#c05d2f', [CL_SUG_CAT]: '#b7791f'};
+const clColor = (cat, i) => CL_CAT_COLOR[cat] || CAT_COLORS[i % CAT_COLORS.length];
+const FLAG = {
+  it: '<path fill="#008c45" d="M0 0h9v18H0z"/><path fill="#fff" d="M9 0h9v18H9z"/><path fill="#cd212a" d="M18 0h9v18h-9z"/>',
+  fr: '<path fill="#0055a4" d="M0 0h9v18H0z"/><path fill="#fff" d="M9 0h9v18H9z"/><path fill="#ef4135" d="M18 0h9v18h-9z"/>',
+  es: '<path fill="#c60b1e" d="M0 0h27v18H0z"/><path fill="#ffc400" d="M0 4.5h27v9H0z"/>',
+  pt: '<path fill="#da291c" d="M0 0h27v18H0z"/><path fill="#046a38" d="M0 0h10.8v18H0z"/><circle cx="10.8" cy="9" r="3.4" fill="#ffe000"/>',
+  at: '<path fill="#c8102e" d="M0 0h27v18H0z"/><path fill="#fff" d="M0 6h27v6H0z"/>',
+  si: '<path fill="#fff" d="M0 0h27v6H0z"/><path fill="#0055a4" d="M0 6h27v6H0z"/><path fill="#ef3340" d="M0 12h27v6H0z"/>',
+  ch: '<path fill="#da291c" d="M0 0h27v18H0z"/><path fill="#fff" d="M11.7 3.5h3.6v3.7H19v3.6h-3.7v3.7h-3.6v-3.7H8V7.2h3.7z"/>',
+  br: '<path fill="#009c3b" d="M0 0h27v18H0z"/><path fill="#ffdf00" d="M13.5 2.2 24.6 9l-11.1 6.8L2.4 9z"/><circle cx="13.5" cy="9" r="3.9" fill="#002776"/>',
+  eu: '<path fill="#039" d="M0 0h27v18H0z"/>' + Array.from({length: 12}, (_, i) => `<circle cx="${(13.5 + 5.6 * Math.sin(i * Math.PI / 6)).toFixed(2)}" cy="${(9 - 5.6 * Math.cos(i * Math.PI / 6)).toFixed(2)}" r=".95" fill="#fc0"/>`).join(''),
+};
+const flagSvg = k => FLAG[k] ? `<svg class="flag-ic" viewBox="0 0 27 18" aria-hidden="true">${FLAG[k]}</svg>` : '';
+const COUNTRY_FLAG = {'Itália': 'it', 'Suíça': 'ch', 'França': 'fr', 'Espanha': 'es', 'Portugal': 'pt', 'Áustria': 'at', 'Eslovênia': 'si'};
+/** Meios de subsistência por pessoa, em €, pela tabela oficial italiana (Diretiva de 01/03/2000). */
+function meansIT(T, days) {
+  const g = T > 1;
+  if (days <= 5) return Math.round(g ? 212.81 : 269.6);
+  if (days <= 10) return Math.round((g ? 26.33 : 44.93) * days);
+  if (days <= 20) return Math.round((g ? 25.82 : 51.64) + (g ? 22.21 : 36.67) * days);
+  return Math.round((g ? 118.79 : 206.58) + (g ? 17.04 : 27.89) * days);
+}
+function ctxOf(start, end, countries, drive) {
+  return {start, end, days: diffDays(start, end) + 1, T: travelers(), countries, ch: countries.includes('Suíça'), eu: countries.some(p => p !== 'Itália' && p !== 'Suíça'), drive};
+}
+/** Datas, viajantes e países do roteiro aberto: a Suíça e os outros países mudam o checklist. */
+function tripCtx() {
+  const P = state.plan || {}, start = state.days[0]?.date || P.start || REAL_TRIP.start, end = state.days.at(-1)?.date || P.end || addDays(start, 14);
+  return ctxOf(start, end, [...new Set(['Itália', ...getStays().map(s => pageCity(s.base).pais), ...(P.cities || []).map(pc => CAT[pc.k]?.reg === 'Suíça' ? 'Suíça' : 'Itália')])], false);
+}
+const sugCtx = r => ctxOf(REAL_TRIP.start, REAL_TRIP.end, [...new Set(['Itália', ...r.stops.map(s => s.pais)])], /\bcarro\b|alug/i.test(JSON.stringify(r.stops) + r.atencao.join(' ')));
+// tags: e = essencial · c = completo · w = mala de inverno · v = volta ao Brasil · d = vou dirigir · s = Suíça · u = outros países · k = com crianças
+// due = dias antes do embarque, 'end' = dia da volta; when = só se o roteiro passar por lá
+const CLI = (key, cat, tags, text, x = {}) => ({key, cat, tags, text, ...x});
+const CL_LIB = [
+  CLI('passaporte', CLC.doc, 'e', c => `Passaporte válido até pelo menos ${fmtBRY(addDays(c.end, 91))} (3 meses depois da volta) e emitido há menos de 10 anos`, {must: 1, due: 75, src: ['pf', 'etias'], info: 'Regra do Espaço Schengen para quem entra sem visto (Itália, Suíça, França, Espanha, Portugal, Áustria…). Se o seu vence antes disso, renove já: a agenda da Polícia Federal pode levar semanas.'}),
+  CLI('visto', CLC.doc, 'e', 'Turismo sem visto: até 90 dias a cada 180, somando todos os países do Espaço Schengen', {src: ['ees'], info: 'Vale para brasileiros com passaporte comum. Desde 10/04/2026 o EES registra entradas e saídas com foto e digitais, sem carimbo no passaporte.'}),
+  CLI('etias', CLC.doc, 'e', 'ETIAS ainda não começou: não pague nada a sites que oferecem a autorização', {src: ['etias'], info: 'A União Europeia vai anunciar a data de início com meses de antecedência. Quando começar, custará €20, valerá 3 anos (ou até o passaporte vencer) e terá 6 meses de transição. Em nov/2026 não há nada para pedir.'}),
+  CLI('volta', CLC.doc, 'e', 'Passagem de volta para o Brasil no celular e impressa (a imigração pode pedir)', {must: 1, due: 14}),
+  CLI('hospedagem', CLC.doc, 'e', 'Reservas de hospedagem de todas as noites, no nome de um dos viajantes (a imigração pode pedir)', {must: 1, due: 30}),
+  CLI('meios', CLC.doc, 'e', c => `Meios financeiros para mostrar na imigração: ~€${meansIT(c.T, c.days)} por pessoa (${c.days} dias, ${c.T > 1 ? `grupo de ${c.T}` : '1 viajante'}); cartão de crédito com limite e extrato servem`, {must: 1, due: 7, src: ['meios'], info: 'Valor da tabela oficial italiana (Diretiva de 01/03/2000). Raramente pedem, mas sem comprovação a entrada pode ser negada.'}),
+  CLI('copias', CLC.doc, 'e', 'Cópias de passaporte, seguro e reservas offline no celular e num e-mail para você mesmo', {due: 3}),
+  CLI('ees-fila', CLC.doc, 'c', 'Contar com fila maior na imigração de Fiumicino: na primeira entrada o EES coleta foto e 4 digitais', {src: ['ees']}),
+  CLI('presenca', CLC.doc, 'c', 'Dichiarazione di presenza: chegando do Brasil, a imigração já registra; vindo de outro país do Schengen, o hotel faz no check-in (em apartamento, peça ao anfitrião)', {src: ['presenca'], info: 'Exigida pela lei italiana em até 8 dias da entrada. Em hotel, basta assinar a ficha de hóspede.'}),
+  CLI('seguro', CLC.health, 'e', c => `Seguro-viagem com cobertura médica de pelo menos €30.000 válido em ${c.countries.length > 1 ? c.countries.join(', ') : 'toda a Europa'} (apólice em inglês no celular)`, {must: 1, due: 30, info: 'Para quem entra sem visto não é exigência formal, mas a imigração pode pedir, e um atendimento de emergência na Europa custa caro. Se for esquiar, confira a cobertura de esportes de inverno.'}),
+  CLI('cdam', CLC.health, 'c', 'Se você contribui para o INSS: pedir o CDAM (formulário IB-2) para usar a rede pública da Itália', {due: 45, src: ['cdam', 'cdamMS'], info: 'Pedido só pela internet no gov.br, com passaporte, RG ou CNH, comprovante de residência e de vínculo com o INSS. Vale 1 ano, também em Portugal, e não substitui o seguro (não cobre repatriação). Na Itália, apresente-o com o passaporte.'}),
+  CLI('remedios', CLC.health, 'c', 'Remédios de uso contínuo na bagagem de mão, na embalagem original e com receita (de preferência em inglês)', {due: 7}),
+  CLI('vacinas', CLC.health, 'c', 'Nenhuma vacina é exigida para entrar na Itália; vale estar com a da gripe em dia (é inverno)'),
+  CLI('banco', CLC.money, 'e', 'Liberar os cartões para uso no exterior e anotar o telefone do banco para emergências', {due: 7}),
+  CLI('dcc', CLC.money, 'e', 'Na maquininha e no caixa eletrônico, pagar sempre em euro (ou franco na Suíça): recusar a conversão para real ou dólar (DCC)'),
+  CLI('cartoes', CLC.money, 'c', 'Dois cartões de bandeiras diferentes (ex.: Visa e Mastercard) e uma conta global em euro, guardados em lugares separados', {due: 21}),
+  CLI('iof', CLC.money, 'c', 'Contar com o IOF de 3,5% em todo gasto no exterior: cartão, conta global, saque ou compra de euro em espécie', {src: ['iof']}),
+  CLI('especie', CLC.money, 'c', 'Pouco dinheiro vivo: €100 a €200 por pessoa para cafés no balcão, mercados e emergências', {due: 7}),
+  CLI('limite-especie', CLC.money, 'c', 'Menos de €10.000 em espécie por pessoa (acima disso, declarar ao entrar e sair da UE) e menos de US$ 10 mil ao sair e voltar ao Brasil (e-DBV)', {src: ['cashEU', 'edbv']}),
+  CLI('ingressos', CLC.book, 'c', 'Comprar os ingressos com horário marcado assim que abrirem (Vaticano, Coliseu, Galleria Borghese, Última Ceia, Cúpula de Florença…)', {due: 60, info: 'As atividades marcadas como “A reservar” no roteiro aparecem no cartão Reservas do roteiro, aqui no checklist.'}),
+  CLI('trens', CLC.book, 'c', 'Comprar os trens de alta velocidade cedo (Trenitalia e Italo): as tarifas promocionais acabam perto da data', {due: 60}),
+  CLI('esim', CLC.tech, 'c', c => `eSIM ou chip com internet na Europa${c.ch ? ' que cubra também a Suíça (fica fora do roaming da UE)' : ''}`, {due: 7}),
+  CLI('tomada', CLC.tech, 'c', c => `Adaptador de tomada: tipos F e L na Itália${c.ch ? ', tipo J na Suíça' : ''}${c.countries.includes('França') ? ', tipo E na França' : ''}`, {due: 7}),
+  CLI('apps', CLC.tech, 'c', 'Apps e mapas offline: Trenitalia, Italo, Google Maps (baixar as cidades), tradutor e o app do seguro', {due: 3}),
+  CLI('roupa', CLC.bag, 'w', c => `Roupa de inverno em camadas: casaco impermeável, gorro, luvas e cachecol (0 a 14 °C${c.ch ? '; abaixo de zero nos Alpes' : ''})`, {due: 5}),
+  CLI('calcado', CLC.bag, 'w', 'Calçado confortável e impermeável (chuva, acqua alta em Veneza e neve)', {due: 5}),
+  CLI('igreja', CLC.bag, 'w', 'Uma peça para cobrir ombros e joelhos nas igrejas (Vaticano e basílicas barram a entrada)', {due: 5}),
+  CLI('checkin-ida', CLC.board, 'e', 'Check-in online do voo de ida (abre 24 a 48 h antes)', {due: 1}),
+  CLI('mala', CLC.board, 'c', 'Mala dentro do peso da tarifa; líquidos de até 100 ml na bagagem de mão', {due: 2}),
+  CLI('checkin-volta', CLC.back, 'e', 'Check-in online do voo de volta', {due: 'end-1'}),
+  CLI('taxfree', CLC.back, 'v', 'Tax free: validar os formulários no aeroporto antes do check-in da volta (compras a partir de €70,01 por nota, com passaporte)', {due: 'end'}),
+  CLI('cota', CLC.back, 'v', 'Cota de US$ 1.000 por pessoa na bagagem (mais US$ 1.000 no free shop de chegada); acima disso, declarar na e-DBV e pagar 50% sobre o excedente', {due: 'end', src: ['cota', 'edbv']}),
+  CLI('cnh', CLC.drive, 'd', 'CNH física válida em todos os dias da viagem: a CNH digital não vale no exterior', {must: 1, src: ['cnhMilao']}),
+  CLI('pid', CLC.drive, 'd', 'Tirar a Permissão Internacional para Dirigir (PID) no DETRAN do estado da sua CNH', {must: 1, due: 45, src: ['pidSP', 'pidMG', 'pidRJ', 'pidPR', 'embIt', 'aci'], info: 'Pedido pela internet ou no posto, com a CNH válida, com foto e sem suspensão (ACC não vale). Taxa de R$ 283,71 em MG a R$ 433,62 em SP (com entrega); chega em 10 a 15 dias úteis. Vale até 3 anos ou até a CNH vencer, e só vale junto com a CNH física e o passaporte. Na Itália, a alternativa é uma tradução juramentada da CNH para o italiano.'}),
+  CLI('cartao-motorista', CLC.drive, 'd', 'Cartão de crédito no nome do motorista principal, com limite para a caução da locadora', {must: 1, due: 14}),
+  CLI('locadora', CLC.drive, 'd', c => `Confirmar com a locadora: idade mínima, tempo mínimo de CNH (muitas pedem 1 a 2 anos)${c.ch || c.eu ? ' e a taxa para cruzar a fronteira' : ''}`, {due: 30}),
+  CLI('ztl', CLC.drive, 'd', 'Mapear as ZTL (centros históricos com câmera) e, se o hotel ficar dentro de uma, pedir que ele registre a placa', {src: ['aci'], info: 'A multa chega meses depois, cobrada pela locadora com uma taxa de administração.'}),
+  CLI('pneus', CLC.drive, 'd', 'Carro com pneus de inverno ou correntes: obrigatórios de 15/11 a 15/04 nos trechos sinalizados'),
+  CLI('regras', CLC.drive, 'd', 'Na estrada: farol baixo aceso fora das cidades, colete e triângulo no carro, álcool até 0,5 g/l (zero para quem tem CNH há menos de 3 anos)', {src: ['aci']}),
+  CLI('pedagio', CLC.drive, 'd', 'Pedágio: pagar nas cabines com cartão (“Carte”) ou dinheiro, nunca na faixa amarela do Telepass'),
+  CLI('vinheta-ch', CLC.drive, 'd', 'Suíça: vinheta digital de autoestrada (CHF 40) comprada só no site oficial', {must: 1, when: c => c.ch, src: ['vinCH', 'chCnh']}),
+  CLI('vinheta-at', CLC.drive, 'd', 'Áustria e Eslovênia: vinheta digital de autoestrada nos sites oficiais (ASFINAG e DARS)', {must: 1, when: c => c.countries.some(p => p === 'Áustria' || p === 'Eslovênia'), src: ['vinAT', 'vinSI']}),
+  CLI('cnh-ue', CLC.drive, 'd', 'Outros países: França pede PID ou tradução oficial em francês; Espanha e Portugal aceitam a CNH de turista, mas as locadoras costumam pedir a PID', {when: c => c.eu, src: ['frCnh', 'ptCnh']}),
+  CLI('chf', CLC.ch, 's', 'Franco suíço (CHF): cartão funciona quase em todo lugar; tenha uns CHF 20 a 50 em moedas', {when: c => c.ch}),
+  CLI('roaming-ch', CLC.ch, 's', 'Confirmar que o eSIM ou o chip cobre a Suíça (fica fora do roaming da UE)', {when: c => c.ch, due: 7}),
+  CLI('tomada-j', CLC.ch, 's', 'Adaptador de tomada tipo J para a Suíça', {when: c => c.ch, due: 7}),
+  CLI('panoramicos', CLC.ch, 's', 'Reservar os trens panorâmicos: Bernina e Glacier Express cobram reserva obrigatória à parte', {when: c => c.ch, due: 45}),
+  CLI('aduana-ch', CLC.ch, 's', 'Passaporte à mão no trem: pode haver controle aduaneiro na fronteira com a Suíça', {when: c => c.ch}),
+  CLI('taxfree-ch', CLC.ch, 's', 'Tax free na Suíça só a partir de CHF 300 por nota, carimbado numa alfândega de fronteira', {when: c => c.ch}),
+  CLI('lowcost', CLC.eu, 'u', 'Voos low-cost: comprar a mala despachada junto com a passagem e conferir a medida da bagagem de mão', {when: c => c.eu, due: 30}),
+  CLI('passaporte-trem', CLC.eu, 'u', 'Passaporte sempre à mão nos trens e voos entre países: pode haver controle mesmo dentro do Schengen', {when: c => c.eu}),
+  CLI('fuso-pt', CLC.eu, 'u', 'Portugal tem 1 h a menos que a Itália: confira os horários dos voos e trens', {when: c => c.countries.includes('Portugal')}),
+  CLI('passaporte-crianca', CLC.kids, 'k', 'Passaporte próprio para cada criança, com a mesma regra de validade', {must: 1, due: 75}),
+  CLI('aev', CLC.kids, 'k', 'Criança ou adolescente com só um dos pais: autorização de viagem do outro (AEV no e-Notariado ou formulário com firma reconhecida)', {must: 1, due: 30, src: ['aev', 'enot'], info: 'Exigida pela Resolução 131 do CNJ para menores de 18 anos que viajam ao exterior com só um dos pais, com terceiros ou sozinhos. A AEV sai pelo e-Notariado em até 5 dias; o formulário em papel fica pronto no cartório. Apresente à Polícia Federal no embarque.'}),
+];
+const CL_PACKS = [
+  {k: 'd', name: 'Vou dirigir', ic: 'carro', c: '#b45309', d: 'CNH, PID, locadora, ZTL, vinhetas e regras de inverno'},
+  {k: 's', name: 'Suíça', ic: 'trem', c: '#dc2626', d: 'franco, roaming, tomada J e trens panorâmicos', force: 1},
+  {k: 'u', name: 'Outros países', ic: 'mapa', c: '#1e3a8a', d: 'low-cost, passaporte nos trens e fuso', force: 1},
+  {k: 'w', name: 'Mala de inverno', ic: 'mala', c: '#a16207', d: 'camadas, calçado impermeável e igrejas'},
+  {k: 'v', name: 'Volta ao Brasil', ic: 'voo', c: '#0e7490', d: 'tax free, cota de US$ 1.000 e e-DBV'},
+  {k: 'k', name: 'Com crianças', ic: 'passeio', c: '#c05d2f', d: 'passaporte e autorização de viagem'},
+];
+const CL_TPL = {essencial: 'e', completo: 'ecwvsu'};
+const clVal = (v, c) => typeof v === 'function' ? v(c) : v;
+function clDue(d, c) {
+  if (d == null || !c.start) return '';
+  const t = d === 'end' ? c.end : d === 'end-1' ? addDays(c.end, -1) : addDays(c.start, -d), today = todayStr();
+  // prazo ideal que já passou, com a viagem ainda pela frente: vira “esta semana”
+  return t < today && c.start > today ? (addDays(today, 7) < c.start ? addDays(today, 7) : today) : t;
+}
+function clItem(x, c, sug) {
+  return {id: uid(), key: x.key, cat: x.cat, text: clVal(x.text, c), due: clDue(x.due, c), link: '', done: false, ...(x.must ? {must: true} : {}), ...(x.info ? {info: clVal(x.info, c)} : {}), ...(x.src ? {links: x.src.map(k => CL_SRC[k])} : {}), ...(sug ? {sug} : {})};
+}
+const clHas = key => state.checklist.some(c => c.key === key);
+/** Itens do modelo com alguma das letras de `tags` que ainda faltam; `force` é a letra de um pacote escolhido à mão, que ignora o “só se o roteiro passar por lá”. */
+const clMissing = (tags, c, force = '') => CL_LIB.filter(x => [...x.tags].some(t => tags.includes(t)) && !clHas(x.key) && (!x.when || x.when(c) || (force && x.tags === force)));
+function clCatsSync() {
+  const cs = state.clCats ||= [];
+  [...new Set(state.checklist.map(c => c.cat))].sort((a, b) => (CLC_ORDER.indexOf(a) + 1 || 99) - (CLC_ORDER.indexOf(b) + 1 || 99)).forEach(c => { if (!cs.includes(c)) cs.push(c); });
+}
+function clAddTags(tags, c, o = {}) {
+  const list = clMissing(tags, c, o.force);
+  list.forEach(x => state.checklist.push(clItem(x, c, o.sug)));
+  clCatsSync();
+  return list.length;
+}
+let clOpt = {d: false, k: false};
+function clApplyTpl(name) {
+  const c = tripCtx(), extra = (clOpt.d ? 'd' : '') + (clOpt.k ? 'k' : '');
+  let n = 0;
+  commit(() => {
+    if (name === 'vazio') { state.clCats = [...new Set([...(state.clCats || []), ...BLANK_CATS])]; if (extra) n = clAddTags(extra, c); }
+    else n = clAddTags(CL_TPL[name] + extra, c);
+  });
+  toast(name === 'vazio' ? `Checklist em branco: as categorias estão prontas para você escrever${n ? ` (mais ${n} itens dos pacotes marcados)` : ''}.` : n ? `<b>${n} itens</b> no checklist, com prazos contados a partir do embarque em ${fmtBR(c.start)}.` : 'O checklist já tinha todos os itens deste modelo.', '<button data-t="undo">Desfazer</button>', undo);
+}
+function clApplyPack(k) {
+  const p = CL_PACKS.find(x => x.k === k), c = tripCtx();
+  let n = 0;
+  commit(() => { n = clAddTags(k, c, {force: p.force ? k : ''}); });
+  toast(`Pacote <b>${esc(p.name)}</b>: ${n ? `+${n} ite${n > 1 ? 'ns' : 'm'}` : 'nada novo'}.`, '<button data-t="undo">Desfazer</button>', undo);
+}
+function clAddOne(act) {
+  if (act.startsWith('pack:')) { clApplyPack(act.slice(5)); return; }
+  const x = CL_LIB.find(y => y.key === act); if (!x || clHas(x.key)) return;
+  const c = tripCtx(), it = clItem(x, c);
+  commit(() => { state.checklist.push(it); clCatsSync(); });
+  toast(`Entrou em <b>${esc(x.cat)}</b>: ${esc(it.text)}.`, '<button data-t="undo">Desfazer</button>', undo);
+}
+function clFocus(id) {
+  let li = $(`#tab-checklist .cl-cols [data-cid="${id}"]`);
+  if (!li && state.settings.clFilter !== 'all') { state.settings.clFilter = 'all'; renderChecklist(); li = $(`#tab-checklist .cl-cols [data-cid="${id}"]`); }
+  if (!li) return;
+  li.scrollIntoView({behavior: 'smooth', block: 'center'});
+  li.classList.add('flash'); setTimeout(() => li.classList.remove('flash'), 1800);
+}
+const dueTxt = due => { const d = diffDays(todayStr(), due); return d < 0 ? `${-d} dia${d === -1 ? '' : 's'} de atraso` : d === 0 ? 'hoje' : d === 1 ? 'amanhã' : d <= 45 ? `em ${d} dias` : `até ${fmtBR(due)}`; };
+const DOC_TAG = {req: '<span class="tag req">obrigatório</span>', rec: '<span class="tag rec">recomendado</span>', inf: '<span class="tag inf">saiba</span>', drive: '<span class="tag cond">se for dirigir</span>', kid: '<span class="tag cond">com criança</span>'};
+/** Linha do painel de documentos: o que é, por que, a fonte e o botão para levar ao checklist (um item do modelo ou um pacote inteiro). */
+function docRow(act, ic, title, desc, tag, src = []) {
+  const c = tripCtx(), has = act.startsWith('pack:') ? !clMissing(act.slice(5), c, CL_PACKS.find(p => p.k === act.slice(5))?.force ? act.slice(5) : '').length : clHas(act);
+  return `<li class="doc-row"><span class="doc-ic">${icSvg(ic)}</span><div><b>${title}</b><small>${desc}</small>${src.length ? `<span class="doc-src">${src.map(k => `<a href="${esc(CL_SRC[k][1])}" target="_blank" rel="noopener">${icSvg('link')}${esc(CL_SRC[k][0])}</a>`).join('')}</span>` : ''}</div>
+    <div class="doc-act">${DOC_TAG[tag] || ''}${has ? '<span class="doc-in">✓ no checklist</span>' : `<button type="button" class="doc-add" data-cladd="${act}">+ checklist</button>`}</div></li>`;
+}
+/** Painel “Documentos obrigatórios”: entrada na Europa, dirigir (Brasil, Itália e vizinhos), saúde e dinheiro, crianças e volta ao Brasil. */
+function docsPanelHTML(c) {
+  const flags = ['br', 'eu', ...c.countries.map(p => COUNTRY_FLAG[p])].filter(Boolean);
+  const drive = [['it', 'Itália', 'CNH física + PID (ou tradução juramentada para o italiano)', 'ZTL nos centros históricos; pneus de inverno de 15/11 a 15/04', ['Itália']],
+    ['ch', 'Suíça', 'CNH + PID (ou tradução oficial em alemão, francês, italiano ou inglês)', 'Vinheta de CHF 40 para as autoestradas', ['Suíça']],
+    ['fr', 'França', 'CNH + PID (ou tradução oficial em francês)', 'Vale para estadias de até 185 dias', ['França']],
+    ['at', 'Áustria e Eslovênia', 'CNH + PID (Convenção de Viena)', 'Vinheta digital para as autoestradas', ['Áustria', 'Eslovênia']],
+    ['es', 'Espanha', 'CNH aceita por até 6 meses; leve a PID', 'As locadoras costumam pedir a PID', ['Espanha']],
+    ['pt', 'Portugal', 'CNH aceita por até 185 dias; leve a PID', 'As locadoras costumam pedir a PID', ['Portugal']]];
+  return `<details class="docs" id="clDocs" ${state.settings.clDocs !== false ? 'open' : ''}><summary>
+      <span class="docs-stamp">${icSvg('info')}<i>docs</i></span>
+      <span class="docs-tt"><h2>Documentos obrigatórios</h2><span class="f-script">para brasileiros · pesquisado em fontes oficiais em nov/2026 · confira perto da data</span></span>
+      <span class="docs-flags">${flags.map(flagSvg).join('')}</span><span class="docs-tg" aria-hidden="true"></span></summary>
+    <div class="docs-grid">
+      <article class="doc-card" style="--c:#1d4ed8"><h3>${flagSvg('eu')}Entrar na Europa<small>Espaço Schengen</small></h3><ul class="doc-list">
+        ${docRow('passaporte', 'info', 'Passaporte válido', `até pelo menos <b>${fmtBRY(addDays(c.end, 91))}</b> (3 meses depois da volta) e emitido há menos de 10 anos.`, 'req', ['pf'])}
+        ${docRow('volta', 'voo', 'Passagem de volta', 'no celular e impressa: a imigração pode pedir.', 'req')}
+        ${docRow('hospedagem', 'hotel', 'Reservas de hospedagem', 'de todas as noites, no nome de um dos viajantes.', 'req')}
+        ${docRow('meios', 'moeda', 'Meios financeiros', `~<b>€${meansIT(c.T, c.days)} por pessoa</b> para ${c.days} dias (tabela oficial da Itália); cartão com limite e extrato servem.`, 'req', ['meios'])}
+        ${docRow('seguro', 'saude', 'Seguro-viagem', 'cobertura médica de pelo menos €30.000; não é exigido de quem não precisa de visto, mas pode ser pedido.', 'rec')}
+        ${docRow('visto', 'calendario', 'Sem visto até 90 dias', 'a cada 180, somando todos os países do Schengen. O EES registra foto e digitais na 1ª entrada, sem carimbo.', 'inf', ['ees'])}
+        ${docRow('etias', 'alerta', 'ETIAS ainda não existe', 'quando começar, custará €20 e valerá 3 anos. Hoje, site que cobra é golpe.', 'inf', ['etias'])}
+      </ul></article>
+      <article class="doc-card" style="--c:#be123c"><h3>${icSvg('saude')}Saúde e dinheiro<small>Brasil e Europa</small></h3><ul class="doc-list">
+        ${docRow('cdam', 'saude', 'CDAM (IB-2): rede pública da Itália', 'para quem contribui para o INSS: pedido online no gov.br, vale 1 ano, também em Portugal. Não substitui o seguro.', 'inf', ['cdam', 'cdamMS'])}
+        ${docRow('remedios', 'saude', 'Remédios com receita', 'na bagagem de mão, na embalagem original; receita de preferência em inglês.', 'rec')}
+        ${docRow('iof', 'moeda', 'IOF de 3,5%', 'em todo gasto no exterior: cartão, conta global, saque ou compra de euro em espécie.', 'inf', ['iof'])}
+        ${docRow('limite-especie', 'moeda', 'Dinheiro em espécie', 'a partir de €10.000 por pessoa, declarar ao entrar e sair da UE; acima de US$ 10 mil, declarar na e-DBV ao sair e ao voltar ao Brasil.', 'inf', ['cashEU', 'edbv'])}
+        ${docRow('dcc', 'moeda', 'Pague em euro', 'na maquininha e no caixa eletrônico, recuse a conversão para real ou dólar (DCC): sai mais caro.', 'rec')}
+      </ul></article>
+      <article class="doc-card wide" style="--c:#b45309"><h3>${icSvg('carro')}Para dirigir<small>Brasil · Itália · outros países</small></h3>
+        <div class="drive-cols">
+          <div class="drive-col"><h4>${flagSvg('br')}No Brasil, antes de ir</h4><ul><li><b>CNH física</b> válida em todos os dias da viagem: a digital não vale lá fora.</li><li><b>PID</b> no DETRAN do estado da sua CNH: de R$ 283,71 (MG) a R$ 433,62 (SP), 10 a 15 dias úteis; vale até 3 anos ou até a CNH vencer.</li><li>CNH vencendo? Renove antes: a PID sai com a validade dela.</li><li>Cartão de crédito no nome do motorista, para a caução.</li></ul></div>
+          <div class="drive-col"><h4>${flagSvg('it')}Na Itália</h4><ul><li>CNH + <b>PID</b> ou tradução juramentada: sem isso, multa e apreensão do carro.</li><li>Não entre nas <b>ZTL</b> (centros com câmera).</li><li>Pneus de inverno ou correntes de 15/11 a 15/04.</li><li>Colete, triângulo, farol baixo na estrada e álcool até 0,5 g/l.</li></ul></div>
+          <div class="drive-col"><h4>${flagSvg('eu')}Na União Europeia e vizinhos</h4><ul><li>Cada país tem a sua regra: veja a tabela.</li><li>Locadoras pedem a PID mesmo onde a lei aceita só a CNH.</li><li>Cruzar fronteira com carro alugado: avise na reserva (taxa).</li><li>Suíça, Áustria e Eslovênia cobram vinheta nas autoestradas.</li></ul></div>
+        </div>
+        <div class="drive-wrap"><table class="drive-tbl"><thead><tr><th>País</th><th>O que levar</th><th>Atenção</th></tr></thead><tbody>
+          ${drive.map(([f, n, what, note, ps]) => { const on = ps.some(p => c.countries.includes(p)); return `<tr class="${on ? 'on' : ''}"><td>${flagSvg(f)}<b>${n}</b>${on ? '<em>no roteiro</em>' : ''}</td><td>${what}</td><td>${note}</td></tr>`; }).join('')}
+        </tbody></table></div>
+        <ul class="doc-list">${docRow('pack:d', 'carro', 'Pacote “Vou dirigir”', 'CNH, PID, locadora, ZTL, vinhetas e regras de inverno, com prazos, no seu checklist.', 'drive', ['cnhMilao', 'embIt', 'aci', 'chCnh', 'frCnh', 'ptCnh'])}</ul>
+      </article>
+      <article class="doc-card" style="--c:#0e7490"><h3>${flagSvg('br')}Volta ao Brasil<small>Receita Federal</small></h3><ul class="doc-list">
+        ${docRow('cota', 'mala', 'Cota de US$ 1.000', 'por pessoa na bagagem, mais US$ 1.000 no free shop de chegada; o excedente paga 50% e vai na e-DBV.', 'inf', ['cota', 'edbv'])}
+        ${docRow('taxfree', 'compras', 'Tax free', 'compras a partir de €70,01 por nota: valide no aeroporto antes do check-in da volta.', 'inf')}
+        ${docRow('checkin-volta', 'voo', 'Check-in da volta', 'online, na véspera do voo.', 'rec')}
+      </ul></article>
+      <article class="doc-card" style="--c:#c05d2f"><h3>${icSvg('passeio')}Viajando com criança<small>CNJ e Polícia Federal</small></h3><ul class="doc-list">
+        ${docRow('passaporte-crianca', 'info', 'Passaporte próprio', 'para cada criança, com a mesma regra de validade.', 'kid')}
+        ${docRow('aev', 'lapis', 'Autorização de viagem', 'menor de 18 anos com só um dos pais precisa da autorização do outro: AEV no e-Notariado (até 5 dias) ou formulário com firma reconhecida.', 'kid', ['aev', 'enot'])}
+      </ul></article>
+    </div></details>`;
+}
+function clDocsToggle(el) {
+  $('#clDocs', el)?.addEventListener('toggle', e => { if (state.settings.clDocs !== e.target.open) { state.settings.clDocs = e.target.open; save(); } });
+}
+function clChooserHTML(c) {
+  const nE = clMissing(CL_TPL.essencial, c).length, nC = clMissing(CL_TPL.completo, c).length;
+  return tabHero('CHECKLIST', 'como você quer começar?', 'check', '#1f9d55')
+    + `<div class="pick-grid">
+      <article class="pick-card" style="--c:#7a6a52"><span class="pk-ic">${icSvg('lapis')}</span><h3>Em branco</h3>
+        <p>Só as categorias, e você escreve cada item do seu jeito.</p>
+        <div class="pk-tags">${BLANK_CATS.map(x => `<span>${esc(x)}</span>`).join('')}</div>
+        <button type="button" class="ink-btn" data-cltpl="vazio">Começar em branco</button></article>
+      <article class="pick-card" style="--c:#1d4ed8"><span class="pk-ic">${icSvg('info')}</span><h3>Essencial</h3>
+        <p class="pk-big">${nE} <small>itens</small></p>
+        <p>O que não pode faltar: passaporte, meios financeiros, seguro, reservas, cartões e check-in.</p>
+        <button type="button" class="ink-btn" data-cltpl="essencial">Usar o essencial</button></article>
+      <article class="pick-card" style="--c:#1f9d55"><span class="pk-badge">recomendado</span><span class="pk-ic">${icSvg('check')}</span><h3>Completo</h3>
+        <p class="pk-big">${nC} <small>itens</small></p>
+        <p>Pesquisado em fontes oficiais e ajustado ao seu roteiro (${esc(c.countries.join(', '))}): documentos, saúde, dinheiro e IOF, reservas, internet, mala de inverno e volta ao Brasil, com prazos.</p>
+        <button type="button" class="ink-btn primary" data-cltpl="completo">Usar o completo</button></article>
+    </div>
+    <div class="pick-opts"><b>Incluir também:</b>
+      <label><input type="checkbox" id="clOptD" ${clOpt.d ? 'checked' : ''}> ${icSvg('carro')} Vou dirigir (CNH, PID, ZTL, vinhetas)</label>
+      <label><input type="checkbox" id="clOptK" ${clOpt.k ? 'checked' : ''}> ${icSvg('passeio')} Viajo com criança</label></div>`;
+}
 function renderChecklist() {
-  const el = $('#tab-checklist'), F = state.settings.clFilter || 'all';
-  const cats = [...new Set(state.checklist.map(c => c.cat))];
+  const el = $('#tab-checklist'), ctx = tripCtx();
+  if (!state.checklist.length && !(state.clCats || []).length) { el.innerHTML = clChooserHTML(ctx) + docsPanelHTML(ctx); clDocsToggle(el); return; }
+  const F = state.settings.clFilter || 'all';
+  const cats = [...new Set([...(state.clCats || []), ...state.checklist.map(c => c.cat)])];
   const res = state.days.flatMap(d => d.items.filter(i => i.status).map(i => ({d, i}))).sort((a, b) => (a.d.date + a.i.start).localeCompare(b.d.date + b.i.start));
   const total = state.checklist.length + res.length;
   const done = state.checklist.filter(c => c.done).length + res.filter(x => x.i.status === 'reservado').length;
@@ -2367,42 +2850,60 @@ function renderChecklist() {
         <span class="res-text" style="flex:1">${esc(i.title)}</span>
         ${i.link ? `<a class="cl-link" href="${esc(i.link)}" target="_blank" rel="noopener" title="Abrir site de reserva">${icSvg('link')}</a>` : ''}
         <span class="cl-date">${weekday(d.date)} ${fmtBR(d.date)}</span></li>`).join('')}</ul>
-      <p class="muted-note" style="margin:8px 0 0">Vem do calendário: atividades marcadas como “A reservar”.</p>
+      <p class="muted-note" style="margin:8px 0 0">Vem do roteiro: atividades marcadas como “A reservar”.</p>
     </section>` : '';
+  const liHTML = c => `<li class="${c.done ? 'done' : ''}" data-cid="${c.id}">
+        <label class="tick"><input type="checkbox" class="cl-done" ${c.done ? 'checked' : ''}><span></span></label>
+        <div class="cl-main">
+          <textarea class="cl-text" rows="1">${esc(c.text)}</textarea>
+          ${c.must || c.info || c.link || c.sug || (c.links || []).length ? `<div class="cl-meta">${c.must ? '<span class="must-chip" title="Sem isso a viagem fica comprometida">obrigatório</span>' : ''}${c.sug ? '<span class="sug-chip" title="Veio do roteiro pronto que você está seguindo">roteiro pronto</span>' : ''}${c.link ? `<a class="cl-site" href="${esc(fixUrl(c.link))}" target="_blank" rel="noopener">${icSvg('link')}${esc(siteName(c.link))}</a>` : ''}${c.info || (c.links || []).length ? `<button type="button" class="cl-more" data-cl="info">${clInfoOpen.has(c.id) ? 'ocultar' : `detalhes${(c.links || []).length ? ' e fontes' : ''}`}</button>` : ''}</div>` : ''}
+          ${clInfoOpen.has(c.id) ? `<div class="cl-info">${c.info ? `<p>${esc(c.info)}</p>` : ''}${(c.links || []).length ? `<ul>${c.links.map(([l, u]) => `<li><a href="${esc(fixUrl(u))}" target="_blank" rel="noopener">${esc(l)}</a></li>`).join('')}</ul>` : ''}</div>` : ''}
+        </div>
+        <input type="date" class="due ${dueClass(c.due, c.done)}" value="${c.due}" title="Prazo">
+        <button class="x" data-cl="del" title="Excluir">×</button></li>`;
   const catCards = cats.map((cat, ci) => {
     const all = state.checklist.filter(c => c.cat === cat), list = all.filter(c => show(c.done, !!dueClass(c.due, c.done), c.must));
     if (!list.length && F !== 'all') return '';
     const dn = all.filter(c => c.done).length;
-    return `<section class="sticker" data-cat="${esc(cat)}" style="--c:${CAT_COLORS[ci % CAT_COLORS.length]}">
-      <h3><span class="ic-dot">${icSvg(catIcon(cat))}</span>${esc(cat)}<span class="cl-count">${dn}/${all.length}</span></h3>
+    return `<section class="sticker" data-cat="${esc(cat)}" style="--c:${clColor(cat, ci)}">
+      <h3><span class="ic-dot">${icSvg(catIcon(cat))}</span><span class="cl-cat-name">${esc(cat)}</span><span class="cl-count">${dn}/${all.length}</span><button type="button" class="cl-cat-x" data-cl="del-cat" title="Excluir a categoria${all.length ? ` e seus ${all.length} itens` : ''}">×</button></h3>
       <div class="mini-bar"><div style="width:${all.length ? Math.round(dn / all.length * 100) : 0}%"></div></div>
-      <ul class="cl-list">${list.map(c => `<li class="${c.done ? 'done' : ''}" data-cid="${c.id}">
-        <label class="tick"><input type="checkbox" class="cl-done" ${c.done ? 'checked' : ''}><span></span></label>
-        <div class="cl-main">
-          <textarea class="cl-text" rows="1">${esc(c.text)}</textarea>
-          ${c.must || c.info || c.link || (c.links || []).length ? `<div class="cl-meta">${c.must ? '<span class="must-chip" title="Sem isso a viagem fica comprometida">obrigatório</span>' : ''}${c.link ? `<a class="cl-site" href="${esc(fixUrl(c.link))}" target="_blank" rel="noopener">${icSvg('link')}${esc(siteName(c.link))}</a>` : ''}${c.info || (c.links || []).length ? `<button type="button" class="cl-more" data-cl="info">${clInfoOpen.has(c.id) ? 'ocultar' : 'detalhes'}</button>` : ''}</div>` : ''}
-          ${clInfoOpen.has(c.id) ? `<div class="cl-info">${c.info ? `<p>${esc(c.info)}</p>` : ''}${(c.links || []).length ? `<ul>${c.links.map(([l, u]) => `<li><a href="${esc(fixUrl(u))}" target="_blank" rel="noopener">${esc(l)}</a></li>`).join('')}</ul>` : ''}</div>` : ''}
-        </div>
-        <input type="date" class="due ${dueClass(c.due, c.done)}" value="${c.due}" title="Prazo">
-        <button class="x" data-cl="del" title="Excluir">×</button></li>`).join('')}</ul>
+      ${list.length ? `<ul class="cl-list">${list.map(liHTML).join('')}</ul>` : '<p class="cl-hint">Nenhum item ainda: escreva o primeiro abaixo.</p>'}
       <form class="cl-add"><input name="text" placeholder="+ adicionar item" required></form>
     </section>`;
   }).join('');
+  const left = diffDays(todayStr(), ctx.start);
+  const next = state.checklist.filter(c => !c.done && c.due).sort((a, b) => a.due.localeCompare(b.due)).slice(0, 5);
+  const countCard = `<section class="sticker cl-count-card" style="--c:#1f9d55">
+      <div class="cc-head"><div class="cc-days"><b>${Math.max(0, left)}</b><span>${left > 1 ? 'dias para o embarque' : left === 1 ? 'dia para o embarque' : left === 0 ? 'é hoje o embarque!' : 'viagem em andamento'}</span></div>
+        <div class="cc-sum"><span><b>${mustDone}/${mustN}</b> obrigatórios</span><span><b>${done}/${total}</b> prontos</span>${lateN ? `<span class="late"><b>${lateN}</b> atrasado${lateN > 1 ? 's' : ''}</span>` : ''}</div></div>
+      <h4>Próximos prazos</h4>
+      <ul class="next-list">${next.map(c => `<li data-cid="${c.id}" title="Ir até o item"><span class="ic-dot" style="--c:${clColor(c.cat, cats.indexOf(c.cat))}">${icSvg(catIcon(c.cat))}</span><span class="nx-t">${esc(c.text)}</span><span class="due-chip ${dueClass(c.due, false)}">${dueTxt(c.due)}</span></li>`).join('') || '<li class="nx-none">Nenhum prazo pendente: use a data ao lado de cada item.</li>'}</ul></section>`;
+  const nC = clMissing(CL_TPL.completo, ctx).length;
+  const packsCard = `<section class="sticker cl-packs" style="--c:#0f766e">
+      <h3><span class="ic-dot">${icSvg('mala')}</span>Montar com pacotes<span class="cl-count">pesquisados</span></h3>
+      <p class="muted-note">Cada pacote acrescenta só o que ainda não está na sua lista, com prazos.</p>
+      <div class="packs">${CL_PACKS.map(p => { const n = clMissing(p.k, ctx, p.force ? p.k : '').length; return `<button type="button" class="pack-chip ${n ? '' : 'done'}" data-clpack="${p.k}" ${n ? '' : 'disabled'} title="${esc(p.d)}" style="--c:${p.c}"><span class="ic-dot">${icSvg(p.ic)}</span><span><b>${esc(p.name)}</b><small>${n ? `+${n} ite${n > 1 ? 'ns' : 'm'}` : '✓ na lista'}</small></span></button>`; }).join('')}</div>
+      ${nC ? `<button type="button" class="ink-btn small primary cl-fill" data-cltpl="completo">Completar com o modelo pesquisado (+${nC})</button>` : '<p class="cl-okline">✓ Todos os itens do modelo completo já estão na lista.</p>'}</section>`;
   el.innerHTML = tabHero('CHECKLIST', `${done} de ${total} prontos${lateN ? ` · <b style="color:#b91c1c">${lateN} atrasado${lateN > 1 ? 's' : ''}</b>` : ''}`, 'check', '#1f9d55',
       `${progressRing(pct, '#1f9d55')}
-       <div class="pills">${[['all', 'Tudo'], ['pending', 'Pendentes'], ['late', 'Urgentes'], ['must', `Obrigatórios ${mustDone}/${mustN}`]].map(([k, l]) => `<button data-clf="${k}" class="${F === k ? 'on' : ''}">${l}</button>`).join('')}</div>
-       <button class="ink-btn small" data-cl="add-cat">+ Categoria</button>`)
-    + (resCard || catCards ? `<div class="cl-cols">${resCard}${catCards}</div>` : `<div class="cl-empty">Nada por aqui — tudo em dia!</div>`);
+       <div class="pills">${[['all', 'Tudo'], ['pending', 'Pendentes'], ['late', 'Urgentes'], ['must', `Obrigatórios ${mustDone}/${mustN}`]].map(([k, l]) => `<button data-clf="${k}" class="${F === k ? 'on' : ''}">${l}</button>`).join('')}</div>`)
+    + `<div class="cl-top">${countCard}${packsCard}</div>`
+    + docsPanelHTML(ctx)
+    + `<div class="sec-title"><b>Sua lista</b><small>marque o que já fez, edite o texto, mude os prazos · ${state.checklist.length} itens em ${cats.length} categorias</small></div>`
+    + (resCard || catCards ? `<div class="cl-cols">${resCard}${catCards}</div>` : `<div class="cl-empty">Nada por aqui — tudo em dia!</div>`)
+    + `<div class="cl-foot"><button type="button" class="ink-btn small" data-cl="add-cat">+ Categoria</button><button type="button" class="ink-btn small danger" data-cl="clear">Esvaziar o checklist</button></div>`;
   $$('.cl-text', el).forEach(autoGrow);
+  clDocsToggle(el);
 }
 function autoGrow(t) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
 function setupChecklistEvents() {
   const el = $('#tab-checklist');
   el.addEventListener('change', e => {
     const t = e.target;
-    if (t.id === 'hideDone') { commit(() => state.settings.hideDone = t.checked); return; }
+    if (t.id === 'clOptD' || t.id === 'clOptK') { clOpt[t.id === 'clOptD' ? 'd' : 'k'] = t.checked; return; }
     if (t.dataset.res) { const f = findItem(t.dataset.res); commit(() => f.item.status = t.checked ? 'reservado' : 'reservar'); return; }
-    const li = t.closest('[data-cid]'); if (!li) return;
+    const li = t.closest('.cl-cols [data-cid]'); if (!li) return;
     const c = state.checklist.find(x => x.id === li.dataset.cid);
     if (t.classList.contains('cl-done')) commit(() => c.done = t.checked);
     else if (t.classList.contains('cl-text')) commit(() => c.text = t.value, {render: false, debounce: true});
@@ -2410,17 +2911,34 @@ function setupChecklistEvents() {
   });
   el.addEventListener('input', e => { if (e.target.classList.contains('cl-text')) autoGrow(e.target); });
   el.addEventListener('click', e => {
+    const tpl = e.target.closest('[data-cltpl]'); if (tpl) { clApplyTpl(tpl.dataset.cltpl); return; }
+    const pk = e.target.closest('[data-clpack]'); if (pk) { clApplyPack(pk.dataset.clpack); return; }
+    const one = e.target.closest('[data-cladd]'); if (one) { e.preventDefault(); clAddOne(one.dataset.cladd); return; }
+    const nx = e.target.closest('.next-list [data-cid]'); if (nx) { clFocus(nx.dataset.cid); return; }
     const fb = e.target.closest('[data-clf]');
     if (fb) { commit(() => state.settings.clFilter = fb.dataset.clf); return; }
     const b = e.target.closest('[data-cl]'); if (!b) return;
-    if (b.dataset.cl === 'info') { const id = b.closest('[data-cid]').dataset.cid; clInfoOpen.has(id) ? clInfoOpen.delete(id) : clInfoOpen.add(id); renderChecklist(); return; }
-    if (b.dataset.cl === 'del') { const id = b.closest('[data-cid]').dataset.cid; commit(() => state.checklist = state.checklist.filter(c => c.id !== id)); }
-    if (b.dataset.cl === 'add-cat') { const name = prompt('Nome da nova categoria:'); if (name && name.trim()) { const text = prompt('Primeiro item da categoria:') || 'Novo item'; commit(() => state.checklist.push({id: uid(), cat: name.trim(), text, due: '', link: '', done: false})); } }
+    const act = b.dataset.cl;
+    if (act === 'info') { const id = b.closest('[data-cid]').dataset.cid; clInfoOpen.has(id) ? clInfoOpen.delete(id) : clInfoOpen.add(id); renderChecklist(); return; }
+    if (act === 'del') { const id = b.closest('[data-cid]').dataset.cid; commit(() => state.checklist = state.checklist.filter(c => c.id !== id)); }
+    if (act === 'add-cat') { const name = (prompt('Nome da nova categoria:') || '').trim(); if (name) commit(() => { const cs = state.clCats ||= []; [...new Set(state.checklist.map(c => c.cat))].forEach(x => { if (!cs.includes(x)) cs.push(x); }); if (!cs.includes(name)) cs.push(name); }); }
+    if (act === 'del-cat') {
+      const cat = b.closest('[data-cat]').dataset.cat, n = state.checklist.filter(c => c.cat === cat).length;
+      if (n && !confirm(`Excluir a categoria “${cat}” e seus ${n} itens?`)) return;
+      commit(() => { state.checklist = state.checklist.filter(c => c.cat !== cat); state.clCats = (state.clCats || []).filter(x => x !== cat); });
+      toast(`Categoria <b>${esc(cat)}</b> excluída.`, '<button data-t="undo">Desfazer</button>', undo);
+    }
+    if (act === 'clear') {
+      if (!confirm('Esvaziar o checklist? Você volta à escolha do modelo (dá para desfazer).')) return;
+      commit(() => { state.checklist = []; state.clCats = []; });
+      toast('Checklist vazio: escolha como recomeçar.', '<button data-t="undo">Desfazer</button>', undo);
+    }
   });
   el.addEventListener('submit', e => {
     e.preventDefault();
     const form = e.target, cat = form.closest('[data-cat]').dataset.cat, fd = new FormData(form);
-    commit(() => state.checklist.push({id: uid(), cat, text: fd.get('text').trim(), due: fd.get('due') || '', link: '', done: false}));
+    commit(() => state.checklist.push({id: uid(), cat, text: fd.get('text').trim(), due: '', link: '', done: false}));
+    $(`#tab-checklist [data-cat="${CSS.escape(cat)}"] .cl-add input`)?.focus();
   });
 }
 
@@ -2556,6 +3074,7 @@ function setupTransportEvents() {
 }
 
 /* ======================= orçamento ======================= */
+// estimativa do roteiro calculado (usada nas exportações)
 function computeBudget() {
   const s = state.settings, T = Math.max(1, +s.travelers || 1);
   const stays = getStays();
@@ -2575,50 +3094,296 @@ function computeBudget() {
   r.total = r.act + r.transp + r.hotel + r.tax + r.extra + r.flights;
   return r;
 }
-let budgetParamsOpen = false;
+const BUD_CATS = [
+  {k: 'voo', n: 'Passagens aéreas', ic: 'voo', c: '#1e3a8a', hint: 'ex.: voos Rio ⇄ Roma'},
+  {k: 'hotel', n: 'Hospedagem', ic: 'hotel', c: '#7c3aed', hint: 'ex.: hotel em Roma, 4 noites'},
+  {k: 'trem', n: 'Trens e trechos entre cidades', ic: 'trem', c: '#0e7490', hint: 'ex.: Frecciarossa Roma → Florença'},
+  {k: 'local', n: 'Transporte local', ic: 'metro', c: '#4d7c0f', hint: 'ex.: passe de vaporetto 72 h'},
+  {k: 'comida', n: 'Alimentação', ic: 'comida', c: '#be123c', hint: 'ex.: €55 por pessoa por dia'},
+  {k: 'passeio', n: 'Passeios e ingressos', ic: 'ingresso', c: '#b45309', hint: 'ex.: Museus Vaticanos'},
+  {k: 'compras', n: 'Compras', ic: 'compras', c: '#a21caf', hint: 'ex.: limite para roupas e eletrônicos'},
+  {k: 'docs', n: 'Seguro e documentos', ic: 'saude', c: '#475569', hint: 'ex.: seguro-viagem, PID'},
+  {k: 'tec', n: 'Celular e internet', ic: 'celular', c: '#1d4ed8', hint: 'ex.: eSIM de 20 GB'},
+  {k: 'taxa', n: 'Taxas de turismo e vinhetas', ic: 'moeda', c: '#c05d2f', hint: 'ex.: taxa de turismo em Roma'},
+  {k: 'carro', n: 'Carro', ic: 'carro', c: '#92400e', hint: 'ex.: aluguel, combustível, pedágio'},
+  {k: 'extra', n: 'Imprevistos', ic: 'alerta', c: '#6b7280', hint: 'ex.: 10% de reserva'},
+];
+const BUD = Object.fromEntries(BUD_CATS.map(c => [c.k, c]));
+const IOF_C = '#94a3b8';
+const CUR_SYM = {BRL: 'R$', EUR: '€', USD: 'US$', CHF: 'CHF'};
+const curRate = cur => cur === 'USD' ? fx() : cur === 'BRL' ? (+state.settings.eurBrl || 6.07) : cur === 'CHF' ? (+state.settings.eurChf || 0.92) : 1;
+const toEUR = (v, cur) => (+v || 0) / curRate(cur);
+const fromEUR = (eur, cur) => (+eur || 0) * curRate(cur);
+const budCur = () => CUR_SYM[state.settings.budCur] ? state.settings.budCur : 'BRL';
+const fmtCur = (eur, cur = budCur()) => `${CUR_SYM[cur]} ${Math.round(fromEUR(eur, cur)).toLocaleString('pt-BR')}`;
+const travelers = () => Math.max(1, +state.settings.travelers || 1);
+const IOF = 0.035;
+const itemEUR = (it, T = travelers()) => toEUR(it.amt, it.cur) * (it.per === 'p' ? T : 1);
+/** Totais em €: por categoria, IOF de 3,5% sobre o que é pago em moeda estrangeira, quanto já foi pago e quantos itens. */
+function budTotals(items, T = travelers()) {
+  const byCat = {}, iofOn = state.settings.iof !== false;
+  let sub = 0, paid = 0, paidN = 0, iof = 0;
+  items.forEach(it => {
+    const v = itemEUR(it, T), tax = iofOn && it.cur !== 'BRL' ? v * IOF : 0;
+    byCat[it.cat] = (byCat[it.cat] || 0) + v; sub += v; iof += tax;
+    if (it.paid) { paid += v + tax; paidN++; }
+  });
+  return {byCat, sub, iof, total: sub + iof, paid, paidN, n: items.length};
+}
+/* ---------- estimativas (pesquisa de nov/2026, fevereiro, padrão médio): € por pessoa por dia e hotel 3–4★ em quarto duplo por noite ---------- */
+const BUD_COUNTRY = {
+  'Itália': {food: 55, local: 7, fun: 25, hotel: 120, tax: 3},
+  'Suíça': {food: 95, local: 12, fun: 45, hotel: 230, tax: 3.5},
+  'França': {food: 65, local: 9, fun: 25, hotel: 150, tax: 3},
+  'Áustria': {food: 55, local: 8, fun: 25, hotel: 130, tax: 2.5},
+  'Eslovênia': {food: 45, local: 6, fun: 15, hotel: 100, tax: 2},
+  'Espanha': {food: 50, local: 8, fun: 25, hotel: 120, tax: 3},
+  'Portugal': {food: 40, local: 7, fun: 18, hotel: 100, tax: 2.5},
+};
+// taxa de turismo de hotel 3–4★ nas cidades grandes; Veneza com o passe de vaporetto
+const BUD_CITY = {roma: {tax: 7.5}, florenca: {tax: 6}, veneza: {tax: 4, local: 15}, milao: {tax: 5.5}, napoles: {tax: 4}, bolonha: {tax: 5}};
+const budC = (pais, k) => ({...(BUD_COUNTRY[pais] || BUD_COUNTRY['Itália']), ...(BUD_CITY[k] || {})});
+const PREP = p => p === 'Portugal' ? 'em' : 'na';
+const hotelNight = (k, pais) => { const L = (HOTEL_CAT[k] || []).map(h => +h.price).filter(Boolean).sort((a, b) => a - b); return L.length ? L[(L.length - 1) >> 1] : budC(pais).hotel; };
+const cityKey = name => IT_CITIES.find(c => norm(c.name) === norm(name))?.k || SUG_KEY[name] || null;
+/** € por pessoa de um trecho: trens pela duração (comprando com antecedência), panorâmicos, voo, ônibus e barco por média. */
+function legCost(t, min) {
+  if (/glacier/.test(t)) return 170;
+  if (/bernina/.test(t)) return 85;
+  if (/\bvoo\b|aviao/.test(t)) return 90;
+  if (/onibus|\bvan\b|flixbus|sita/.test(t)) return 20;
+  if (/balsa|barco|travelmar|ferry/.test(t)) return 25;
+  return Math.round(Math.min(110, Math.max(12, (min || 60) * 0.3)));
+}
+const legEstimate = via => legCost(norm(via), viaMin(via));
+/** Linhas do orçamento a partir das estadias (cidade, país, noites, dias, hotel escolhido, ingressos já com preço) e dos trechos. */
+function budLines({stays, legs, flights}) {
+  const T = travelers(), rooms = Math.max(1, +state.settings.rooms || 1), out = [];
+  const add = (cat, title, amt, per, x = {}) => { if (amt > 0 || x.keep) out.push({cat, title, amt: round2(amt), cur: 'EUR', per, ...x}); };
+  if (flights) out.push(flights);
+  stays.forEach(s => { if (!s.n) return; const p = s.hotel?.price || hotelNight(s.k, s.pais); add('hotel', `${s.name} · ${s.n} noite${s.n > 1 ? 's' : ''} · ${s.hotel ? s.hotel.name : `~€${Math.round(p)} por noite`}`, p * s.n * rooms, 'g', {key: 'hotel:' + norm(s.name), city: s.name}); });
+  legs.forEach(l => add(l.cat || 'trem', l.title, l.eur, 'p', l.key ? {key: l.key} : {}));
+  const byP = new Map();
+  stays.forEach(s => {
+    const C = budC(s.pais, s.k), g = byP.get(s.pais) || {days: 0, food: 0, local: 0, fun: 0, funDays: 0, real: 0};
+    byP.set(s.pais, g); g.days += s.days; g.food += C.food * s.days; g.local += C.local * s.days;
+    if (s.fun != null) g.real += s.fun; else { g.fun += C.fun * s.days; g.funDays += s.days; }
+  });
+  const many = byP.size > 1;
+  byP.forEach((g, p) => {
+    if (!g.days) return;
+    const where = many ? ` ${PREP(p)} ${p}` : '';
+    add('comida', `Alimentação${where} · ${g.days} dias × ~€${Math.round(g.food / g.days)} por pessoa`, g.food, 'p', {key: 'food:' + p});
+    add('local', `Metrô, ônibus e barcos${where} · ~€${Math.round(g.local / g.days)} por pessoa por dia`, g.local, 'p', {key: 'local:' + p});
+    if (g.real) add('passeio', `Ingressos já com preço no roteiro${where}`, g.real, 'p', {key: 'fun-real:' + p});
+    if (g.fun) add('passeio', `Passeios e ingressos${where} · ${g.funDays} dias × ~€${Math.round(g.fun / g.funDays)} por pessoa`, g.fun, 'p', {key: 'fun:' + p});
+  });
+  const taxed = stays.filter(s => s.n), tax = taxed.reduce((a, s) => a + budC(s.pais, s.k).tax * s.n, 0);
+  add('taxa', `Taxa de turismo cobrada no hotel (${taxed.map(s => s.name).join(', ')})`, tax, 'p', {key: 'tax'});
+  add('docs', 'Seguro-viagem para a Europa (cote antes de comprar)', 400, 'p', {cur: 'BRL', key: 'seguro'});
+  add('tec', 'eSIM com internet na Europa', 25, 'p', {cur: 'USD', key: 'esim'});
+  add('compras', 'Compras: defina o seu limite', 0, 'g', {key: 'compras', keep: 1});
+  const sub = out.filter(l => l.key !== 'voo-br').reduce((a, l) => a + itemEUR(l, T), 0);
+  add('extra', '10% de reserva para imprevistos', sub * 0.1, 'g', {key: 'extra'});
+  return out;
+}
+const brFlights = (bought = realNow()) => ({key: 'voo-br', cat: 'voo', title: bought ? 'Voos Rio ⇄ Roma (já comprados)' : 'Voos de ida e volta do Brasil', amt: +state.settings.flightsUsd || 0, cur: 'USD', per: 'g', paid: bought, keep: 1});
+const LEONARDO = {title: 'Leonardo Express Fiumicino ⇄ Roma Termini (ida e volta)', eur: 28, key: 'leonardo'};
+/** Estimativa do roteiro aberto: hotel escolhido (ou a média da cidade), trechos do roteiro, ingressos com preço e médias por país. */
+function tripBudget() {
+  const S = getStays().map(s => {
+    const h = chosenHotel(s.base) || hotelsOf(s.base).filter(x => x.status !== 'descartado' && +x.price).sort((a, b) => a.price - b.price)[0];
+    const fun = s.days.flatMap(d => d.items).filter(it => !isAuto(it) && !TRANSPORT.has(it.type) && it.type !== 'hotel').reduce((a, it) => a + (+it.cost || 0), 0);
+    return {name: s.base, k: cityKey(s.base), pais: pageCity(s.base).pais, n: s.nights, days: s.days.length, hotel: h && +h.price ? {name: h.name, price: +h.price} : null, fun: fun > 0 ? fun : null};
+  });
+  const legs = [];
+  state.days.forEach(d => d.items.filter(it => TRANSPORT.has(it.type) && !it.air && !it.hin && !it.hout).forEach(it => {
+    const eur = +it.cost || (it.leg ? legCost(norm(`${it.type} ${it.title}`), legMin(it)) : 0);
+    if (eur > 0) legs.push({title: `${it.title}${+it.cost ? '' : ' (estimativa)'}`, eur, cat: it.type === 'voo' ? 'voo' : 'trem'});
+  }));
+  if (realNow() && !legs.some(l => /leonardo/i.test(l.title))) legs.unshift(LEONARDO);
+  return budLines({stays: S, legs, flights: brFlights()});
+}
+/** Estimativa de um roteiro pronto: hotéis pela média dos sugeridos em cada cidade, trens pela duração e as passagens entre países pela pesquisa. */
+function sugBudget(r) {
+  const P = SUG_PASS[r.id], S = r.stops, legs = [LEONARDO];
+  S.forEach((s, i) => {
+    const prev = S[i - 1], abroad = !!P && (s.pais !== 'Itália' || (prev && prev.pais !== 'Itália') || /^\s*voo/i.test(s.via));
+    if (abroad || (!i && s.nome === 'Roma')) return;
+    legs.push({title: /→/.test(s.via) ? s.via : `${prev ? prev.nome : 'Fiumicino'} → ${s.nome} · ${s.via}`, eur: legEstimate(s.via), cat: /^\s*voo/i.test(s.via) ? 'voo' : 'trem'});
+  });
+  (P || []).forEach(x => legs.push({title: `${x.de} → ${x.para} · ${x.cias}`, eur: Math.round((x.p[0] + x.p[1]) / 2), cat: x.m === 'voo' ? 'voo' : 'trem'}));
+  return budLines({stays: S.map((s, i) => ({name: s.nome, k: s.k, pais: s.pais, n: s.n, days: s.n + (i === S.length - 1 ? 1 : 0), hotel: null, fun: null})), legs, flights: brFlights(true)});
+}
+/** Total por pessoa de um roteiro pronto, sem os voos do Brasil (iguais em todos). */
+const sugBudgetTotals = r => budTotals(sugBudget(r).filter(l => l.key !== 'voo-br'));
+/** Troca as linhas de estimativa pelas novas; o que você digitou ou editou fica (e não volta duplicado). */
+function setBudgetLines(lines, src) {
+  const B = state.budget ||= {items: [], cap: 0};
+  const mine = (B.items || []).filter(it => !it.auto), keys = new Set(mine.map(it => it.key).filter(Boolean));
+  B.on = true; B.src = src;
+  B.items = [...mine, ...lines.filter(l => !l.key || !keys.has(l.key)).map(l => ({id: uid(), cat: l.cat, title: l.title, amt: l.amt, cur: l.cur || 'EUR', per: l.per || 'g', paid: !!l.paid, auto: src, ...(l.key ? {key: l.key} : {}), ...(l.city ? {city: l.city} : {})}))];
+}
+const budSrcSug = src => (src || '').startsWith('sug:') ? SUG_ROTEIROS.find(x => x.id === src.slice(4)) : null;
+function startBudget(src) {
+  const r = budSrcSug(src), lines = src === 'trip' ? tripBudget() : r ? sugBudget(r) : [];
+  commit(() => { state.budget = {on: true, src, cap: state.budget?.cap || 0, items: []}; setBudgetLines(lines, src); });
+  if (lines.length) toast(`Orçamento preenchido com <b>${lines.length} itens</b> estimados ${r ? `pelo roteiro pronto <b>${esc(r.nome)}</b>` : 'pelo seu roteiro'}: ajuste os valores e marque o que já foi pago.`, '<button data-t="undo">Desfazer</button>', undo);
+}
+function recalcBudget() {
+  const r = budSrcSug(state.budget?.src), src = r ? state.budget.src : 'trip';
+  commit(() => setBudgetLines(r ? sugBudget(r) : tripBudget(), src));
+  toast(`Estimativa recalculada ${r ? `pelo roteiro pronto <b>${esc(r.nome)}</b>` : 'pelo seu roteiro'}. Os itens que você digitou ou editou ficaram como estavam.`, '<button data-t="undo">Desfazer</button>', undo);
+}
+const budBar = (t, cls = 'pk-bar') => `<div class="${cls}">${BUD_CATS.filter(c => t.byCat[c.k] > 0).map(c => `<i style="flex:${t.byCat[c.k].toFixed(1)};background:${c.c}" title="${esc(c.n)}"></i>`).join('')}${t.iof ? `<i style="flex:${t.iof.toFixed(1)};background:${IOF_C}" title="IOF"></i>` : ''}</div>`;
+const curPills = () => `<div class="pills" role="group" aria-label="Moeda dos valores">${Object.entries(CUR_SYM).map(([k, s]) => `<button type="button" data-bcur="${k}" class="${budCur() === k ? 'on' : ''}" title="Mostrar os valores em ${s}">${s}</button>`).join('')}</div>`;
+const rateNote = () => `€1 = R$ ${(+state.settings.eurBrl || 6.07).toLocaleString('pt-BR', {minimumFractionDigits: 2})} = US$ ${fx().toLocaleString('pt-BR', {minimumFractionDigits: 2})} = CHF ${(+state.settings.eurChf || 0.92).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+let budSugSel = null, budgetParamsOpen = false;
+function budChooserHTML() {
+  const T = travelers(), stays = getStays(), trT = budTotals(tripBudget().filter(l => l.key !== 'voo-br'), T);
+  const curSug = SUG_ROTEIROS.find(sugIsCurrent), sel = SUG_ROTEIROS.find(r => r.id === budSugSel) || curSug || SUG_ROTEIROS[0], sT = sugBudgetTotals(sel);
+  const nights = stays.reduce((a, s) => a + s.nights, 0);
+  return tabHero('ORÇAMENTO', 'como você quer montar?', 'moeda', '#c05d2f', curPills())
+    + `<div class="pick-grid">
+      <article class="pick-card" style="--c:#7a6a52"><span class="pk-ic">${icSvg('lapis')}</span><h3>Em branco</h3>
+        <p>As categorias prontas, sem valores: você digita o que já sabe, na moeda que quiser (R$, €, US$ ou CHF), por pessoa ou para o grupo.</p>
+        <div class="pk-tags">${BUD_CATS.map(c => `<span style="--c:${c.c}">${esc(c.n)}</span>`).join('')}</div>
+        <button type="button" class="ink-btn" data-bstart="empty">Começar em branco</button></article>
+      <article class="pick-card" style="--c:#0f766e"><span class="pk-ic">${icSvg('mapa')}</span><h3>Pelo meu roteiro</h3>
+        ${stays.length ? `<p class="pk-big">~${fmtCur(trT.total / T)} <small>por pessoa</small></p>${budBar(trT)}
+        <p>${stays.length} cidade${stays.length > 1 ? 's' : ''} e ${nights} noites do roteiro aberto: hotéis escolhidos (ou a média da cidade), trechos de trem, ingressos já com preço e médias de comida e transporte por país.</p>
+        <button type="button" class="ink-btn primary" data-bstart="trip">Preencher com a estimativa</button>` : `<p>Monte as cidades na aba Roteiro e a estimativa aparece aqui, com hotéis, trens, comida e passeios.</p><button type="button" class="ink-btn" disabled>Preencher com a estimativa</button>`}</article>
+      <article class="pick-card" style="--c:#1e3a8a">${curSug ? '<span class="pk-badge">o seu roteiro</span>' : ''}<span class="pk-ic">${icSvg('estrela')}</span><h3>De um roteiro pronto</h3>
+        <select class="pk-sel" data-bsugsel aria-label="Roteiro pronto">${Object.entries(SUG_CATS).map(([cat, lb]) => `<optgroup label="${esc(lb)}">${SUG_ROTEIROS.filter(r => r.cat === cat).map(r => `<option value="${r.id}" ${r === sel ? 'selected' : ''}>${esc(r.nome)}</option>`).join('')}</optgroup>`).join('')}</select>
+        <p class="pk-big">~${fmtCur(sT.total / T)} <small>por pessoa</small></p>${budBar(sT)}
+        <p>${esc(sel.stops.map(s => `${s.nome} ${s.n}`).join(' · '))} noites. Só preenche o orçamento: o roteiro aberto não muda.</p>
+        <button type="button" class="ink-btn" data-bstart="sug:${sel.id}">Usar esta estimativa</button></article>
+    </div>
+    <p class="muted-note bud-foot">Estimativas sem os voos do Brasil, para ${T} viajante${T > 1 ? 's' : ''}, com o IOF de 3,5% sobre o que é pago em moeda estrangeira. Câmbio do BCE em 30/10/2026: ${rateNote()}.</p>`;
+}
+function donutSVG(parts, total, label) {
+  const R = 68, C = 2 * Math.PI * R;
+  let off = 0;
+  const segs = parts.map(([n, v, col]) => { const len = total ? v / total * C : 0, s = `<circle r="${R}" cx="95" cy="95" fill="none" stroke="${col}" stroke-width="32" stroke-dasharray="${len.toFixed(2)} ${(C - len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 95 95)"><title>${esc(n)}: ${Math.round(v / total * 100)}%</title></circle>`; off += len; return s; }).join('');
+  return `<svg class="donut" viewBox="0 0 190 190" role="img" aria-label="Divisão do orçamento por categoria"><circle r="${R}" cx="95" cy="95" fill="none" stroke="#efe3c6" stroke-width="32"/>${segs}<circle r="${R + 16}" cx="95" cy="95" fill="none" stroke="${INK}" stroke-width="2"/><circle r="${R - 16}" cx="95" cy="95" fill="#fffaf0" stroke="${INK}" stroke-width="2"/><text x="95" y="86" text-anchor="middle" class="d-lbl">total previsto</text><text x="95" y="109" text-anchor="middle" class="d-val">${esc(label)}</text></svg>`;
+}
 function renderBudget() {
-  const el = $('#tab-orcamento'), s = state.settings, b = computeBudget();
-  const daysN = state.days.length || 1;
-  const parts = [['Passeios e refeições', b.act, '#e09f3e', 'comida'], ['Transportes', b.transp, '#0e7490', 'trem'], ['Hotéis', b.hotel, '#7c3aed', 'hotel'], ['Taxa de turismo', b.tax, '#c05d2f', 'moeda'], ['Extras do dia a dia', b.extra, '#6b7280', 'livre'], ['Voos internacionais', b.flights, '#475569', 'voo']].filter(p => p[1] > 0);
-  const cities = Object.entries(b.byCity).map(([c, v]) => [c, v.act + v.transp + v.hotel]).filter(x => x[1] > 0);
-  const max = Math.max(1, ...cities.map(x => x[1]));
-  const kpi = (lbl, eur, sub) => `<div class="sticker kpi-sticker"><div class="lbl">${lbl}</div><div class="big">${fmtUSD(eur)}</div><div class="sub">${sub}</div></div>`;
-  el.innerHTML = tabHero('ORÇAMENTO', `estimativa para ${b.T} viajante${b.T > 1 ? 's' : ''} · câmbio US$ ${fx().toLocaleString('pt-BR', {minimumFractionDigits: 2})} por €`, 'moeda', '#c05d2f')
-    + `<div class="kpi-row">
-        ${kpi('Total do grupo', b.total, fmtEUR(b.total))}
-        ${kpi('Por pessoa', b.total / b.T, fmtEUR(b.total / b.T))}
-        ${kpi('Por pessoa, por dia', b.total / b.T / daysN, `${daysN} dias · ${fmtEUR(b.total / b.T / daysN)}`)}
+  const el = $('#tab-orcamento'), B = state.budget;
+  if (!B?.on) { el.innerHTML = budChooserHTML(); return; }
+  const s = state.settings, T = travelers(), c = tripCtx(), cur = budCur(), t = budTotals(B.items, T), r = budSrcSug(B.src);
+  const left = diffDays(todayStr(), c.start), capEUR = +B.cap || 0, over = capEUR && t.total > capEUR, pctPaid = t.total ? Math.round(t.paid / t.total * 100) : 0;
+  const alt = cur === 'BRL' ? `${fmtCur(t.total, 'EUR')} · ${fmtCur(t.total, 'USD')}` : `${fmtCur(t.total, 'BRL')} · ${fmtCur(t.total, cur === 'EUR' ? 'USD' : 'EUR')}`;
+  const kpi = (lbl, ic, col, big, sub, extra = '') => `<div class="bud-kpi" style="--c:${col}"><div class="lbl">${icSvg(ic)}${lbl}</div><div class="big">${big}</div><div class="sub">${sub}</div>${extra}</div>`;
+  const kpis = `<div class="bud-kpis">
+    ${kpi('Total previsto', 'moeda', '#c05d2f', fmtCur(t.total), `${fmtCur(t.total / T)} por pessoa · ${fmtCur(t.total / T / c.days)} por pessoa por dia`, `<div class="alt">${alt}</div>`)}
+    ${kpi('Já pago', 'check', '#15803d', fmtCur(t.paid), `${t.paidN} de ${t.n} itens · ${pctPaid}% do total`, `<div class="kbar"><i style="width:${pctPaid}%"></i></div>`)}
+    ${kpi('Falta pagar', 'calendario', '#c2410c', fmtCur(t.total - t.paid), left > 0 ? `faltam ${left} dias para o embarque${left > 30 ? ` · ~${fmtCur((t.total - t.paid) / Math.max(1, Math.ceil(left / 30)))} por mês até lá` : ''}` : 'a viagem já começou')}
+    ${kpi('Teto do orçamento', 'alerta', over ? '#b91c1c' : '#0f766e', capEUR ? (over ? `passa ${fmtCur(t.total - capEUR)}` : `sobram ${fmtCur(capEUR - t.total)}`) : 'sem teto', capEUR ? `${Math.round(t.total / capEUR * 100)}% do teto de ${fmtCur(capEUR)}` : 'defina quanto quer gastar no máximo',
+      `${capEUR ? `<div class="kbar ${over ? 'over' : ''}"><i style="width:${Math.min(100, t.total / capEUR * 100).toFixed(1)}%"></i></div>` : ''}<label class="cap-in"><span>teto em ${CUR_SYM[cur]}</span><input type="number" min="0" step="100" data-bcap value="${capEUR ? Math.round(fromEUR(capEUR, cur)) : ''}" placeholder="ex.: ${cur === 'BRL' ? '60000' : '10000'}"></label>`)}
+  </div>`;
+  const parts = [...BUD_CATS.filter(C => t.byCat[C.k] > 0).map(C => [C.n, t.byCat[C.k], C.c, C.k]), ...(t.iof ? [['IOF de 3,5%', t.iof, IOF_C, '']] : [])];
+  const donut = `<section class="sticker bud-donut" style="--c:#c05d2f"><h3><span class="ic-dot">${icSvg('moeda')}</span>Para onde vai o dinheiro</h3>
+    ${t.total ? `<div class="donut-wrap">${donutSVG(parts, t.total, fmtCur(t.total))}<ul class="dleg">${parts.map(([n, v, col, k]) => `<li ${k ? `data-go="${k}" title="Ver os itens"` : ''}><i style="background:${col}"></i><span>${esc(n)}</span><b>${fmtCur(v)}</b><span class="p">${Math.round(v / t.total * 100)}%</span></li>`).join('')}</ul></div>`
+      : '<p class="bud-empty">Os valores aparecem aqui quando você preencher os itens.</p>'}</section>`;
+  const DAILY = ['comida', 'local', 'passeio', 'compras', 'taxa'], dayV = k => B.items.filter(it => it.cat === k && !it.paid).reduce((a, it) => a + itemEUR(it, T), 0);
+  const perDay = DAILY.reduce((a, k) => a + dayV(k), 0) / c.days;
+  const wallet = `<section class="sticker wallet" style="--c:#15803d"><h3><span class="ic-dot">${icSvg('livre')}</span>Dinheiro durante a viagem</h3>
+    <div class="w-big"><b>${fmtCur(perDay, 'EUR')}</b><span>por dia para o grupo<br>${fmtCur(perDay / T, 'EUR')} por pessoa${cur !== 'EUR' ? ` · ${fmtCur(perDay / T)}` : ''}</span></div>
+    <div class="w-split">${DAILY.map(k => { const v = dayV(k) / c.days; return v ? `<span style="--c:${BUD[k].c}"><i></i>${esc(BUD[k].n.split(' ')[0])} <b>${fmtCur(v, 'EUR')}</b></span>` : ''; }).join('')}</div>
+    <ul class="w-tips"><li>Pague em euro${c.ch ? ' (franco na Suíça)' : ''} e recuse a conversão para real ou dólar (DCC).</li><li>${s.iof !== false ? 'O IOF de 3,5% já está no total.' : 'O IOF está desligado nos parâmetros.'} O banco aplica o câmbio dele, um pouco acima do de referência.</li><li>Leve €100 a €200 por pessoa em espécie; o resto no cartão ou na conta global.</li></ul></section>`;
+  const shown = C => B.items.some(it => it.cat === C.k) || B.src === 'empty' || (B.show || []).includes(C.k);
+  const row = it => {
+    const eur = itemEUR(it, T), conv = it.cur !== cur || (it.per === 'p' && T > 1);
+    return `<li class="bud-row ${it.paid ? 'paid' : ''}" data-bid="${it.id}">
+      <div class="br-top"><label class="tick" title="Já pago"><input type="checkbox" data-bf="paid" ${it.paid ? 'checked' : ''}><span></span></label><input class="t" data-bf="title" value="${esc(it.title)}" aria-label="Item"><button type="button" class="x" data-b="del" title="Excluir">×</button></div>
+      <div class="br-bot"><input type="number" min="0" step="any" data-bf="amt" value="${+it.amt || ''}" placeholder="0" aria-label="Valor"><select data-bf="cur" aria-label="Moeda">${Object.entries(CUR_SYM).map(([k, sy]) => `<option value="${k}" ${k === it.cur ? 'selected' : ''}>${sy}</option>`).join('')}</select><select data-bf="per" aria-label="O valor é">${[['g', 'total'], ['p', 'por pessoa']].map(([k, l]) => `<option value="${k}" ${k === (it.per || 'g') ? 'selected' : ''}>${l}</option>`).join('')}</select>${it.auto ? '<span class="est-chip" title="Estimativa: edite à vontade; ao editar, o item passa a ser seu">estimativa</span>' : ''}${it.paid ? '<span class="paid-chip">pago</span>' : ''}<span class="br-eq">${eur ? `${conv ? '= ' : ''}${fmtCur(eur)}` : ''}</span></div></li>`;
+  };
+  const card = C => {
+    const list = B.items.filter(it => it.cat === C.k), sum = t.byCat[C.k] || 0, pd = list.filter(it => it.paid).length;
+    return `<section class="sticker bud-cat" id="bc-${C.k}" data-bcat="${C.k}" style="--c:${C.c}">
+      <h3><span class="ic-dot">${icSvg(C.ic)}</span><span class="bc-n">${esc(C.n)}</span><span class="tot">${sum ? fmtCur(sum) : '—'}</span></h3>
+      <div class="mini-bar"><div style="width:${t.total ? (sum / t.total * 100).toFixed(1) : 0}%"></div></div>
+      ${list.length ? `<p class="bc-sub">${list.length} ite${list.length > 1 ? 'ns' : 'm'} · ${pd ? `${pd} pago${pd > 1 ? 's' : ''}` : 'nada pago ainda'}${t.total ? ` · ${Math.round(sum / t.total * 100)}% do total` : ''}</p>` : ''}
+      <ul class="bud-rows">${list.map(row).join('') || `<li class="bud-empty">${esc(C.hint)}</li>`}</ul>
+      <form class="bud-add"><input name="t" placeholder="+ adicionar item" required aria-label="Novo item em ${esc(C.n)}"><input name="v" type="number" min="0" step="any" placeholder="${CUR_SYM[cur]}" aria-label="Valor em ${CUR_SYM[cur]}"></form>
+    </section>`;
+  };
+  const hidden = BUD_CATS.filter(C => !shown(C));
+  const hotels = B.items.filter(it => it.cat === 'hotel' && it.city), hMax = Math.max(1, ...hotels.map(it => itemEUR(it, T)));
+  const cityCard = hotels.length > 1 ? `<section class="sticker" style="--c:#7c3aed"><h3><span class="ic-dot">${icSvg('hotel')}</span>Hospedagem por cidade</h3>
+      <div class="bars">${hotels.map(it => `<div class="bar-row" style="--c:${cityColor(it.city)}"><b style="color:${cityColor(it.city)}">${esc(it.city)}</b><div class="bar-track"><div style="width:${(itemEUR(it, T) / hMax * 100).toFixed(1)}%"></div></div><span style="text-align:right">${fmtCur(itemEUR(it, T))}</span></div>`).join('')}</div>
+      <p class="muted-note" style="margin:8px 0 0">${Math.max(1, +s.rooms || 1)} quarto${(+s.rooms || 1) > 1 ? 's' : ''} por noite. Escolha os hotéis no mapa de cada cidade e use “Recalcular estimativa”.</p></section>` : '';
+  const params = `<details class="sticker" id="budParams" ${budgetParamsOpen ? 'open' : ''}><summary><h3><span class="ic-dot" style="--c:#475569">${icSvg('lapis')}</span>Viajantes, câmbio e IOF</h3></summary>
+      <div class="param-grid">
+        <label for="b-travelers">Viajantes</label><input id="b-travelers" data-s="travelers" type="number" min="1" value="${s.travelers}">
+        <label for="b-rooms">Quartos de hotel</label><input id="b-rooms" data-s="rooms" type="number" min="1" value="${s.rooms}">
+        <label for="b-brl">R$ por € (BCE em 30/10/2026: 6,07)</label><input id="b-brl" data-s="eurBrl" type="number" step="0.01" min="1" value="${s.eurBrl}">
+        <label for="b-rate">US$ por € (BCE: 1,12)</label><input id="b-rate" data-s="eurUsd" type="number" step="0.01" min="0.5" value="${s.eurUsd}">
+        <label for="b-chf">CHF por € (BCE: 0,92)</label><input id="b-chf" data-s="eurChf" type="number" step="0.01" min="0.5" value="${s.eurChf}">
+        <label for="b-iof">Somar o IOF de 3,5% no que é pago em moeda estrangeira</label><input id="b-iof" data-siof type="checkbox" ${s.iof !== false ? 'checked' : ''}>
       </div>
-      <div class="budget-two">
-        <div class="sticker"><h3>Para onde vai o dinheiro</h3>
-          <div class="stack">${parts.map(([l, v, c]) => `<div style="width:${(v / b.total * 100).toFixed(1)}%;background:${c}" title="${l}: ${fmtUSD(v)} (${fmtEUR(v)})"></div>`).join('')}</div>
-          ${parts.map(([l, v, c, ic]) => `<div class="leg"><span class="ic-dot" style="--c:${c}">${icSvg(ic)}</span><span>${l}</span><b title="${fmtEUR(v)}">${fmtUSD(v)}</b><span class="pct">${Math.round(v / b.total * 100)}%</span></div>`).join('')}
-          ${b.hotelMissing.length ? `<p class="muted-note" style="margin:8px 0 0">Hotel ainda não escolhido em ${b.hotelMissing.map(esc).join(', ')} — usei a opção mais barata.</p>` : ''}
-        </div>
-        <div class="sticker"><h3>Por cidade</h3>
-          <div class="bars">${cities.map(([c, v]) => `<div class="bar-row" style="--c:${cityColor(c)}"><b style="color:${cityColor(c)}">${isNoHotel(c) ? 'Dias de voo' : esc(c)}</b><div class="bar-track"><div style="width:${(v / max * 100).toFixed(1)}%"></div></div><span style="text-align:right" title="${fmtEUR(v)}">${fmtUSD(v)}</span></div>`).join('')}</div>
-          <p class="muted-note" style="margin:8px 0 0">Atividades, transportes e hotel de cada cidade, para o grupo.</p>
-        </div>
-      </div>
-      <details class="sticker" id="budgetParams" ${budgetParamsOpen ? 'open' : ''}><summary><h3>Ajustar parâmetros</h3></summary>
-        <div class="param-grid">
-          <label for="b-travelers">Viajantes</label><input id="b-travelers" data-s="travelers" type="number" min="1" value="${s.travelers}">
-          <label for="b-rooms">Quartos de hotel</label><input id="b-rooms" data-s="rooms" type="number" min="1" value="${s.rooms}">
-          <label for="b-rate">Câmbio (US$ por €) — BCE em 30/10/2026: 1,1172</label><input id="b-rate" data-s="eurUsd" type="number" step="0.01" min="0.5" value="${s.eurUsd}">
-          <label for="b-tax">Taxa de turismo (€ por pessoa/noite)</label><input id="b-tax" data-s="tourTax" type="number" step="0.5" value="${s.tourTax}">
-          <label for="b-extra">Extras do dia a dia: cafés, água, metrô (€ por pessoa/dia)</label><input id="b-extra" data-s="dailyExtra" type="number" step="1" value="${s.dailyExtra}">
-          <label for="b-fl">Voos internacionais já pagos (US$ total)</label><input id="b-fl" data-s="flightsUsd" type="number" step="10" value="${s.flightsUsd}">
-        </div>
-        <p class="muted-note" style="margin:10px 0 0">Os custos de cada atividade são editados no Calendário (valor por pessoa).</p>
-      </details>`;
-  $('#budgetParams').addEventListener('toggle', e => budgetParamsOpen = e.target.open);
+      <p class="muted-note" style="margin:10px 0 0">Valores “por pessoa” se multiplicam pelos viajantes. O IOF vale para cartão, conta global, saque e compra de moeda em espécie.</p></details>`;
+  const srcTxt = B.src === 'empty' ? 'montado por você' : r ? `estimado pelo roteiro pronto “${esc(r.nome)}”` : 'estimado pelo seu roteiro';
+  el.innerHTML = tabHero('ORÇAMENTO', `${T} viajante${T > 1 ? 's' : ''} · ${c.days} dias · ${srcTxt}`, 'moeda', '#c05d2f',
+      `${curPills()}<button type="button" class="ink-btn small" data-b="recalc" title="${B.src === 'empty' ? 'Acrescenta as estimativas do roteiro aberto' : 'Refaz as estimativas; o que você digitou ou editou fica'}">${icSvg('mapa')}${B.src === 'empty' ? 'Somar estimativa do roteiro' : 'Recalcular estimativa'}</button><button type="button" class="ink-btn small danger" data-b="reset">Recomeçar</button>`)
+    + kpis
+    + `<div class="bud-two">${donut}${wallet}</div>`
+    + `<div class="sec-title"><b>Itens do orçamento</b><small>marque o que já foi pago · cada item na moeda em que você paga · “por pessoa” vale para os ${T} viajantes</small></div>`
+    + `<div class="bud-cats">${BUD_CATS.filter(shown).map(card).join('')}</div>`
+    + (hidden.length ? `<div class="bud-more"><span>Outras categorias:</span>${hidden.map(C => `<button type="button" class="pack-chip" data-bshow="${C.k}" style="--c:${C.c}"><span class="ic-dot">${icSvg(C.ic)}</span><span><b>${esc(C.n)}</b><small>+ adicionar</small></span></button>`).join('')}</div>` : '')
+    + `<div class="bud-two bud-bottom">${cityCard || `<section class="sticker" style="--c:#0e7490"><h3><span class="ic-dot">${icSvg('info')}</span>Como a estimativa é feita</h3><ul class="w-tips"><li>Hotel 3–4★ em quarto duplo: o escolhido no roteiro ou a média dos sugeridos em cada cidade.</li><li>Comida, transporte local e passeios pela média de cada país em fevereiro (Itália ~€55, €7 e €25 por pessoa por dia).</li><li>Trens pela duração do trecho comprando com antecedência; passagens entre países pela pesquisa de nov/2026.</li></ul></section>`}${params}</div>`
+    + `<p class="muted-note bud-foot">Câmbio de referência: ${rateNote()}. Estimativas são médias: confira os preços antes de comprar.</p>`;
 }
 function setupBudgetEvents() {
-  $('#tab-orcamento').addEventListener('change', e => {
-    const k = e.target.dataset.s; if (!k) return;
-    commit(() => state.settings[k] = parseFloat(e.target.value) || 0);
+  const el = $('#tab-orcamento');
+  const itemOf = t => { const row = t.closest('[data-bid]'); return row && state.budget?.items.find(x => x.id === row.dataset.bid); };
+  el.addEventListener('click', e => {
+    const t = e.target;
+    const st = t.closest('[data-bstart]'); if (st) { startBudget(st.dataset.bstart); return; }
+    const cu = t.closest('[data-bcur]'); if (cu) { commit(() => state.settings.budCur = cu.dataset.bcur); return; }
+    const sh = t.closest('[data-bshow]'); if (sh) { const k = sh.dataset.bshow; commit(() => (state.budget.show ||= []).push(k)); $(`#bc-${k} .bud-add input`)?.focus(); return; }
+    const go = t.closest('[data-go]'); if (go) { $(`#bc-${go.dataset.go}`)?.scrollIntoView({behavior: 'smooth', block: 'center'}); return; }
+    const b = t.closest('[data-b]'); if (!b) return;
+    if (b.dataset.b === 'del') { const it = itemOf(b); if (!it) return; commit(() => state.budget.items = state.budget.items.filter(x => x !== it)); toast(`“${esc(it.title)}” saiu do orçamento.`, '<button data-t="undo">Desfazer</button>', undo); }
+    if (b.dataset.b === 'recalc') recalcBudget();
+    if (b.dataset.b === 'reset') {
+      if (!confirm('Recomeçar o orçamento? Você volta à escolha entre em branco e as estimativas (dá para desfazer).')) return;
+      commit(() => { state.budget = null; });
+      toast('Orçamento zerado: escolha como recomeçar.', '<button data-t="undo">Desfazer</button>', undo);
+    }
   });
+  el.addEventListener('change', e => {
+    const t = e.target;
+    if (t.matches('[data-bsugsel]')) { budSugSel = t.value; renderBudget(); return; }
+    if (t.matches('[data-bcap]')) { commit(() => state.budget.cap = round2(toEUR(Math.max(0, parseFloat(t.value) || 0), budCur()))); return; }
+    if (t.matches('[data-siof]')) { commit(() => state.settings.iof = t.checked); return; }
+    if (t.dataset.s) { commit(() => state.settings[t.dataset.s] = parseFloat(t.value) || 0); return; }
+    const f = t.dataset.bf, it = f && itemOf(t); if (!it) return;
+    commit(() => {
+      if (f === 'paid') it.paid = t.checked;
+      else it[f] = f === 'amt' ? Math.max(0, parseFloat(t.value) || 0) : f === 'title' ? t.value.trim() || it.title : t.value;
+      delete it.auto;
+    }, f === 'title' ? {render: false} : {});
+  });
+  el.addEventListener('submit', e => {
+    e.preventDefault();
+    const f = e.target, cat = f.closest('[data-bcat]')?.dataset.bcat, fd = new FormData(f), title = String(fd.get('t') || '').trim();
+    if (!cat || !title) return;
+    commit(() => state.budget.items.push({id: uid(), cat, title, amt: Math.max(0, parseFloat(fd.get('v')) || 0), cur: budCur(), per: 'g', paid: false}));
+    $(`#bc-${cat} .bud-add input`)?.focus();
+  });
+  el.addEventListener('toggle', e => { if (e.target.id === 'budParams') budgetParamsOpen = e.target.open; }, true);
 }
+/** Ao seguir ou salvar um roteiro pronto: orçamento estimado e checklist já preenchidos (o que você digitou ou editou fica). */
+function applySugExtras(r) {
+  const c = sugCtx(r);
+  state.checklist = state.checklist.filter(x => !x.sug || x.sug === r.id || x.done);
+  clAddTags(CL_TPL.completo + (c.drive ? 'd' : ''), c);
+  r.atencao.forEach((text, i) => { const key = `sug:${r.id}:${i}`; if (!clHas(key)) state.checklist.push({id: uid(), key, cat: CL_SUG_CAT, text, due: clDue(30, c), link: '', done: false, sug: r.id}); });
+  clCatsSync();
+  setBudgetLines(sugBudget(r), 'sug:' + r.id);
+}
+const sugExtrasTxt = () => { const T = travelers(), t = budTotals(state.budget?.items || [], T); return `orçamento estimado em <b>~${fmtCur(t.total / T)}</b> por pessoa e checklist com <b>${state.checklist.length} itens</b> (abas Orçamento e Checklist)`; };
 
 /* ======================= informações ======================= */
 const INFO_CARDS = [
@@ -7094,6 +7859,7 @@ function sugRoteirosHTML() {
         <small>${esc(r.resumo)}</small>
         ${(() => { const mv = sugMoves(r), tot = mv.reduce((a, x) => a + x.min, 0), big = mv.filter(x => x.min >= 300).length; return tot ? `<small class="rs-time">${icSvg('trem')}<span><b>~${fmtDur(tot)}</b> de deslocamento entre cidades em ${mv.length} trecho${mv.length > 1 ? 's' : ''}${big ? ` · ${big} dia${big > 1 ? 's' : ''} quase só de viagem (5 h ou mais)` : ''}</span></small>` : ''; })()}
         ${SUG_PASS[r.id] ? (() => { const P = SUG_PASS[r.id], [a, b] = passTotal(r), nv = P.filter(x => x.m === 'voo').length; return `<small class="rs-fly">${icSvg(nv ? 'voo' : 'trem')}<span>Passagens extras: <b>~€${a}–${b}</b> por pessoa · ${P.map(x => `${esc(x.de.replace(/ \(.*\)/, ''))} → ${esc(x.para.replace(/ \(.*\)/, ''))}`).join(' · ')}</span></small>`; })() : ''}
+        ${(() => { const T = travelers(), t = sugBudgetTotals(r); return `<small class="rs-bud">${icSvg('moeda')}<span>Orçamento estimado: <b>~${fmtCur(t.total / T, 'BRL')}</b> por pessoa (${fmtCur(t.total / T, 'EUR')}), sem os voos do Brasil${budBar(t, 'rs-bbar')}</span></small>`; })()}
         <div class="rs-use">${cur ? '<span class="rs-cur">✓ É o roteiro que você está seguindo</span>' : out.length ? `<small class="rs-out">${esc(out.length > 1 ? `${out.slice(0, -1).join(', ')} e ${out.at(-1)}` : out[0])} ${out.length > 1 ? 'ficam' : 'fica'} fora do mapa do planejador: use este como inspiração.</small>`
           : `<button type="button" class="ink-btn small primary" data-sugr-use="${r.id}" title="Troca as cidades do roteiro aberto por estas, com as mesmas noites">Usar no meu roteiro</button><button type="button" class="ink-btn small" data-sugr-save="${r.id}" title="Cria um roteiro novo com estas cidades; o atual não muda">Salvar como novo roteiro</button>`}</div></div>`;
       }).join('')}</div>`;
@@ -7973,21 +8739,21 @@ function useSugRoteiro(r, asNew) {
   if (asNew) {
     // roteiro novo começa limpo: mesmas datas e voos, sem os hotéis escolhidos nem as atividades do roteiro aberto
     const {arrive, depart, entry, exit} = plan(), start = planStart(), end = plan().end || state.days.at(-1)?.date, from = state.title;
-    const fresh = {version: 1, title: r.nome, settings: {...JSON.parse(JSON.stringify(state.settings)), planMin: {}}, days: [], hotels: [], checklist: JSON.parse(JSON.stringify(state.checklist)), notes: '', plan: {cities: [], start, end, arrive, depart, entry, exit}};
+    const fresh = {version: 1, title: r.nome, settings: {...JSON.parse(JSON.stringify(state.settings)), planMin: {}}, days: [], hotels: [], checklist: JSON.parse(JSON.stringify(state.checklist)), clCats: [...(state.clCats || [])], notes: '', plan: {cities: [], start, end, arrive, depart, entry, exit}};
     applySugPlan(fresh.plan, r);
     addTrip(fresh);
     let n = 0;
-    commit(() => { n = fillSugDays(r); });
-    toast(`Roteiro <b>${esc(r.nome)}</b> criado e aberto: ${esc(names)}, com <b>${n} atividades</b> e as refeições de cada dia no “Mapa do roteiro”. Ele começa sem hotéis; o original (“${esc(from)}”) continua em Meus roteiros.`);
+    commit(() => { n = fillSugDays(r); applySugExtras(r); });
+    toast(`Roteiro <b>${esc(r.nome)}</b> criado e aberto: ${esc(names)}, com <b>${n} atividades</b> e as refeições de cada dia no “Mapa do roteiro”, ${sugExtrasTxt()}. Ele começa sem hotéis; o original (“${esc(from)}”) continua em Meus roteiros.`);
     return;
   }
   const keep = new Set(r.stops.map(s => s.k));
   const lost = state.days.filter(d => d.pck && !keep.has(d.pck)).reduce((a, d) => a + d.items.filter(it => !isAuto(it)).length, 0);
-  if (!confirm(`Seguir o roteiro “${r.nome}” em “${state.title}”?\n\nAs cidades passam a ser: ${names}, com as noites sugeridas, e cada dia já recebe as atividades do roteiro com horário (as cidades em que você já escolheu atividades ficam como estão). ${lost ? `Saem ${lost} atividade${lost > 1 ? 's' : ''} escolhida${lost > 1 ? 's' : ''} em cidades que não estão nele. ` : ''}${realNow() ? 'Os voos e as datas não mudam. ' : ''}Dá para desfazer.`)) return;
+  if (!confirm(`Seguir o roteiro “${r.nome}” em “${state.title}”?\n\nAs cidades passam a ser: ${names}, com as noites sugeridas, e cada dia já recebe as atividades do roteiro com horário (as cidades em que você já escolheu atividades ficam como estão). O orçamento estimado e o checklist também são preenchidos (o que você digitou fica). ${lost ? `Saem ${lost} atividade${lost > 1 ? 's' : ''} escolhida${lost > 1 ? 's' : ''} em cidades que não estão nele. ` : ''}${realNow() ? 'Os voos e as datas não mudam. ' : ''}Dá para desfazer.`)) return;
   let n = 0;
-  commit(() => { applySugPlan(plan(), r); syncPlan(); n = fillSugDays(r); });
+  commit(() => { applySugPlan(plan(), r); syncPlan(); n = fillSugDays(r); applySugExtras(r); });
   planSel = null;
-  toast(`Agora você segue <b>${esc(r.nome)}</b>: ${esc(names)}. ${n ? `<b>${n} atividades</b> entraram nos dias, com as refeições, no “Mapa do roteiro”.` : 'Escolha os lugares de cada cidade no “Mapa do roteiro”.'}`, '<button data-t="undo">Desfazer</button>', undo);
+  toast(`Agora você segue <b>${esc(r.nome)}</b>: ${esc(names)}. ${n ? `<b>${n} atividades</b> entraram nos dias, com as refeições, no “Mapa do roteiro”` : 'Escolha os lugares de cada cidade no “Mapa do roteiro”'}; ${sugExtrasTxt()}.`, '<button data-t="undo">Desfazer</button>', undo);
   $('#tab-mapa .plan-grid')?.scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 
@@ -9876,6 +10642,24 @@ button.pri{background:var(--teal)!important;border-color:var(--teal)!important;c
 .ed-toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,calc(100% + 40px));background:#2b1d12;color:#fff;border-radius:14px;padding:10px 18px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .25s;z-index:20;max-width:min(640px,calc(100vw - 24px))}
 .ed-toast.on{transform:translate(-50%,0)}
 .ed-toast.warn{background:#c0392b}
+.box.budget{background:linear-gradient(135deg,#fff4ec,#fff 55%);border-color:#f2cdb4}
+.box.budget h3 .ic{color:#c05d2f}
+.bud-big{display:flex;flex-wrap:wrap;gap:6px 34px;margin:6px 0 4px}
+.bud-big b{display:block;font-family:'Playfair Display',Georgia,serif;font-size:32px;line-height:1.1}
+.bud-big span{color:var(--muted);font-size:13.5px}
+.bud-bar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:10px 0 12px;background:#f3ead4;box-shadow:inset 0 0 0 1px rgba(43,29,18,.08)}
+.bud-bar i{display:block;height:100%}
+.bud-bar i+i{border-left:2px solid #fff}
+.bud-tbl{width:100%;border-collapse:collapse;font-size:14px}
+.bud-tbl td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.bud-tbl td small{display:block;color:var(--muted);font-size:12.5px;margin:2px 0 0 18px}
+.bud-tbl td.v{text-align:right;font-weight:800;white-space:nowrap}
+.bud-tbl td.v small{margin:0;font-weight:600}
+.bud-tbl .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+.bud-tbl tfoot td{font-weight:800;border-bottom:none;padding-top:12px}
+.box.docs{background:linear-gradient(135deg,#eef4fb,#fff 55%);border-color:#c9d8ee}
+.box.docs h3 .ic{color:#1d4ed8}
+.badge.must{background:#fee2e2;color:#b91c1c;margin-left:0}
 @media (max-width:820px){.city-head{grid-template-columns:1fr}.photo{min-height:230px}.hero-in{padding-bottom:84px}}
 @media print{
 @page{size:A4;margin:0}
@@ -9890,7 +10674,8 @@ body{padding:10mm 0;-webkit-box-decoration-break:clone;box-decoration-break:clon
 .photo{min-height:280px}
 .wtext:not([hidden]){display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden}
 .grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
-.day,.box,.route,.sched li,.eat-grid>div{break-inside:avoid}
+.day,.box,.route,.sched li,.eat-grid>div,.bud-tbl tr{break-inside:avoid}
+.box.budget,.box.docs{break-inside:auto}
 .box.full,.eat{break-inside:auto}
 .box h3,.eat h3,.date{break-after:avoid}
 }
@@ -9986,6 +10771,28 @@ function passHTML(r) {
     </tbody><tfoot><tr><td colspan="4">Total por pessoa${n > 1 ? ` · para ${n} viajantes` : ''}</td><td class="pr">€${a}–${b}${n > 1 ? `<small>€${a * n}–${b * n}</small>` : ''}</td></tr></tfoot></table>
     <p>Valores pesquisados em nov/2026 para fevereiro de 2027: só ida, classe econômica, sem mala despachada (as low-cost cobram ~€25–45 por mala e por trecho). O mais barato costuma aparecer com 2 a 3 meses de antecedência; volte a Roma no dia anterior ao voo para o Brasil.</p></div>`;
 }
+/** Quadro do orçamento estimado do roteiro pronto (sem os voos do Brasil), por categoria, em € e R$. */
+function sugBudgetPageHTML(r) {
+  const T = travelers(), lines = sugBudget(r).filter(l => l.key !== 'voo-br'), t = budTotals(lines, T), days = diffDays(REAL_TRIP.start, REAL_TRIP.end) + 1;
+  const cats = BUD_CATS.filter(c => t.byCat[c.k] > 0), two = v => `${fmtCur(v, 'EUR')}<small>${fmtCur(v, 'BRL')}</small>`;
+  return `<div class="box full budget"><h3>${pic('moeda')}Orçamento estimado</h3>
+    <div class="bud-big"><div><b>${fmtCur(t.total / T, 'BRL')}</b><span>por pessoa · ${fmtCur(t.total / T, 'EUR')}</span></div><div><b>${fmtCur(t.total, 'BRL')}</b><span>para ${T} viajante${T > 1 ? 's' : ''}</span></div><div><b>${fmtCur(t.total / T / days, 'EUR')}</b><span>por pessoa por dia</span></div></div>
+    ${budBar(t, 'bud-bar')}
+    <table class="bud-tbl"><tbody>${cats.map(c => `<tr><td><span class="dot" style="background:${c.c}"></span><b>${esc(c.n)}</b><small>${lines.filter(l => l.cat === c.k).map(l => esc(l.title)).join(' · ')}</small></td><td class="v">${two(t.byCat[c.k])}</td></tr>`).join('')}
+      ${t.iof ? `<tr><td><span class="dot" style="background:${IOF_C}"></span><b>IOF de 3,5%</b><small>sobre o que é pago em moeda estrangeira: cartão, conta global, saque ou espécie</small></td><td class="v">${two(t.iof)}</td></tr>` : ''}</tbody>
+      <tfoot><tr><td>Total para ${T} viajante${T > 1 ? 's' : ''}, sem os voos do Brasil (já comprados)</td><td class="v">${two(t.total)}</td></tr></tfoot></table>
+    <p>Estimativa de nov/2026 para fevereiro de 2027: hotel 3–4★ em quarto duplo (média dos hotéis sugeridos em cada cidade), comida em restaurantes de preço médio, transporte local e ingressos pela média de cada país, trens pela duração do trecho comprando com antecedência e passagens entre países pela pesquisa acima. Câmbio do BCE: ${rateNote()}. Ao usar este roteiro no app, a aba Orçamento já vem preenchida com estes itens para você ajustar.</p></div>`;
+}
+/** Quadro dos documentos e do checklist para o roteiro pronto: o obrigatório e o que muda por passar pela Suíça, por outros países ou de carro. */
+function sugDocsPageHTML(r) {
+  const c = sugCtx(r), tags = 'e' + (c.ch ? 's' : '') + (c.eu ? 'u' : '') + (c.drive ? 'd' : '');
+  const pick = CL_LIB.filter(x => (x.must || x.tags !== 'e') && [...x.tags].some(t => tags.includes(t)) && (!x.when || x.when(c)));
+  const total = CL_LIB.filter(x => [...x.tags].some(t => (CL_TPL.completo + (c.drive ? 'd' : '')).includes(t)) && (!x.when || x.when(c))).length + r.atencao.length;
+  return `<div class="box full docs"><h3>${pic('info')}Documentos e checklist para este roteiro</h3>
+    <ul>${pick.map(x => `<li>${x.must ? '<span class="badge must">obrigatório</span> ' : ''}${esc(clVal(x.text, c))}</li>`).join('')}</ul>
+    ${c.drive ? '<p><b>Este roteiro sugere carro em algum trecho:</b> leve a CNH física e a PID (Permissão Internacional para Dirigir), tirada no DETRAN antes da viagem.</p>' : ''}
+    <p>Ao usar este roteiro no app, a aba Checklist já vem com <b>${total} itens</b>, com prazos: estes e o resto do modelo pesquisado (saúde, dinheiro e IOF, internet, mala de inverno e volta ao Brasil), mais os avisos “Antes de fechar” acima.</p></div>`;
+}
 /** Programa de um dia do roteiro pronto, com horários: as atividades do texto (com o trajeto entre elas) e as refeições — café, almoço, café da tarde quando citado e jantar. */
 function sugDaySchedHTML(s, txt, j, from, cafeAt) {
   const {acts, meals} = sugDayParse(txt, s.k, j ? '' : s.via);
@@ -10054,6 +10861,8 @@ function openSugRoteiro(id) {
       ${r.eventos.length ? `<div class="box gold full"><h3>${pic('calendario')}Acontece nas suas datas</h3><ul>${r.eventos.map(e => `<li><b>${esc(e.q)}</b> — ${esc(e.t)} <a href="${esc(e.u)}" target="_blank" rel="noopener">fonte ↗</a></li>`).join('')}</ul></div>` : ''}
       <div class="box warn full"><h3>${pic('alerta')}Antes de fechar</h3><ul>${r.atencao.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>
       ${passHTML(r)}
+      ${sugBudgetPageHTML(r)}
+      ${sugDocsPageHTML(r)}
       <div class="box full"><h3>${pic('compras')}Compras na viagem</h3><ul>${shop.map(a => `<li>${esc(a)}</li>`).join('')}</ul><p>Em cada cidade abaixo: onde tomar café, almoçar, lanchar e jantar, e onde comprar roupas e eletrônicos.</p></div>
       ${sections}
       <footer class="sources"><h3>Fontes da pesquisa</h3><ul>${fontes.map(k => `<li><a href="${esc(SUG_SRC[k][1])}" target="_blank" rel="noopener">${esc(SUG_SRC[k][0])}</a></li>`).join('')}</ul>
@@ -10160,7 +10969,7 @@ function timelineBody() {
 
 /* ======================= abas e init ======================= */
 const RENDER = {roteiro: renderBoard, mapa: renderMap, checklist: renderChecklist, hoteis: renderHotels, transporte: renderTransport, orcamento: renderBudget, info: renderInfo};
-const TABS_ON = ['mapa'];
+const TABS_ON = ['mapa', 'checklist', 'orcamento'];
 const tabOn = t => TABS_ON.includes(t);
 function setTab(tab) {
   if (!tabOn(tab)) tab = TABS_ON[0];
@@ -10328,6 +11137,15 @@ function xlsxSheets(D) {
   const CL = head('Checklist', `${state.checklist.filter(x => x.done).length} de ${state.checklist.length} feitos`, ['Categoria', 'Item', 'Prazo', 'Feito', 'Obrigatório']);
   state.checklist.forEach(x => CL.push([x.cat || '', {v: x.text, s: XS.text}, x.due ? {v: xlDate(x.due), s: XS.date} : '', {v: x.done ? 'Sim' : 'Não', s: x.done ? XS.text : XS.warn}, x.must ? 'Sim' : '']));
   sheets.push({name: 'Checklist', rows: CL, widths: [24, 60, 13, 9, 14], head: 3});
+  // Orçamento
+  if (state.budget?.on) {
+    const BI = state.budget.items, bt = budTotals(BI, T);
+    const OB = head('Orçamento', `${T} viajante${T > 1 ? 's' : ''} · câmbio ${rateNote()} · total ${fmtCur(bt.total, 'BRL')} (${fmtCur(bt.total, 'EUR')}) · já pago ${fmtCur(bt.paid, 'BRL')}`, ['Categoria', 'Item', 'Valor', 'Moeda', 'Valor é', 'Total em €', 'Total em R$', 'Pago']);
+    BUD_CATS.forEach(C => BI.filter(it => it.cat === C.k).forEach(it => { const v = itemEUR(it, T); OB.push([C.n, {v: it.title, s: XS.text}, {v: +it.amt || 0, s: XS.dec}, CUR_SYM[it.cur] || it.cur, it.per === 'p' ? 'por pessoa' : 'total', {v: round2(v), s: XS.eur}, {v: Math.round(fromEUR(v, 'BRL')), s: XS.int}, it.paid ? 'Sim' : {v: 'Não', s: XS.warn}]); }));
+    if (bt.iof) OB.push(['IOF', {v: 'IOF de 3,5% sobre o que é pago em moeda estrangeira', s: XS.text}, '', '', '', {v: round2(bt.iof), s: XS.eur}, {v: Math.round(fromEUR(bt.iof, 'BRL')), s: XS.int}, '']);
+    OB.push([{v: 'Total', s: XS.totLbl}, '', '', '', '', {v: round2(bt.total), s: XS.totEur}, {v: Math.round(fromEUR(bt.total, 'BRL')), s: XS.int}, '']);
+    sheets.push({name: 'Orçamento', rows: OB, widths: [26, 56, 12, 8, 12, 14, 14, 8], head: 3});
+  }
   return sheets;
 }
 function buildXlsx() {
@@ -10394,7 +11212,7 @@ function aiMarkdown() {
 function exportXlsx() {
   const name = exportName('xlsx');
   downloadBlob(buildXlsx(), name);
-  toast(`Planilha <b>${esc(name)}</b> gerada: Resumo, Dia a dia, Hotéis, Transportes, Deslocamentos e Checklist.`);
+  toast(`Planilha <b>${esc(name)}</b> gerada: Resumo, Dia a dia, Hotéis, Transportes, Deslocamentos, Checklist${state.budget?.on ? ' e Orçamento' : ''}.`);
 }
 function exportMd(copy) {
   const md = aiMarkdown();

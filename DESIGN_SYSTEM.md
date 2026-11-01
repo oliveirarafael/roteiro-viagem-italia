@@ -189,6 +189,12 @@ Caixa alta só em etiquetas curtas (`letter-spacing .05–.08em`).
 | **Roteiro pronto** | `.rs-item` | título, rota em pílulas coloridas com noites, resumo, linhas informativas (`.rs-time` deslocamento, `.rs-fly` passagens em azul) e ações; `.cur` com borda verde quando é o roteiro em uso. |
 | **Bilhete** | `.ticket` | grade com ícone, data, descrição e preço separado por traço tracejado. |
 | **Medalha** | `.medal-big` | círculo de papel com borda na cor da seção e `--sh-ink-md`, ilustração dentro. |
+| **Cartão de escolha** | `.pick-card` | primeira tela do Checklist e do Orçamento ("em branco" × "preenchido"): faixa de 9px na cor da opção (`--c`), medalha de ícone 54px, título Lilita 27px com contorno, número grande, botão no rodapé; `.pk-badge` (post-it amarelo girado) marca a recomendada. |
+| **Pacote** | `.pack-chip` | pílula branca com ícone em `.ic-dot`, nome em negrito e `small` com quanto acrescenta ("+8 itens"); `.done` esmaecido quando já está tudo na lista. |
+| **Painel de documentos** | `.docs` / `.doc-card` / `.doc-row` | `<details>` com carimbo tracejado azul e bandeiras dos países do roteiro; cartões com cabeçalho cheio na cor do tema; cada linha tem ícone, explicação, fontes oficiais e `.tag` (`req` obrigatório, `rec` recomendado, `cond` condicional, `inf` saiba) + botão "+ checklist". Bandeiras em SVG (`flagSvg`), nunca emoji. |
+| **KPI do orçamento** | `.bud-kpi` | cartão de papel com régua lateral de 7px e círculo translúcido na cor (`--c`); valor em Lilita com contorno; `.kbar` para progresso (listrado em vermelho quando passa do teto). |
+| **Rosca do orçamento** | `donutSVG()` + `.dleg` | rosca de 190px com contorno de tinta e total no centro; legenda clicável leva à categoria. Cores das categorias em `BUD_CATS`. |
+| **Item de orçamento** | `.bud-row` | duas linhas: marcador "pago" + título editável; valor, moeda (R$, €, US$, CHF), "total/por pessoa", selos `.est-chip` (estimativa) e `.paid-chip`, e o valor convertido à direita. |
 
 ---
 
