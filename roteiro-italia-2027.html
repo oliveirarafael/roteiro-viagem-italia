@@ -656,6 +656,11 @@ body.hm-on main *{cursor:crosshair!important}
 .rs-route span{background:var(--c);color:#fff;border-radius:999px;padding:1px 4px 1px 8px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px}
 .rs-route i{font-style:normal;background:rgba(255,255,255,.28);border-radius:999px;padding:0 5px;font-size:10px}
 .rs-item small{font-size:11.5px;color:#6b5a44;line-height:1.35}
+.rs-item.cur{border-color:#15803d;background:#f3fbf5}
+.rs-use{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.rs-use .ink-btn{font-size:11.5px;padding:2px 9px}
+.rs-cur{color:#15803d;font-weight:800;font-size:12px}
+.rs-item small.rs-out{font-style:italic;color:#8a7a62}
 .card.is-min>:not(h3,h4){display:none}
 .card.is-min h3,.card.is-min h4{margin:0}
 .city-side h4 .card-min{width:22px;height:22px;font-size:11px;box-shadow:1.5px 1.5px 0 var(--ink)}
@@ -5937,6 +5942,8 @@ const LEGS = {
   'bari|bolonha': ['trem', 315, 'Frecciarossa pela costa adriática'], 'bari|milao': ['trem', 410, 'Frecciarossa, direto'], 'lecce|milao': ['trem', 510, 'Frecciarossa ou trem noturno'],
   'catania|milao': ['voo', 105, 'voo (+ ~2h de aeroportos)'], 'milao|palermo': ['voo', 105, 'voo (+ ~2h de aeroportos)'], 'cagliari|milao': ['voo', 85, 'voo (+ ~2h de aeroportos)'],
   'catania|napoles': ['voo', 60, 'voo (ou trem ~7h com travessia de balsa)'], 'bergamo|lago-como': ['carro', 60, 'carro (de trem ~1h45 via Milão)'], 'bergamo|verona': ['trem', 75, 'regional/Frecce'], 'lago-como|lago-garda': ['carro', 150, 'carro (de trem ~2h30 via Milão)'],
+  'lago-como|roma': ['trem', 240, 'trem até Milão (~1h) + Frecciarossa até Roma (2h55)'], 'lago-como|verona': ['trem', 140, 'trem até Milão + Frecciarossa até Verona'],
+  'roma|zermatt': ['trem', 420, 'trem até Visp + EuroCity até Milão + Frecciarossa até Roma'], 'bolonha|lucca': ['trem', 135, 'regional até Florença + Frecciarossa'],
 };
 const MODE = {trem: ['Trem', 'trem', '#8a4b2a'], onibus: ['Ônibus', 'onibus', '#4d7c0f'], barco: ['Balsa', 'barco', '#1f78ad'], voo: ['Avião', 'voo', '#56657a'], carro: ['Carro', 'carro', '#b45309']};
 const fmtDur = m => { m = Math.round(m); return m < 60 ? `${m} min` : `${Math.floor(m / 60)}h${String(m % 60).padStart(2, '0')}`; };
@@ -6235,6 +6242,11 @@ function planEndsHTML() {
 const BALKANS = [[45.2, 16], [45.17, 14.69], [44.95, 14.85], [44.55, 15.05], [44.1, 15.25], [43.75, 15.75], [43.5, 16.3], [43.25, 16.95], [43.0, 17.45], [42.65, 18.05], [42.4, 18.55], [42.1, 19.1], [41.85, 19.38], [41.4, 19.45], [40.95, 19.42], [40.45, 19.4], [40.05, 19.85], [39.7, 20.05], [39.3, 20.3], [38.8, 20.65], [38.2, 21.2], [37.9, 21.15], [37.6, 21.65], [36.8, 21.7], [36.3, 22.5], [36.3, 23.5], [45.2, 23.5]];
 const PLAN_MAP = (() => { const k = 64, c = 0.743, lo0 = 6.4, la1 = 47.3; return {W: Math.round((18.7 - lo0) * c * k), H: Math.round((la1 - 36.4) * k), p: (lat, lon) => [(lon - lo0) * c * k, (la1 - lat) * k]}; })();
 const ZOOM_MAX = 2.5;
+/** Nome curto no mapa quando o nome inteiro não cabe (os demais encurtam no “ e ”). */
+const SHORT_NAME = {'costa-amalfi': 'Amalfi', 'lago-garda': 'Garda', 'lago-como': 'L. de Como', 'val-dorcia': 'Val d’Orcia', 'san-gimignano': 'S. Gimignano'};
+/** Direções para o rótulo em volta do ponto: 8 perto e 16 quando vai longe, com linha-guia. */
+const DIRS8 = [[1, 0], [-1, 0], [0, -1], [0, 1], [.75, -.75], [-.75, -.75], [.75, .75], [-.75, .75]];
+const DIRS16 = [...DIRS8, ...[-67.5, -22.5, 22.5, 67.5, 112.5, 157.5, 202.5, 247.5].map(a => [Math.cos(a * Math.PI / 180), Math.sin(a * Math.PI / 180)])];
 const planZoom = {z: 1, cx: PLAN_MAP.W / 2, cy: PLAN_MAP.H / 2};
 function planViewBox() {
   const {W, H} = PLAN_MAP, w = W / planZoom.z, h = H / planZoom.z;
@@ -6277,17 +6289,19 @@ function planMapSVG() {
   const txt = (t, a, b, o = {}) => { const [x, y] = p(a, b); return `<text x="${rn(x)}" y="${rn(y)}" text-anchor="middle" font-size="${o.size || 14}" fill="${o.fill || '#2f6d8f'}" class="f-bold" letter-spacing="${o.ls || 3}" opacity="${o.op ?? .7}" ${o.rot ? `transform="rotate(${o.rot} ${rn(x)} ${rn(y)})"` : ''}>${t}</text>`; };
   s += txt('MAR TIRRENO', 40.3, 11.6, {size: 18}) + txt('MAR ADRIÁTICO', 43.2, 15.2, {size: 15, rot: -38}) + txt('MAR JÔNICO', 38.4, 18.0, {size: 14}) + txt('MAR LÍGURE', 43.65, 8.6, {size: 13}) + txt('SUÍÇA', 46.75, 8.3, {size: 13, fill: '#b0413e'});
   // rota
+  const legBoxes = [];
   for (let i = 1; i < seq.length; i++) {
     const a = seq[i - 1], b = seq[i]; if (a.k === b.k) continue;
     const L = legInfo(a, b), [x1, y1] = p(a.lat, a.lon), [x2, y2] = p(b.lat, b.lon), col = MODE[L.mode][2];
     const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, bend = Math.min(30, len * .18);
     const cx = mx - dy / len * bend, cy = my + dx / len * bend;
     s += `<path d="M${rn(x1)} ${rn(y1)}Q${rn(cx)} ${rn(cy)} ${rn(x2)} ${rn(y2)}" fill="none" stroke="${col}" stroke-width="3.2" stroke-dasharray="${L.mode === 'voo' ? '7 7' : L.mode === 'barco' ? '2 6' : '10 6'}" stroke-linecap="round" class="route-anim"/>`;
-    if (len > 46) { const bx = (x1 + 2 * cx + x2) / 4, by = (y1 + 2 * cy + y2) / 4; s += `<g class="pl-leg" transform="translate(${rn(bx)},${rn(by)})"><title>${MODE[L.mode][0]} ${a.name} → ${b.name}: ${fmtDur(L.min)}</title><circle r="11" fill="#fffaf0" stroke="${col}" stroke-width="2.2"/><use href="#ic-${MODE[L.mode][1]}" x="-7.5" y="-7.5" width="15" height="15" color="${col}"/></g>`; }
+    if (len > 46) { const bx = (x1 + 2 * cx + x2) / 4, by = (y1 + 2 * cy + y2) / 4; legBoxes.push({x0: bx - 12, x1: bx + 12, y0: by - 12, y1: by + 12, dot: [bx, by, 12]}); s += `<g class="pl-leg" transform="translate(${rn(bx)},${rn(by)})"><title>${MODE[L.mode][0]} ${a.name} → ${b.name}: ${fmtDur(L.min)}</title><circle r="11" fill="#fffaf0" stroke="${col}" stroke-width="2.2"/><use href="#ic-${MODE[L.mode][1]}" x="-7.5" y="-7.5" width="15" height="15" color="${col}"/></g>`; }
   }
   // cidades
-  const labels = [], boxes = [];
+  const labels = [], boxes = [...legBoxes], dotBox = new Map();
   const fits = r => !boxes.some(o => r.x0 < o.x1 && r.x1 > o.x0 && r.y0 < o.y1 && r.y1 > o.y0);
+  const segPts = (x1, y1, x2, y2) => { const n = Math.max(1, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 3)); return Array.from({length: n + 1}, (_, i) => [x1 + (x2 - x1) * i / n, y1 + (y2 - y1) * i / n]); };
   const ordered = [...IT_CITIES].sort((a, b) => (inPlan.has(a.k) - inPlan.has(b.k)) || (a.k === planSel) - (b.k === planSel));
   let dots = '';
   const step = planStep();
@@ -6300,19 +6314,42 @@ function planMapSVG() {
     dots += `<g class="pl-city ${on ? 'on' : ''} ${sel ? 'sel' : ''}" data-city="${c.k}" transform="translate(${rn(x)},${rn(y)})" role="button" aria-label="${esc(c.name)} — ${esc(c.reg)}${tip}">
       <circle r="16" fill="transparent"/>${sel ? `<rect x="${-rw - 6}" y="-17" width="${2 * rw + 12}" height="34" rx="17" fill="none" stroke="#f59e0b" stroke-width="4"/>` : ''}
       ${on ? `<rect x="${-rw}" y="-11" width="${2 * rw}" height="22" rx="11" fill="${col}" stroke="${INK}" stroke-width="2.5"/><text y="4.5" text-anchor="middle" font-size="${nums.length > 1 ? 11 : 12}" class="f-bold" fill="#fff">${numTxt}</text>` : `<circle r="6" fill="${col}" stroke="${INK}" stroke-width="2"/>`}${badge}</g>`;
-    boxes.push({x0: x - (on ? rw + 1 : 7), x1: x + (on ? rw + 1 : 7), y0: y - (on ? 12 : 7), y1: y + (on ? 12 : 7)});
+    const b = {x0: x - (on ? rw + 1 : 7), x1: x + (on ? rw + 1 : 7), y0: y - (on ? 12 : 7), y1: y + (on ? 12 : 7), dot: on ? null : [x, y]};
+    boxes.push(b); dotBox.set(c.k, b);
   });
-  ordered.slice().reverse().forEach(c => {
-    const on = inPlan.has(c.k), sel = c.k === planSel;
-    const [x, y] = p(c.lat, c.lon), fs = on || sel ? 13 : 10.5, w = c.name.length * fs * .56 + 6, h = fs + 3, off = on ? Math.max(14, inPlan.get(c.k).join('·').length * 4 + 9) : 9;
-    const cands = [[off, -h / 2, 'start'], [-off - w, -h / 2, 'end'], [-w / 2, -off - h, 'middle'], [-w / 2, off, 'middle']];
-    for (const [dx, dy, anchor] of cands) {
-      const r = {x0: x + dx, x1: x + dx + w, y0: y + dy, y1: y + dy + h};
-      if (r.x0 < 2 || r.x1 > W - 2 || !fits(r)) continue;
+  // rótulos: primeiro as cidades do roteiro e as maiores; quem não cabe colado no ponto vai mais longe, com linha-guia, fonte menor ou nome curto
+  const pos = new Map(IT_CITIES.map(c => [c.k, p(c.lat, c.lon)]));
+  const gap = new Map(IT_CITIES.map(c => [c.k, Math.min(...IT_CITIES.filter(o => o !== c).map(o => Math.hypot(pos.get(o.k)[0] - pos.get(c.k)[0], pos.get(o.k)[1] - pos.get(c.k)[1])))]));
+  const labelOrder = [...IT_CITIES].sort((a, b) => (inPlan.has(b.k) || b.k === planSel) - (inPlan.has(a.k) || a.k === planSel) || gap.get(a.k) - gap.get(b.k));
+  labelOrder.forEach(c => {
+    const on = inPlan.has(c.k), sel = c.k === planSel, [x, y] = p(c.lat, c.lon), big = on || sel;
+    const short = SHORT_NAME[c.k] || c.name.split(' e ')[0], base = big ? 13 : 10.5;
+    const off = on ? Math.max(14, inPlan.get(c.k).join('·').length * 4 + 9) : 9;
+    const tries = [[c.name, base, 0], [short, base, 0], [c.name, base - 1.5, 0], [short, base - 1.5, 0], [c.name, base - 1.5, 10], [short, base - 1.5, 10], [c.name, base - 1.5, 22], [short, base - 1.5, 22], [short, base - 1.5, 36], [short, base - 1.5, 52], [short, base - 1.5, 72], [short, base - 1.5, 95]];
+    place: for (const strict of [true, false]) for (const [name, fs, extra] of tries) {
+      if (!strict && !extra) continue;
+      const dirs = extra < 22 ? DIRS8 : DIRS16;
+      const w = name.length * fs * .56 + 6, h = fs + 3, d = off + extra;
+      const own = dotBox.get(c.k);
+      const leader = r => {
+        const lx = Math.min(Math.max(x, r.x0), r.x1), ly = Math.min(Math.max(y, r.y0), r.y1), len = Math.hypot(lx - x, ly - y) || 1;
+        return [x + (lx - x) / len * 7, y + (ly - y) / len * 7, lx, ly];
+      };
+      const lineFree = r => segPts(...leader(r)).every(([px, py]) => !boxes.some(o => o !== own && (o.dot ? Math.hypot(px - o.dot[0], py - o.dot[1]) < (o.dot[2] || 7.5) : strict && px > o.x0 && px < o.x1 && py > o.y0 && py < o.y1)));
+      const r = dirs.map(([ux, uy]) => {
+        const x0 = ux > .2 ? x + ux * d : ux < -.2 ? x + ux * d - w : x - w / 2, y0 = uy > .2 ? y + uy * d : uy < -.2 ? y + uy * d - h : y - h / 2;
+        return {x0, x1: x0 + w, y0, y1: y0 + h, ux: Math.abs(ux) > .2 ? ux : 0};
+      }).find(r => r.x0 >= 2 && r.x1 <= W - 2 && r.y0 >= 2 && r.y1 <= H - 2 && fits(r) && (!extra || lineFree(r)));
+      if (!r) continue;
       boxes.push(r);
-      const tx = anchor === 'start' ? r.x0 + 2 : anchor === 'end' ? r.x1 - 2 : (r.x0 + r.x1) / 2;
-      labels.push(`<text x="${rn(tx)}" y="${rn(r.y1 - 3)}" text-anchor="${anchor}" font-size="${fs}" class="${on || sel ? 'f-bold' : 'f-hand'}" fill="${INK}" paint-order="stroke" stroke="#fffaf0" stroke-width="3.5" stroke-linejoin="round" pointer-events="none">${esc(c.name)}</text>`);
-      break;
+      const anchor = r.ux > 0 ? 'start' : r.ux < 0 ? 'end' : 'middle', tx = anchor === 'start' ? r.x0 + 2 : anchor === 'end' ? r.x1 - 2 : (r.x0 + r.x1) / 2;
+      if (extra) {
+        const [x1, y1, x2, y2] = leader(r);
+        segPts(x1, y1, x2, y2).forEach(([px, py]) => boxes.push({x0: px - 1.5, x1: px + 1.5, y0: py - 1.5, y1: py + 1.5}));
+        labels.push(`<line x1="${rn(x1)}" y1="${rn(y1)}" x2="${rn(x2)}" y2="${rn(y2)}" stroke="${INK}" stroke-width="1" opacity=".55" pointer-events="none"/>`);
+      }
+      labels.push(`<text x="${rn(tx)}" y="${rn(r.y1 - 3)}" text-anchor="${anchor}" font-size="${fs}" class="${big ? 'f-bold' : 'f-hand'}" fill="${INK}" paint-order="stroke" stroke="#fffaf0" stroke-width="3.5" stroke-linejoin="round" pointer-events="none">${esc(name)}</text>`);
+      break place;
     }
   });
   s += dots + labels.join('');
@@ -6400,16 +6437,36 @@ function planAdviceHTML() {
     ${notes.length ? `<ul class="adv-notes">${notes.map(n => `<li>${n}</li>`).join('')}</ul>` : ''}
     ${opts.map(optHTML).join('')}${sugRoteirosHTML()}</div>`;
 }
-/** Roteiros prontos (pesquisados) para as datas dos voos, agrupados por tipo; “Detalhes” abre a página do roteiro numa nova aba. */
+/** Roteiros prontos (pesquisados) para as datas dos voos, agrupados por tipo; “Detalhes” abre a página do roteiro numa nova aba e “Usar” leva as cidades para o planejador. */
 function sugRoteirosHTML() {
-  return `<div class="rs-head"><b>Roteiros prontos para as suas datas</b><small>${fmtBR(REAL_TRIP.start)} a ${fmtBR(REAL_TRIP.end)} · 16 noites · chegada e volta por Roma · pesquisados em guias e sites oficiais (nov/2026)</small></div>
+  return `<div class="rs-head"><b>Roteiros prontos para as suas datas</b><small>${fmtBR(REAL_TRIP.start)} a ${fmtBR(REAL_TRIP.end)} · 16 noites · chegada e volta por Roma · pesquisados em guias e sites oficiais (nov/2026) · cada um traz onde tomar café, almoçar, lanchar, jantar e comprar roupas e eletrônicos</small></div>
     ${Object.entries(SUG_CATS).map(([cat, label]) => {
       const list = SUG_ROTEIROS.filter(r => r.cat === cat); if (!list.length) return '';
-      return `<div class="rs-group"><div class="rs-gt">${esc(label)}</div>${list.map(r => `<div class="rs-item">
+      return `<div class="rs-group"><div class="rs-gt">${esc(label)}</div>${list.map(r => {
+        const out = [...new Set(r.stops.filter(s => !s.k).map(s => s.nome))], cur = sugIsCurrent(r);
+        return `<div class="rs-item ${cur ? 'cur' : ''}">
         <div class="rs-top"><b>${esc(r.nome)}</b><button type="button" class="ink-btn small" data-sugr="${r.id}" title="Abrir o roteiro detalhado numa nova aba">Detalhes ↗</button></div>
         <div class="rs-route">${r.stops.map(s => `<span style="--c:${cityColor(s.nome)}">${esc(s.nome)} <i>${s.n}</i></span>`).join('')}</div>
-        <small>${esc(r.resumo)}</small></div>`).join('')}</div>`;
+        <small>${esc(r.resumo)}</small>
+        <div class="rs-use">${cur ? '<span class="rs-cur">✓ É o roteiro que você está seguindo</span>' : out.length ? `<small class="rs-out">${esc(out.length > 1 ? `${out.slice(0, -1).join(', ')} e ${out.at(-1)}` : out[0])} ${out.length > 1 ? 'ficam' : 'fica'} fora do mapa do planejador: use este como inspiração.</small>`
+          : `<button type="button" class="ink-btn small primary" data-sugr-use="${r.id}" title="Troca as cidades do roteiro aberto por estas, com as mesmas noites">Usar no meu roteiro</button><button type="button" class="ink-btn small" data-sugr-save="${r.id}" title="Cria um roteiro novo com estas cidades; o atual não muda">Salvar como novo roteiro</button>`}</div></div>`;
+      }).join('')}</div>`;
     }).join('')}`;
+}
+/** Paradas do roteiro pronto ajustadas à chegada e à saída do plano (se a 1ª cidade não for a do pouso, ela ganha 1 noite tirada da estadia mais longa; no empate, da última). */
+function sugStops(r, P) {
+  const st = r.stops.map(s => ({k: s.k, n: s.n})), entry = P.entry || st[0].k, exit = P.exit || st.at(-1).k;
+  const take = () => { const m = st.reduce((a, b) => (b.n >= a.n ? b : a)); m.n--; };
+  if (st[0].k !== entry) { take(); st.unshift({k: entry, n: 1}); }
+  if (st.at(-1).k !== exit) { take(); st.push({k: exit, n: 1}); }
+  return {st, entry, exit};
+}
+const sugIsCurrent = r => r.stops.every(s => s.k) && sugStops(r, plan()).st.map(s => `${s.k}:${s.n}`).join() === plan().cities.map(pc => `${pc.k}:${pc.n}`).join();
+/** Troca as cidades do plano pelas do roteiro pronto, reaproveitando as paradas que já existem (com as atividades escolhidas). */
+function applySugPlan(P, r) {
+  const {st, entry, exit} = sugStops(r, P), pool = P.cities.slice();
+  P.cities = st.map(s => { const i = pool.findIndex(pc => pc.k === s.k), pc = i >= 0 ? pool.splice(i, 1)[0] : newStop(s.k); pc.fix = s.n; return pc; });
+  Object.assign(P, {entry, exit, nModel: 2});
 }
 /** Avisos e ordens melhores do planejador (o mesmo que aparece em "Sugestões para o seu roteiro"). */
 function planAdviceData() {
@@ -6863,6 +6920,8 @@ function setupPlanner() {
     if (Date.now() - planDragEnd < 250) return;
     const sr = e.target.closest('[data-sugr]');
     if (sr) { openSugRoteiro(sr.dataset.sugr); return; }
+    const su = e.target.closest('[data-sugr-use], [data-sugr-save]');
+    if (su) { useSugRoteiro(SUG_ROTEIROS.find(r => r.id === (su.dataset.sugrUse || su.dataset.sugrSave)), !!su.dataset.sugrSave); return; }
     const city = e.target.closest('.pl-city');
     if (city && planStep()) { pickCity(planStep(), city.dataset.city); return; }
     if (city) { planSel = city.dataset.city; renderMap(); $('#tab-mapa .plan-left')?.scrollIntoView({behavior: 'smooth', block: 'nearest'}); return; }
@@ -6942,6 +7001,27 @@ function setupPlanner() {
     $('#tab-mapa .pl-side-main').innerHTML = planSideHTML();
     const s = $('#tab-mapa .pl-search'); s.focus(); s.setSelectionRange(s.value.length, s.value.length);
   });
+}
+
+/** “Usar no meu roteiro” troca as cidades do roteiro aberto; “Salvar como novo” cria outro roteiro com elas e abre. */
+function useSugRoteiro(r, asNew) {
+  if (!r) return;
+  const names = sugStops(r, plan()).st.map(s => CAT[s.k].name).join(' → ');
+  if (asNew) {
+    const copy = JSON.parse(JSON.stringify(state)), from = state.title;
+    applySugPlan(copy.plan, r);
+    copy.title = r.nome;
+    addTrip(copy);
+    toast(`Roteiro <b>${esc(r.nome)}</b> criado e aberto: ${esc(names)}. O original (“${esc(from)}”) continua em Meus roteiros.`);
+    return;
+  }
+  const keep = new Set(r.stops.map(s => s.k));
+  const lost = state.days.filter(d => d.pck && !keep.has(d.pck)).reduce((a, d) => a + d.items.filter(it => !isAuto(it)).length, 0);
+  if (!confirm(`Seguir o roteiro “${r.nome}” em “${state.title}”?\n\nAs cidades passam a ser: ${names}, com as noites sugeridas. ${lost ? `Saem ${lost} atividade${lost > 1 ? 's' : ''} escolhida${lost > 1 ? 's' : ''} em cidades que não estão nele; as das outras cidades continuam. ` : ''}${realNow() ? 'Os voos e as datas não mudam. ' : ''}Dá para desfazer.`)) return;
+  commit(() => applySugPlan(plan(), r));
+  planSel = null;
+  toast(`Agora você segue <b>${esc(r.nome)}</b>: ${esc(names)}. Escolha os lugares de cada cidade no “Mapa do roteiro”.`, '<button data-t="undo">Desfazer</button>', undo);
+  $('#tab-mapa .plan-grid')?.scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 
 /* ---------- interação ---------- */
@@ -7544,7 +7624,7 @@ function openNewTripModal() {
 // Modo de revisão: clique em qualquer elemento para pedir um ajuste; a lista vira um .md para a IA aplicar em sequência.
 const HM_KEY = 'homologacao-v1';
 /** hm-id dos ajustes que a IA já aplicou: ao abrir a página, o painel marca cada um como feito (uma vez; depois o usuário pode desmarcar). */
-const HM_FEITOS = ['vnqdznqs', '4aog7rik', '6222mix3', 'wigglhem', '6ewm0od8', 'si83ajlf', 'p47gtk03', 'k8qk3lhw', 'evyeyftn', 'qcfqzmqa', 'oi1cqijq', 'oejf85vp', 'sbbwvj41', 'mndd7vm5', '0qbhbd0g', 'hasp0a9i'];
+const HM_FEITOS = ['vnqdznqs', '4aog7rik', '6222mix3', 'wigglhem', '6ewm0od8', 'si83ajlf', 'p47gtk03', 'k8qk3lhw', 'evyeyftn', 'qcfqzmqa', 'oi1cqijq', 'oejf85vp', 'sbbwvj41', 'mndd7vm5', '0qbhbd0g', 'hasp0a9i', '9s14e13m', 'ywbcxdt8', 't33jalcp', 'ryhxkv9y'];
 const HM_UI = '#hmPanel, #hmPop, #hmBtn, .hm-mark, #hmBox';
 const hm = {on: false, items: [], cur: null, el: null, ui: {min: false, pos: null}};
 try { const x = JSON.parse(localStorage.getItem(HM_KEY)); hm.items = x?.items || []; hm.ui = {...hm.ui, ...(x?.ui || {})}; } catch (e) { hm.items = []; }
@@ -7811,7 +7891,7 @@ function setupHomologacao() {
 
 /* ======================= roteiros prontos (pesquisa nov/2026) ======================= */
 // Todos encaixam nos voos comprados: chegada a Roma dom 07/02 06:40, volta de Roma ter 23/02 22:30 (16 noites).
-const SUG_CATS = {classico: 'Clássicos — os mais feitos', alternativo: 'Menos comuns', suica: 'Com a Suíça', vizinhos: 'Com países vizinhos', europa: 'Com Espanha, França ou Portugal'};
+const SUG_CATS = {classico: 'Clássicos — os mais feitos', equilibrado: 'Mais distribuídos — até 3 noites por cidade', alternativo: 'Menos comuns', suica: 'Com a Suíça', vizinhos: 'Com países vizinhos', europa: 'Com Espanha, França ou Portugal'};
 const SUG_SRC = {
   rs: ['Rick Steves — prioridades por número de dias na Itália', 'https://www.ricksteves.com/europe/italy/itinerary'],
   it: ['ItalyTourism.org — 14 dias na Itália: rotas clássicas', 'https://www.italytourism.org/2-week-italy-itinerary/'],
@@ -7834,9 +7914,180 @@ const SUG_SRC = {
   fo: ['FlightsFrom — voos diretos Roma ↔ Porto', 'https://www.flightsfrom.com/FCO-OPO'],
   rv: ['Roamvisa — Paris, Roma e Barcelona em 14 dias', 'https://roamvisa.com/blog/14-day-europe-itinerary/'],
   ct: ['Cinque Terre no inverno: o que abre e fecha', 'https://cinqueterrefromflorence.tours/cinque-terre-winter-whats-open-closed.html'],
+  ia: ['Italia Mia — Itália de norte a sul em 2 semanas de trem', 'https://www.italiamia.com/travel/plan-your-trip/italy-north-south/'],
+  sg: ['Short Stay Guide — 14 dias na Itália, noites por cidade', 'https://shortstayguide.com/itineraries/italy-in-14-days/'],
+  bx: ['Bernina Express saindo de Milão: o que cabe em 1 noite', 'https://berninaexpressmilanto.com/zermatt/'],
+  sd: ['Saldi invernali 2027 — datas por região', 'https://shopping.muchita.ai/it/guides/january-sales/'],
+  tf: ['Agenzia delle Dogane — reembolso do IVA (tax free) para turistas', 'https://vatrefund.adm.gov.it/howto'],
+  rf: ['Receita Federal — cota de isenção e free shop', 'https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/viagens-internacionais/guia-do-viajante/entrada-no-brasil/cota-de-isencao-duty-free-e-bagagem-tributavel'],
+  ch: ['Alfândega suíça — tax free a partir de CHF 300', 'https://www.bazg.admin.ch/en/leaving-switzerland-with-personal-goods'],
 };
+/** Onde tomar café, almoçar, lanchar, jantar e comprar em cada parada dos roteiros prontos (casas tradicionais; confira horários de inverno). */
+const SUG_COMER = (() => {
+  const M = (nome, dica) => ({nome, dica});
+  return {
+    'Roma': {cafe: [M('Sant’Eustachio Il Caffè', 'espresso e cornetto no balcão, ao lado do Pantheon'), M('Roscioli Caffè Pasticceria', 'maritozzo com creme, perto do Campo de’ Fiori'), M('Antico Caffè Greco', 'o café mais antigo de Roma (1760), na Via dei Condotti')],
+      almoco: [M('Forno Campo de’ Fiori', 'pizza bianca e rossa al taglio para comer andando'), M('Pizzarium Bonci', 'pizza al taglio famosa, perto dos Museus Vaticanos'), M('Mercato di Testaccio', 'bancas de comida de rua romana: supplì e sanduíches')],
+      tarde: [M('Giolitti', 'gelato desde 1900, perto do Pantheon'), M('Fatamorgana', 'gelato artesanal em Monti e Trastevere'), M('Pasticceria Regoli', 'maritozzo e doces romanos no Esquilino')],
+      jantar: [M('Da Enzo al 29', 'carbonara e cacio e pepe em Trastevere; chegue cedo, há fila'), M('Armando al Pantheon', 'trattoria clássica desde 1961; reserve'), M('Felice a Testaccio', 'cacio e pepe montada na mesa; reserve')],
+      roupa: 'Via del Corso (Zara, H&M, OVS e marcas italianas) e Via Cola di Rienzo, em Prati, mais tranquila; grifes na Via dei Condotti; Castel Romano Designer Outlet (ônibus saindo de Termini, ~45 min). No Lácio as liquidações devem ir só até ~15/02: compre roupa em Roma no começo da viagem.',
+      eletro: 'Apple Via del Corso e as redes MediaWorld, Unieuro e Euronics; peça a nota tax free com o passaporte.'},
+    'Florença': {cafe: [M('Ditta Artigianale', 'café especial e brunch (Sant’Ambrogio e Oltrarno)'), M('Caffè Gilli', 'café histórico de 1733 na Piazza della Repubblica')],
+      almoco: [M('All’Antico Vinaio', 'schiacciata recheada na Via dei Neri'), M('Mercato Centrale', 'praça de alimentação no 1º andar do mercado de San Lorenzo'), M('Da Nerbone', 'lampredotto e bollito dentro do Mercato Centrale')],
+      tarde: [M('Gelateria dei Neri', 'gelato perto de Santa Croce'), M('Vivoli', 'gelato histórico e affogato'), M('Caffè Gilli', 'chocolate quente denso no inverno')],
+      jantar: [M('Trattoria Sostanza', 'frango na manteiga e bistecca; reserve'), M('Buca Mario', 'bistecca alla fiorentina numa adega de 1886'), M('Trattoria Za Za', 'clássica e animada, ao lado do Mercato Centrale')],
+      roupa: 'Via Roma e Via dei Calzaiuoli (lojas de rede), Via de’ Tornabuoni (grifes) e o mercado de couro de San Lorenzo (negocie e prefira lojas com nota fiscal). Outlets: The Mall Firenze (Leccio, ônibus ~50 min) e Barberino Designer Outlet. Na Toscana as liquidações devem ir até ~05/03.',
+      eletro: 'MediaWorld e Unieuro; não há loja da Apple no centro histórico.'},
+    'Veneza': {cafe: [M('Pasticceria Tonolo', 'frittelle de Carnaval em fevereiro (Dorsoduro)'), M('Rosa Salva', 'cornetto e café, confeitaria tradicional')],
+      almoco: [M('Cantina Do Mori', 'cicchetti no Rialto, num bacaro do século XV'), M('All’Arco', 'cicchetti feitos na hora, perto do mercado do Rialto'), M('Dal Moro’s', 'massa fresca para levar')],
+      tarde: [M('Caffè Florian', 'chocolate quente com música na Praça São Marcos (caro, desde 1720)'), M('Gelatoteca Suso', 'gelato perto do Rialto')],
+      jantar: [M('Antiche Carampane', 'frutos do mar em San Polo; reserve'), M('Osteria alle Testiere', 'pequena e disputada em Castello; reserve'), M('Trattoria Al Gatto Nero', 'risoto de peixe em Burano (almoço no dia das ilhas)')],
+      roupa: 'Mercerie e Calle Larga XXII Marzo (grifes); vidro de Murano só com o selo “Vetro Artistico Murano”; máscaras artesanais. Outlet: Noventa di Piave Designer Outlet (ônibus do Piazzale Roma, ~45 min). No Vêneto as liquidações vão até 28/02.',
+      eletro: 'Pouca opção na ilha: deixe os eletrônicos para Milão ou Roma.'},
+    'Milão': {cafe: [M('Pasticceria Marchesi', 'cappuccino e doces finos (Galleria e Via Santa Maria alla Porta)'), M('Cova Montenapoleone', 'café histórico de 1817 no bairro da moda')],
+      almoco: [M('Luini', 'panzerotti fritos ao lado do Duomo'), M('Spontini', 'pizza de massa alta no Corso Buenos Aires'), M('Mercato Centrale Milano', 'praça de alimentação na Stazione Centrale')],
+      tarde: [M('Camparino in Galleria', 'aperitivo histórico na Galleria'), M('Navigli', 'aperitivo com petiscos à beira dos canais')],
+      jantar: [M('Trattoria Milanese', 'cotoletta e risoto perto do Duomo; reserve'), M('Ratanà', 'risoto alla milanese no Isola; reserve'), M('Antica Trattoria della Pesa', 'ossobuco numa trattoria de 1880')],
+      roupa: 'Corso Buenos Aires (uma das ruas comerciais mais longas da Europa, lojas de rede), Corso Vittorio Emanuele II e a Rinascente ao lado do Duomo; grifes no Quadrilatero della Moda (Via Montenapoleone). Outlet: Serravalle Designer Outlet (ônibus ~1h). Na Lombardia as liquidações devem ir até ~05/03.',
+      eletro: 'A melhor parada para eletrônicos: Apple Piazza Liberty, MediaWorld e Unieuro no centro.'},
+    'Nápoles': {cafe: [M('Gran Caffè Gambrinus', 'café e sfogliatella na Piazza del Plebiscito'), M('Pasticceria Mary', 'sfogliatella quentinha na Galleria Umberto')],
+      almoco: [M('L’Antica Pizzeria da Michele', 'margherita clássica; chegue cedo'), M('Gino Sorbillo', 'pizza na Via dei Tribunali'), M('Di Matteo', 'pizza frita e frituras de rua')],
+      tarde: [M('Scaturchio', 'babà e ministeriale na Piazza San Domenico Maggiore'), M('Gran Caffè Gambrinus', 'café napolitano no balcão')],
+      jantar: [M('Tandem', 'ragù napolitano no centro'), M('Trattoria Nennella', 'animada e barata nos Quartieri Spagnoli'), M('50 Kalò', 'pizza premiada em Mergellina')],
+      roupa: 'Via Toledo (lojas de rede) e Via Chiaia/Via dei Mille (grifes e alfaiataria napolitana). Outlet: La Reggia Designer Outlet (Marcianise, ônibus ~40 min).',
+      eletro: 'MediaWorld e Euronics; para presente, café, limoncello e taralli.'},
+    'Amalfi': {cafe: [M('Pasticceria Pansa', 'delizia al limone na Piazza Duomo, desde 1830')],
+      almoco: [M('Piazza Duomo', 'rosticcerias e trattorias que abrem no inverno (confira no dia)')],
+      tarde: [M('Pasticceria Pansa', 'café com doces de limão')],
+      jantar: [M('Trattorias do centro', 'peixe do dia e scialatielli; prefira as que abrem o ano todo')],
+      roupa: 'Sandálias feitas sob medida, cerâmica, papel artesanal de Amalfi e limoncello.'},
+    'Palermo': {cafe: [M('Pasticceria Cappello', 'torta setteveli e brioche')],
+      almoco: [M('Antica Focacceria San Francesco', 'arancine e pane con la milza, desde 1834'), M('Mercado de Ballarò', 'panelle, crocchè e arancine de rua')],
+      tarde: [M('I Segreti del Chiostro', 'cannoli e doces das freiras no convento de Santa Caterina')],
+      jantar: [M('Trattoria Ai Cascinari', 'cozinha siciliana caseira; reserve'), M('Osteria Ballarò', 'pratos sicilianos perto dos Quattro Canti')],
+      roupa: 'Via Ruggero Settimo e Via della Libertà (redes e grifes); cerâmica de Caltagirone. Na Sicília as liquidações vão até 15/03.',
+      eletro: 'MediaWorld e Euronics.'},
+    'Taormina': {cafe: [M('Bam Bar', 'granita com brioche, a mais famosa de Taormina')],
+      almoco: [M('Corso Umberto', 'arancine e pizza nos bares da rua principal')],
+      tarde: [M('Pasticceria Etna', 'cannoli e frutas de marzipã')],
+      jantar: [M('Trattorias do Corso Umberto', 'peixe e massa alla Norma; confira quais abrem no inverno')],
+      roupa: 'Corso Umberto: cerâmica siciliana, corais e lojas de grife.'},
+    'Perúgia': {cafe: [M('Pasticceria Sandri', 'café histórico no Corso Vannucci, desde 1860')],
+      almoco: [M('Torta al testo', 'pão úmbrio recheado nas osterie do centro')],
+      tarde: [M('Casa del Cioccolato Perugina', 'visita e degustação na fábrica dos Baci (agende)')],
+      jantar: [M('Osteria a Priori', 'cozinha úmbria com produtores locais')],
+      roupa: 'Corso Vannucci; em Assis, artesanato e produtos da Úmbria.'},
+    'Bolonha': {cafe: [M('Caffè Terzi', 'café especial no centro')],
+      almoco: [M('Mercato di Mezzo', 'tábuas de frios e massas no Quadrilatero'), M('Osteria dell’Orsa', 'tagliatelle al ragù a preço de estudante')],
+      tarde: [M('Cremeria Funivia', 'gelato artesanal')],
+      jantar: [M('Trattoria Anna Maria', 'tortellini in brodo e massas feitas à mão; reserve')],
+      roupa: 'Via dell’Indipendenza e Via Rizzoli (redes) e Galleria Cavour (grifes); na Emília-Romanha as liquidações devem ir até ~05/03.',
+      eletro: 'MediaWorld e Unieuro.'},
+    'Verona': {cafe: [M('Caffè Borsari', 'café minúsculo e charmoso perto da Piazza delle Erbe')],
+      almoco: [M('Osteria al Duca', 'cozinha veronesa na suposta casa de Romeu')],
+      tarde: [M('Pandoro', 'o doce nasceu em Verona: prove nas confeitarias do centro')],
+      jantar: [M('Antica Bottega del Vino', 'risoto all’Amarone e adega histórica; reserve')],
+      roupa: 'Via Mazzini, a rua de compras entre a Arena e a Piazza delle Erbe; liquidações no Vêneto até 28/02.'},
+    'Turim': {cafe: [M('Caffè Al Bicerin', 'o bicerin (café, chocolate e creme) desde 1763'), M('Caffè Mulassano', 'tramezzini na Piazza Castello')],
+      almoco: [M('Eataly Lingotto', 'o primeiro Eataly do mundo')],
+      tarde: [M('Baratti & Milano', 'chocolate gianduia na Galleria Subalpina')],
+      jantar: [M('Del Cambio', 'restaurante histórico de 1757 (caro)'), M('Tre Galline', 'bollito misto e cozinha piemontesa')],
+      roupa: 'Via Roma e Via Garibaldi, uma longa rua de pedestres.',
+      eletro: 'MediaWorld e Unieuro.'},
+    'Siena': {cafe: [M('Nannini', 'café com panforte e ricciarelli na Banchi di Sopra')],
+      almoco: [M('Pici', 'massa grossa típica nas osterie ao redor do Campo')],
+      tarde: [M('Nannini', 'cantucci com vin santo')],
+      jantar: [M('Osteria Le Logge', 'cozinha toscana a um passo do Campo; reserve')],
+      roupa: 'Banchi di Sopra e Banchi di Sotto; cerâmica e panforte para presente.'},
+    'Lucca': {cafe: [M('Taddeucci', 'buccellato (pão doce de erva-doce) na Piazza San Michele')],
+      almoco: [M('Trattoria da Leo', 'trattoria familiar e barata no centro')],
+      tarde: [M('Via Fillungo', 'cafés e confeitarias da rua principal')],
+      jantar: [M('Buca di Sant’Antonio', 'cozinha lucchese tradicional, desde 1782')],
+      roupa: 'Via Fillungo, a rua de compras dentro das muralhas.'},
+    'Lago de Como': {cafe: [M('Cafés da orla de Como', 'no inverno, em Varenna e Bellagio vários fecham')],
+      almoco: [M('Osteria del Gallo', 'osteria tradicional no centro de Como')],
+      tarde: [M('Bellagio', 'café com vista para o lago entre uma balsa e outra')],
+      jantar: [M('Peixe de lago', 'missoltini e risoto com perca nas trattorias de Como e Varenna')],
+      roupa: 'Seda de Como: gravatas e lenços nas lojas do centro de Como.'},
+    'Lugano': {cafe: [M('Grand Café Al Porto', 'café histórico desde 1803')],
+      almoco: [M('Piazza della Riforma', 'polenta, risoto e luganighetta nos bares da praça')],
+      tarde: [M('Chocolatarias suíças', 'na Via Nassa e arredores')],
+      jantar: [M('Grotto ticinese', 'cozinha do Ticino em ambiente rústico; confira quais abrem no inverno')],
+      roupa: 'Via Nassa, com grifes sob arcadas; preços em francos suíços (CHF).',
+      eletro: 'Relógios suíços; o tax free suíço vale a partir de CHF 300 por nota.'},
+    'St. Moritz': {cafe: [M('Hanselmann', 'confeitaria desde 1894: torta de nozes da Engadina')],
+      almoco: [M('Centro de St. Moritz', 'bistrôs e cafés da Via Serlas')],
+      tarde: [M('Chocolate quente', 'com vista do lago congelado')],
+      jantar: [M('Fondue ou raclette', 'nos restaurantes do centro')],
+      roupa: 'Via Serlas, rua de grifes; roupas de neve. Tax free suíço a partir de CHF 300 por nota.'},
+    'Zermatt': {cafe: [M('Padarias da Bahnhofstrasse', 'pão e café antes do Gornergrat')],
+      almoco: [M('Gornergrat', 'restaurante no topo, com vista do Matterhorn')],
+      tarde: [M('Chocolate quente', 'nas cafeterias da Bahnhofstrasse')],
+      jantar: [M('Whymper-Stube', 'fondue e raclette clássicos; reserve')],
+      roupa: 'Bahnhofstrasse: relógios, canivetes e roupas de esqui. Tax free suíço a partir de CHF 300 por nota.'},
+    'Lucerna': {cafe: [M('Confiserie Bachmann', 'doces e chocolates suíços')],
+      almoco: [M('Wirtshaus Galliker', 'cozinha suíça tradicional; fecha domingo e segunda')],
+      tarde: [M('Chocolate quente', 'à beira do lago')],
+      jantar: [M('Fondue', 'nos restaurantes da cidade velha')],
+      roupa: 'Schwanenplatz e Grendelstrasse: relógios (Bucherer) e canivetes Victorinox. Tax free suíço a partir de CHF 300 por nota.'},
+    'Interlaken': {cafe: [M('Höheweg', 'cafés com vista para o Jungfrau')],
+      almoco: [M('Jungfraujoch', 'restaurante no topo da montanha')],
+      tarde: [M('Chocolate suíço', 'nas lojas do Höheweg')],
+      jantar: [M('Fondue', 'nos restaurantes do Höheweg')],
+      roupa: 'Höheweg: relógios, canivetes e roupa de neve.'},
+    'Nice': {cafe: [M('Cours Saleya', 'café no mercado de flores')],
+      almoco: [M('Chez Pipo', 'socca (panqueca de grão-de-bico) desde 1923')],
+      tarde: [M('Fenocchio', 'sorvetes de dezenas de sabores na Place Rossetti')],
+      jantar: [M('La Merenda', 'cozinha niçoise pequena e famosa')],
+      roupa: 'Avenue Jean Médecin e shopping Nice Étoile; as liquidações francesas acabam no começo de fevereiro; tax free na França a partir de €100,01.',
+      eletro: 'Fnac no Nice Étoile.'},
+    'Liubliana': {cafe: [M('Cafés do rio', 'ao longo do Ljubljanica')],
+      almoco: [M('Mercado Central', 'mercado de Plečnik, com bancas de comida')],
+      tarde: [M('Kremšnita', 'torta de creme típica do Lago Bled')],
+      jantar: [M('Gostilna Sokol', 'cozinha eslovena tradicional')],
+      roupa: 'Čopova (rua de pedestres) e o shopping BTC City.'},
+    'Viena': {cafe: [M('Café Central', 'café vienense histórico'), M('Café Sacher', 'a Sachertorte original')],
+      almoco: [M('Naschmarkt', 'mercado com bancas de comida'), M('Figlmüller', 'schnitzel gigante; reserve')],
+      tarde: [M('Demel', 'confeitaria imperial')],
+      jantar: [M('Plachutta', 'Tafelspitz, o cozido vienense')],
+      roupa: 'Mariahilfer Straße (redes) e Kärntner Straße/Graben (grifes).',
+      eletro: 'MediaMarkt e Saturn.'},
+    'Barcelona': {cafe: [M('Granja La Pallaresa', 'churros com chocolate na Carrer Petritxol')],
+      almoco: [M('Mercat de la Boqueria', 'El Quim de la Boqueria e bancas de tapas')],
+      tarde: [M('Granja Dulcinea', 'chocolate quente na mesma rua')],
+      jantar: [M('Cal Pep', 'tapas de balcão no Born'), M('Cervecería Catalana', 'tapas no Eixample')],
+      roupa: 'Passeig de Gràcia e Portal de l’Àngel (Zara, Mango e Massimo Dutti costumam sair mais baratas que no Brasil) e El Corte Inglés da Plaça de Catalunya; na Espanha o tax free não tem valor mínimo.',
+      eletro: 'MediaMarkt e Fnac (El Triangle).'},
+    'Madri': {cafe: [M('Chocolatería San Ginés', 'churros com chocolate desde 1894')],
+      almoco: [M('Mercado de San Miguel', 'tapas e vinhos'), M('Plaza Mayor', 'bocadillo de calamares')],
+      tarde: [M('Café Gijón', 'café literário de 1888')],
+      jantar: [M('Botín', 'leitão assado no restaurante mais antigo do mundo (1725)'), M('Casa Lucio', 'huevos rotos')],
+      roupa: 'Gran Vía, Calle Preciados e El Corte Inglés (Callao e Sol).',
+      eletro: 'Fnac Callao e MediaMarkt.'},
+    'Paris': {cafe: [M('Café de Flore', 'café clássico de Saint-Germain'), M('Du Pain et des Idées', 'escargot de pistache (fecha nos fins de semana)')],
+      almoco: [M('Bouillon Chartier', 'bistrô de 1896 com preços baixos')],
+      tarde: [M('Angelina', 'chocolate quente e mont-blanc na Rue de Rivoli')],
+      jantar: [M('Le Relais de l’Entrecôte', 'steak-frites com molho da casa; fila sem reserva')],
+      roupa: 'Galeries Lafayette e Printemps (Bd Haussmann) e Rue de Rivoli; tax free na França a partir de €100,01.',
+      eletro: 'Fnac e Darty.'},
+    'Lisboa': {cafe: [M('Manteigaria', 'pastel de nata quentinho no Chiado'), M('Pastéis de Belém', 'a receita original, desde 1837')],
+      almoco: [M('Time Out Market', 'Mercado da Ribeira com chefs locais')],
+      tarde: [M('A Brasileira', 'café histórico do Chiado')],
+      jantar: [M('Cervejaria Ramiro', 'mariscos; fila sem reserva')],
+      roupa: 'Chiado, Rua Augusta e os shoppings Colombo e Amoreiras.',
+      eletro: 'Worten e Fnac.'},
+    'Porto': {cafe: [M('Majestic Café', 'café art nouveau na Rua de Santa Catarina')],
+      almoco: [M('Mercado do Bolhão', 'mercado reformado, reaberto em 2022'), M('Café Santiago', 'francesinha clássica')],
+      tarde: [M('Confeitaria do Bolhão', 'doces portugueses desde 1896')],
+      jantar: [M('Taberna dos Mercadores', 'pequena, na Ribeira; reserve')],
+      roupa: 'Rua de Santa Catarina e o shopping Via Catarina.',
+      eletro: 'Worten e Fnac.'},
+  };
+})();
+/** Cidade do roteiro pronto → cidade do planejador (as de fora da Itália e da Suíça não estão no mapa). */
+const SUG_KEY = {'Roma': 'roma', 'Florença': 'florenca', 'Veneza': 'veneza', 'Milão': 'milao', 'Nápoles': 'napoles', 'Amalfi': 'costa-amalfi', 'Palermo': 'palermo', 'Taormina': 'taormina', 'Perúgia': 'perugia', 'Bolonha': 'bolonha', 'Verona': 'verona', 'Turim': 'turim', 'Siena': 'siena', 'Lucca': 'lucca', 'Lago de Como': 'lago-como', 'Lugano': 'lugano', 'St. Moritz': 'stmoritz', 'Zermatt': 'zermatt', 'Lucerna': 'lucerna', 'Interlaken': 'interlaken'};
 const SUG_ROTEIROS = (() => {
-  const S = (nome, n, via, clima, top, d, x = {}) => ({nome, n, via, clima, top, d, w: x.w || nome, pais: x.pais || 'Itália'});
+  const S = (nome, n, via, clima, top, d, x = {}) => ({nome, n, via, clima, top, d, w: x.w || nome, pais: x.pais || 'Itália', k: SUG_KEY[nome] || null});
   const IN = 'Pouso em Fiumicino 06:40 · Leonardo Express até Termini 32 min';
   const R = {
     cheg: 'Pouso às 06:40, Leonardo Express até Termini e check-in (deixe a mala se o quarto não estiver pronto). À tarde, sem pressa: Pantheon, Fontana di Trevi e Piazza Navona.',
@@ -8004,6 +8255,100 @@ const SUG_ROTEIROS = (() => {
       eventos: [],
       atencao: ['Porto ↔ Roma tem só ~9 voos diretos por semana (Ryanair e Wizz): escolha o dia pelo voo.', 'Portugal tem 1 h a menos que a Itália.', 'Portugal usa euro e está no Schengen.'],
       fontes: ['tp', 'gf', 'fo']},
+    // ---- novos (nov/2026): no máximo 3 noites em Roma e em Florença, e Suíça com 1 noite só ----
+    {id: 'sete-cidades', cat: 'equilibrado', nome: 'Seis cidades sem pressa: Roma, Nápoles, Florença, Bolonha, Veneza e Milão', ritmo: 'moderado',
+      resumo: 'Roma curta no começo e no fim (3 noites no total), Nápoles com Pompeia, Florença em 3 noites e o norte com Bolonha, Veneza e Milão — nenhuma cidade passa de 3 noites.',
+      ideal: 'Quem quer ver muito, só de trem, sem ficar quase uma semana no mesmo lugar.',
+      stops: [
+        roma(2, [R.cheg, R.ant]),
+        S('Nápoles', 3, 'Trem rápido Roma → Nápoles · 1h10', '6–14 °C', ['Pompeia', 'Cristo Velado', 'Pizza napolitana'], ['Chegada; Spaccanapoli, Capela Sansevero (Cristo Velado) e pizza na Via dei Tribunali.', 'Pompeia (Circumvesuviana ~35 min) e, à tarde, Herculano ou o Lungomare.', 'Museu Arqueológico Nacional de manhã; tarde de compras na Via Toledo e na Via Chiaia.']),
+        flo(3, [FLO.a, FLO.b, 'Dom 14/02: Accademia (Davi) de manhã e tarde de compras (Via Roma e couro de San Lorenzo) — ou o Carnaval de Viareggio às 15h (trem ~1h30).'], 'Trem rápido Nápoles → Florença · ~2h55'),
+        S('Bolonha', 2, 'Trem rápido Florença → Bolonha · 37 min', '1–9 °C', ['Pórticos (UNESCO)', 'Duas Torres', 'Modena'], ['Chegada; Piazza Maggiore, Duas Torres e os pórticos; almoço no Mercato di Mezzo.', 'Modena (trem 25 min): Duomo, vinagre balsâmico e Museu Enzo Ferrari; à noite, tortellini in brodo.']),
+        ven(3, ['Chegada; vaporetto pelo Grande Canal e Rialto ao entardecer.', 'Praça e Basílica de São Marcos, Palácio Ducal e Ponte dos Suspiros.', 'Murano e Burano de manhã; à tarde, compras nas Mercerie (liquidações no Vêneto até 28/02).'], 'Trem rápido Bolonha → Veneza · 1h25'),
+        S('Milão', 2, 'Trem rápido Veneza → Milão · 2h27', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Corso Buenos Aires'], ['Chegada; Duomo com os terraços, Galleria Vittorio Emanuele II e a Rinascente.', 'A Última Ceia (reserve) de manhã; tarde de compras: roupas no Corso Buenos Aires e eletrônicos na Apple Piazza Liberty ou na MediaWorld.'], {w: 'Milão'}),
+        roma(1, ['Trem rápido cedo; à tarde, Museus Vaticanos e Basílica de São Pedro.'], 'Trem rápido Milão → Roma · 2h55'),
+      ],
+      eventos: [{q: 'Dom 14/02, 15h', t: 'Desfile do Carnaval de Viareggio, a 1h30 de trem de Florença.', u: SUG_SRC.vg[1]}],
+      atencao: ['Seis trocas de hotel: viaje com mala média ou pequena (os trens rápidos têm pouco espaço para malas grandes).', 'Reserve a Última Ceia, o Coliseu, os Uffizi e a Cúpula com antecedência.', 'O Vaticano fica para o fim: no penúltimo dia, chegue a Roma até o meio-dia.'],
+      fontes: ['ia', 'sg', 'it', 'vg']},
+    {id: 'toscana-cidades', cat: 'equilibrado', nome: 'Toscana de cidade em cidade: Siena, Florença, Lucca, Bolonha e Veneza', ritmo: 'moderado',
+      resumo: 'Em vez de uma semana em Florença, a Toscana dividida em Siena, Florença e Lucca (com o Carnaval de Viareggio a 25 min), depois Bolonha e Veneza; Roma só 3 noites.',
+      ideal: 'Quem gosta de cidades medievais, comida e menos filas, sem abrir mão de Florença e Veneza.',
+      stops: [
+        roma(2, [R.cheg, R.ant]),
+        S('Siena', 2, 'Ônibus direto Roma → Siena · ~3h (ou trem via Chiusi)', '2–11 °C', ['Piazza del Campo', 'Duomo de Siena', 'San Gimignano'], ['Chegada; Piazza del Campo, Torre del Mangia e o Duomo com o piso de mármore.', 'San Gimignano e suas torres (ônibus ~1h15) ou o Val d’Orcia (Montalcino e Pienza) de carro ou excursão.']),
+        flo(3, [FLO.a, FLO.b, 'Accademia (Davi) e Mercado Central; tarde de compras na Via Roma e no couro de San Lorenzo.'], 'Ônibus expresso Siena → Florença · 1h15'),
+        S('Lucca', 2, 'Trem regional Florença → Lucca · 1h20', '3–12 °C', ['Muralhas de bicicleta', 'Torre Guinigi', 'Carnaval de Viareggio'], ['Dom 14/02: chegada de manhã e desfile do Carnaval de Viareggio às 15h (trem 25 min).', 'Muralhas de bicicleta, Torre Guinigi e Piazza dell’Anfiteatro; à tarde, Pisa (trem 30 min).']),
+        S('Bolonha', 3, 'Trem Lucca → Florença → Bolonha · ~2h15', '1–9 °C', ['Pórticos (UNESCO)', 'Modena e Parma', 'Mosaicos de Ravenna'], ['Chegada; Piazza Maggiore, Duas Torres e os pórticos; compras na Via dell’Indipendenza.', 'Modena e Parma (trem 25 min e 1h): balsâmico, parmigiano e presunto.', 'Ravenna e os mosaicos bizantinos (trem 1h); à noite, tagliatelle al ragù.']),
+        ven(3, ['Chegada; vaporetto pelo Grande Canal e Rialto ao entardecer.', 'São Marcos, Palácio Ducal e Ponte dos Suspiros.', 'Murano e Burano; à tarde, compras nas Mercerie.'], 'Trem rápido Bolonha → Veneza · 1h25'),
+        roma(1, ['Trem rápido cedo; à tarde, Museus Vaticanos e Basílica de São Pedro.'], 'Trem rápido Veneza → Roma · ~4h'),
+      ],
+      eventos: [{q: 'Dom 14/02, 15h', t: 'Desfile do Carnaval de Viareggio, a 25 min de trem de Lucca.', u: SUG_SRC.vg[1]}],
+      atencao: ['Siena não tem trem rápido: o ônibus direto de Roma é o mais simples.', 'Val d’Orcia e San Gimignano rendem mais com carro ou excursão.', 'O trem Veneza → Roma leva ~4h: saia cedo para ainda ver o Vaticano.'],
+      fontes: ['sg', 'it', 'vg', 'ct']},
+    {id: 'norte-lagos', cat: 'equilibrado', nome: 'Norte equilibrado: Florença, Veneza, Verona, Lago de Como e Milão', ritmo: 'moderado',
+      resumo: 'Roma e Florença com 2 e 3 noites, depois o norte sem pressa: Veneza, Verona com o Lago de Garda, o Lago de Como e Milão para as compras.',
+      ideal: 'Quem prefere lagos, cidades românticas e um dia inteiro de compras em Milão.',
+      stops: [
+        roma(2, [R.cheg, R.ant]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        ven(3, ['Chegada; vaporetto pelo Grande Canal e Rialto ao entardecer.', 'São Marcos, Palácio Ducal e Ponte dos Suspiros.', 'Dom 14/02: Murano e Burano; jantar de Dia dos Namorados italiano (San Valentino) — reserve.'], 'Trem rápido Florença → Veneza · 2h14'),
+        S('Verona', 2, 'Trem rápido Veneza → Verona · 1h10', '1–9 °C', ['Arena', 'Casa de Julieta', 'Lago de Garda'], ['Chegada; Arena, Casa de Julieta e Piazza delle Erbe; compras na Via Mazzini.', 'Sirmione no Lago de Garda (ônibus ~1h) ou Mântua; à noite, risoto all’Amarone.']),
+        S('Lago de Como', 3, 'Trem Verona → Milão → Varenna · ~2h20', '2–10 °C', ['Varenna e Bellagio', 'Funicular de Brunate', 'Seda de Como'], ['Chegada a Varenna; orla e Castello di Vezio.', 'Balsa para Bellagio e Menaggio (horário de inverno reduzido; várias vilas só reabrem em março).', 'Como: Duomo, funicular de Brunate e as lojas de seda.'], {w: 'Lago de Como'}),
+        S('Milão', 2, 'Trem Varenna → Milão · ~1h05', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Quadrilatero della Moda'], ['Chegada; Duomo com os terraços, Galleria e a Última Ceia (reserve).', 'Dia de compras: Corso Buenos Aires e Corso Vittorio Emanuele (roupas), Quadrilatero della Moda (grifes) e Apple Piazza Liberty ou MediaWorld (eletrônicos).'], {w: 'Milão'}),
+        roma(1, ['Trem rápido cedo; à tarde, Museus Vaticanos e Basílica de São Pedro.'], 'Trem rápido Milão → Roma · 2h55'),
+      ],
+      eventos: [],
+      atencao: ['Lago de Como no inverno: balsas com menos horários e muitos hotéis e vilas fechados — Varenna e Como são as bases mais seguras.', 'Reserve a Última Ceia com meses de antecedência.', 'Liquidações na Lombardia devem ir até ~05/03: Milão é o melhor lugar da viagem para compras.'],
+      fontes: ['sg', 'ia', 'it', 'sd']},
+    {id: 'lugano-1', cat: 'suica', nome: 'Clássico + 1 noite em Lugano (a Suíça que fala italiano)', ritmo: 'moderado',
+      resumo: 'Roma, Florença, Bolonha, Veneza e Milão, um pulo de 1h15 até Lugano para dormir na Suíça e a volta pelo Lago de Como.',
+      ideal: 'Quem quer pisar na Suíça sem dias inteiros de trem nem gastar muito em francos.',
+      stops: [
+        roma(2, [R.cheg, R.ant]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        S('Bolonha', 2, 'Trem rápido Florença → Bolonha · 37 min', '1–9 °C', ['Pórticos (UNESCO)', 'Duas Torres', 'Modena'], ['Chegada; Piazza Maggiore, Duas Torres e os pórticos; almoço no Mercato di Mezzo.', 'Modena (trem 25 min): Duomo, balsâmico e Museu Enzo Ferrari.']),
+        ven(3, ['Dom 14/02: chegada; vaporetto pelo Grande Canal e Rialto.', 'São Marcos, Palácio Ducal e Ponte dos Suspiros.', 'Murano e Burano; à tarde, compras nas Mercerie.'], 'Trem rápido Bolonha → Veneza · 1h25'),
+        S('Milão', 2, 'Trem rápido Veneza → Milão · 2h27', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Corso Buenos Aires'], ['Chegada; Duomo com os terraços e a Galleria.', 'A Última Ceia de manhã; tarde de compras no Corso Buenos Aires e eletrônicos na Apple Piazza Liberty ou MediaWorld.'], {w: 'Milão'}),
+        S('Lugano', 1, 'Trem Milão → Lugano · ~1h15 (EuroCity ou TILO)', '1–9 °C', ['Lago de Lugano', 'Monte Brè', 'Via Nassa'], ['Chegada de manhã; orla do lago e Parco Ciani, funicular do Monte Brè (aberto o ano todo) e as arcadas da Via Nassa; jantar num grotto ticinese.'], {pais: 'Suíça'}),
+        S('Lago de Como', 2, 'Trem Lugano → Como · ~35 min', '2–10 °C', ['Duomo de Como', 'Funicular de Brunate', 'Bellagio'], ['Chegada a Como; Duomo, orla e funicular de Brunate.', 'Balsa para Bellagio (horário de inverno) e lojas de seda em Como.'], {w: 'Lago de Como'}),
+        roma(1, ['Trem até Milão e trem rápido para Roma; à tarde, Museus Vaticanos ou Trastevere.'], 'Trem Como → Milão → Roma · ~4h'),
+      ],
+      eventos: [],
+      atencao: ['Lugano usa franco suíço (CHF); cartão funciona em quase tudo.', 'Leve passaporte nos trens: há controle na fronteira de Chiasso.', 'Tax free suíço só a partir de CHF 300 por nota, carimbado na alfândega da fronteira.'],
+      fontes: ['ir', 'sw', 'ch']},
+    {id: 'stmoritz-1', cat: 'suica', nome: 'Bernina Express + 1 noite em St. Moritz', ritmo: 'moderado',
+      resumo: 'O trem panorâmico mais famoso saindo da Itália, com 1 noite só nos Alpes suíços: sobe de Milão por Tirano, dorme em St. Moritz e desce de volta pelo mesmo caminho até o Lago de Como.',
+      ideal: 'Quem quer a neve e o Bernina Express sem os dias inteiros de trem do Glacier Express.',
+      stops: [
+        roma(2, [R.cheg, R.ant]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        ven(3, ['Chegada; vaporetto pelo Grande Canal e Rialto ao entardecer.', 'São Marcos, Palácio Ducal e Ponte dos Suspiros.', 'Dom 14/02: Murano e Burano; à tarde, compras nas Mercerie.'], 'Trem rápido Florença → Veneza · 2h14'),
+        S('Verona', 2, 'Trem rápido Veneza → Verona · 1h10', '1–9 °C', ['Arena', 'Casa de Julieta', 'Lago de Garda'], ['Chegada; Arena, Casa de Julieta e Piazza delle Erbe; compras na Via Mazzini.', 'Sirmione no Lago de Garda (ônibus ~1h) ou Mântua.']),
+        S('Milão', 2, 'Trem rápido Verona → Milão · 1h15', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Corso Buenos Aires'], ['Chegada; Duomo com os terraços, Galleria e a Rinascente.', 'A Última Ceia de manhã; tarde de compras (Corso Buenos Aires, Apple Piazza Liberty, MediaWorld).'], {w: 'Milão'}),
+        S('St. Moritz', 1, 'Trem Milão → Tirano 2h30 + Bernina Express até St. Moritz ~2h20', '-12 a -1 °C', ['Bernina Express', 'Lago congelado', 'Viaduto de Brusio'], ['Saia cedo de Milão; Bernina Express pelo viaduto circular de Brusio e o passo Bernina (UNESCO); à tarde, lago congelado e centro; jantar com fondue.'], {pais: 'Suíça'}),
+        S('Lago de Como', 2, 'Bernina Express St. Moritz → Tirano + trem Tirano → Varenna · ~3h40', '2–10 °C', ['Varenna', 'Bellagio', 'Seda de Como'], ['Descida de manhã com a luz do outro lado do vale; chegada a Varenna à tarde e Castello di Vezio.', 'Balsa para Bellagio; à tarde, Como e as lojas de seda.'], {w: 'Lago de Como'}),
+        roma(1, ['Trem até Milão e trem rápido para Roma; à tarde, Museus Vaticanos ou Trastevere.'], 'Trem Varenna → Milão → Roma · ~4h'),
+      ],
+      eventos: [{q: 'Toda a temporada', t: 'O Bernina Express roda o ano todo; o ônibus Lugano–Tirano não roda no inverno.', u: SUG_SRC.mb[1]}],
+      atencao: ['Reserve o assento do Bernina Express (vagões panorâmicos); o trem regional da Ferrovia Retica faz o mesmo trajeto sem reserva.', 'Frio de verdade: -10 °C em St. Moritz é comum.', 'Franco suíço e preços altos: 1 noite basta para a experiência.'],
+      fontes: ['bx', 'mb', 'sw']},
+    {id: 'zermatt-1', cat: 'suica', nome: 'Matterhorn: 1 noite em Zermatt', ritmo: 'intenso',
+      resumo: 'Roma, Florença, Bolonha, Veneza, Verona e Milão, depois 1 noite em Zermatt aos pés do Matterhorn indo pelo EuroCity até Visp (sem o Glacier Express) e volta direta para Roma.',
+      ideal: 'Quem sonha com a vista do Matterhorn e aceita um dia longo de trem na volta.',
+      stops: [
+        roma(2, [R.cheg, R.ant]),
+        flo(3, [FLO.a, FLO.b, FLO.c]),
+        S('Bolonha', 2, 'Trem rápido Florença → Bolonha · 37 min', '1–9 °C', ['Pórticos (UNESCO)', 'Duas Torres', 'Modena'], ['Chegada; Piazza Maggiore, Duas Torres e os pórticos.', 'Modena (trem 25 min) ou Ravenna (1h); à noite, tortellini in brodo.']),
+        ven(3, ['Dom 14/02: chegada; vaporetto pelo Grande Canal e Rialto.', 'São Marcos, Palácio Ducal e Ponte dos Suspiros.', 'Murano e Burano; à tarde, compras nas Mercerie.'], 'Trem rápido Bolonha → Veneza · 1h25'),
+        S('Verona', 2, 'Trem rápido Veneza → Verona · 1h10', '1–9 °C', ['Arena', 'Casa de Julieta', 'Lago de Garda'], ['Chegada; Arena, Casa de Julieta e Piazza delle Erbe.', 'Sirmione no Lago de Garda (ônibus ~1h); compras na Via Mazzini.']),
+        S('Milão', 2, 'Trem rápido Verona → Milão · 1h15', '0–9 °C', ['Duomo e terraços', 'A Última Ceia', 'Corso Buenos Aires'], ['Chegada; Duomo com os terraços, Galleria e a Rinascente.', 'A Última Ceia de manhã; tarde de compras (Corso Buenos Aires, Apple Piazza Liberty, MediaWorld).'], {w: 'Milão'}),
+        S('Zermatt', 1, 'EuroCity Milão → Visp ~2h + trem até Zermatt 1h05', '-8 a 0 °C', ['Matterhorn', 'Gornergrat', 'Vila sem carros'], ['Saia cedo de Milão; à tarde, trem do Gornergrat com vista para o Matterhorn (se o tempo abrir); jantar com fondue ou raclette.'], {pais: 'Suíça'}),
+        roma(1, ['Dia de trem de volta (Zermatt → Visp → Milão → Roma), saindo cedo; jantar de despedida em Trastevere.'], 'Trens Zermatt → Milão ~3h30 + Milão → Roma 2h55'),
+      ],
+      eventos: [],
+      atencao: ['Uma noite só em Zermatt depende do tempo: confira a webcam do Matterhorn e tenha o Gornergrat como única subida.', 'O penúltimo dia é quase todo de trem (~7h); a folga é o último dia em Roma antes do voo das 22:30.', 'Franco suíço; tax free só a partir de CHF 300 por nota.'],
+      fontes: ['bx', 'sw', 'ir', 'ch']},
   ];
 })();
 
@@ -8121,6 +8466,18 @@ section.city{margin-top:56px;scroll-margin-top:20px}
 .badge{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;margin-left:6px}
 .badge.reservar{background:#ffedd5;color:#c2410c}
 .badge.reservado{background:#dcfce7;color:#15803d}
+.meals{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:13px;color:#4a3b2a}
+.meals span{display:inline-flex;align-items:center;gap:5px}
+.meals .ic{color:var(--c)}
+.meals b{font-weight:700;color:var(--muted)}
+.eat{margin:4px 0 0 12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 20px;box-shadow:0 6px 18px rgba(43,29,18,.05)}
+.eat h3{margin:0 0 10px;font-family:'Playfair Display',Georgia,serif;font-size:19px;display:flex;gap:8px;align-items:center}
+.eat h3 .ic{color:var(--c)}
+.eat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px 20px}
+.eat-grid>div>b{display:flex;gap:6px;align-items:center;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--c)}
+.eat ul{margin:6px 0 0;padding-left:18px;font-size:14px}
+.eat li{margin:3px 0}
+.eat p{margin:6px 0 0;font-size:14px}
 .hotel{margin-top:8px;font-size:13.5px;color:#4a3b2a;display:flex;gap:6px;align-items:center}
 .hotel .ic{color:#7c3aed}
 .sources{margin-top:60px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:13.5px}
@@ -8143,6 +8500,25 @@ function openPage(title, body) {
   if (!window.open(url, '_blank')) toast('O navegador bloqueou a nova aba: permita pop-ups para esta página e tente de novo.');
 }
 const heroBg = titles => `<div class="hero-bg">${[...new Set(titles)].slice(0, 3).map(t => `<div data-wiki="${esc(t)}"></div>`).join('')}</div>`;
+const MEALS = [['cafe', 'Café da manhã', 'livre'], ['almoco', 'Almoço', 'comida'], ['tarde', 'Café da tarde', 'livre'], ['jantar', 'Jantar', 'comida']];
+/** Sugestão de café, almoço, lanche e jantar para o dia j na cidade (as opções se revezam ao longo da estadia). */
+const mealsHTML = (nome, j) => {
+  const m = SUG_COMER[nome]; if (!m) return '';
+  return `<div class="meals">${MEALS.map(([k, lb, ic]) => { const o = m[k]?.[j % m[k].length]; return o ? `<span>${pic(ic)}<b>${lb}:</b>${esc(o.nome)}</span>` : ''; }).join('')}</div>`;
+};
+function eatHTML(nome) {
+  const m = SUG_COMER[nome]; if (!m) return '';
+  return `<div class="eat"><h3>${pic('comida')}Comer e comprar em ${esc(nome)}</h3><div class="eat-grid">
+    ${MEALS.map(([k, lb, ic]) => m[k] ? `<div><b>${pic(ic)}${lb}</b><ul>${m[k].map(o => `<li><b>${esc(o.nome)}</b> — ${esc(o.dica)}</li>`).join('')}</ul></div>` : '').join('')}
+    ${m.roupa ? `<div><b>${pic('compras')}Roupas e lembranças</b><p>${esc(m.roupa)}</p></div>` : ''}
+    ${m.eletro ? `<div><b>${pic('celular')}Eletrônicos</b><p>${esc(m.eletro)}</p></div>` : ''}</div></div>`;
+}
+const SHOP_TIPS = [
+  'Liquidações de inverno (saldi) 2027 começam em 05/01: em Roma (Lácio) devem acabar por volta de 15/02; no Vêneto vão até 28/02; na Toscana, Lombardia, Emília-Romanha e Campânia, até ~05/03; na Sicília, até 15/03.',
+  'Tax free na Itália: a partir de €70,01 numa mesma nota, emitida com o seu passaporte. Valide no aeroporto de Fiumicino antes de despachar a mala (as compras precisam estar com você); o reembolso vem descontada a taxa da empresa de tax free.',
+  'Volta ao Brasil: cota de isenção de US$ 1.000 por pessoa na bagagem (viagem aérea), mais US$ 1.000 no free shop de chegada; o que passar disso paga 50% de imposto sobre o excedente, declarado na e-DBV.',
+  'Eletrônicos: na Itália o preço já inclui 22% de IVA — compare com o Brasil já descontando o tax free, confira se o carregador é bivolt (100–240 V) e guarde caixa e nota.',
+];
 const LAST_DAY = 'Último dia: check-out até 11h (a mala fica no hotel), passeio leve e almoço sem pressa. Leonardo Express até Fiumicino (32 min) para estar no aeroporto até ~19h30 — o voo para o Rio sai às 22:30.';
 function openSugRoteiro(id) {
   const r = SUG_ROTEIROS.find(x => x.id === id); if (!r) return;
@@ -8155,7 +8531,7 @@ function openSugRoteiro(id) {
   const route = stops.map((s, i) => `${i ? `<span class="leg">${pic(legIc(s.via))}${esc(s.via.split('·').pop().trim())}</span>` : ''}<a class="stop" href="#p${i}" style="--c:${s.color}"><span class="n">${i + 1}</span><b>${esc(s.nome)}</b><small>${s.n} noite${s.n > 1 ? 's' : ''}</small></a>`).join('');
   const dayRow = (date, txt, extra = '', cls = '') => `<li class="day ${cls}"><div class="date"><b>${fmtBR(date)}</b><span>${wdLong(date)}</span><small>Dia ${diffDays(start, date) + 1}</small></div><p>${esc(txt)}</p>${extra}</li>`;
   const sections = stops.map(s => {
-    const days = s.d.map((t, j) => dayRow(addDays(s.inD, j), t, j === 0 ? `<div class="move">${pic(legIc(s.via))}${esc(s.via)}</div>` : ''));
+    const days = s.d.map((t, j) => dayRow(addDays(s.inD, j), t, (j === 0 ? `<div class="move">${pic(legIc(s.via))}${esc(s.via)}</div>` : '') + mealsHTML(s.nome, j)));
     if (s === stops.at(-1)) days.push(dayRow(s.outD, LAST_DAY, `<div class="move">${pic('voo')}${esc(REAL_TRIP.volta)}</div>`, 'flight'));
     return `<section class="city" id="p${s.i}" style="--c:${s.color}">
       <div class="city-head">
@@ -8167,8 +8543,10 @@ function openSugRoteiro(id) {
           <div class="tags">${s.top.map(t => `<span>${pic('estrela')}${esc(t)}</span>`).join('')}</div>
           <a id="wl${s.i}" class="wlink" target="_blank" rel="noopener" hidden>Ler mais na Wikipédia ↗</a>
         </div></div>
-      <ol class="days">${days.join('')}</ol></section>`;
+      <ol class="days">${days.join('')}</ol>${eatHTML(s.nome)}</section>`;
   }).join('');
+  const swiss = stops.some(s => s.pais === 'Suíça'), fontes = [...new Set([...r.fontes, 'sd', 'tf', 'rf', ...(swiss ? ['ch'] : [])])];
+  const shop = [...SHOP_TIPS, ...(swiss ? ['Na Suíça: franco suíço (CHF) e tax free só a partir de CHF 300 por nota, carimbado numa alfândega de fronteira com atendente.'] : [])];
   const body = `<header class="hero">${heroBg(stops.map(s => s.w))}<div class="hero-in">
       <span class="kicker">${pic('mapa')}${esc(SUG_CATS[r.cat])} · roteiro sugerido</span>
       <h1>${esc(r.nome)}</h1><p class="lead">${esc(r.resumo)}</p>
@@ -8183,8 +8561,9 @@ function openSugRoteiro(id) {
       </div>
       ${r.eventos.length ? `<div class="box gold full"><h3>${pic('calendario')}Acontece nas suas datas</h3><ul>${r.eventos.map(e => `<li><b>${esc(e.q)}</b> — ${esc(e.t)} <a href="${esc(e.u)}" target="_blank" rel="noopener">fonte ↗</a></li>`).join('')}</ul></div>` : ''}
       <div class="box warn full"><h3>${pic('alerta')}Antes de fechar</h3><ul>${r.atencao.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>
+      <div class="box full"><h3>${pic('compras')}Compras na viagem</h3><ul>${shop.map(a => `<li>${esc(a)}</li>`).join('')}</ul><p>Em cada cidade abaixo: onde tomar café, almoçar, lanchar e jantar, e onde comprar roupas e eletrônicos.</p></div>
       ${sections}
-      <footer class="sources"><h3>Fontes da pesquisa</h3><ul>${r.fontes.map(k => `<li><a href="${esc(SUG_SRC[k][1])}" target="_blank" rel="noopener">${esc(SUG_SRC[k][0])}</a></li>`).join('')}</ul>
+      <footer class="sources"><h3>Fontes da pesquisa</h3><ul>${fontes.map(k => `<li><a href="${esc(SUG_SRC[k][1])}" target="_blank" rel="noopener">${esc(SUG_SRC[k][0])}</a></li>`).join('')}</ul>
         <p>Pesquisa feita em novembro de 2026. Tempos de trem e voo são médios; confira horários e datas de eventos antes de comprar. Clima: médias de fevereiro. Fotos e resumos: Wikipédia.</p></footer>
     </main>`;
   openPage(`${r.nome} · roteiro sugerido`, body);
