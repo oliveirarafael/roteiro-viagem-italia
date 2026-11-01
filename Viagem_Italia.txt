@@ -1,0 +1,6 @@
+Voo ida: 06/02/2027, 15:35 - Chegada: D+1, 06:40
+Voo volta: 23/02/2027, 22:30 - Chegada: D+1, 06:40
+
+Aeroporto:
+Ida: GIG -> FCO
+Volta: FCO -> GIG
